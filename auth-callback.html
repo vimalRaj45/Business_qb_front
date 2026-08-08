@@ -54,7 +54,7 @@
       try {
         statusText.textContent = 'Exchanging OAuth token & building Google Drive ledger...';
 
-        const redirectUri = window.location.origin + window.location.pathname;
+        const redirectUri = window.location.origin + '/auth-callback.html';
         const res = await API.post('/api/auth/google/exchange', {
           code,
           redirect_uri: redirectUri
