@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Customers - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
+      
+      <!-- Top Action Bar -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="relative w-full sm:w-80">
+          <i class="bi bi-search absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+          <input type="text" id="search-customers" placeholder="Search customers..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-teal-500" />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <button onclick="window.exportCustomersCSV()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-filetype-csv text-emerald-600 text-sm"></i> Export CSV
+          </button>
+          <button onclick="window.exportCustomersPDF()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-sm"></i> Export PDF
+          </button>
+          <button onclick="window.openCustomerModal()" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition">
+            <i class="bi bi-plus-circle-fill"></i> Add New Customer
+          </button>
+        </div>
+      </div>
+
+      <!-- Customers Table Card -->
+      <div id="customers-table-card" class="card-premium overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">Customer Name</th>
+                <th class="py-3.5 px-4">Company</th>
+                <th class="py-3.5 px-4">Email</th>
+                <th class="py-3.5 px-4">Phone</th>
+                <th class="py-3.5 px-4 font-bold">Opening Balance</th>
+                <th class="py-3.5 px-4 text-right no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody">
+              <tr><td colspan="6" class="py-8 text-center text-slate-400">Loading customers...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add/Edit Customer Modal -->
+  <div id="customer-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6 space-y-5 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 id="modal-title" class="font-bold text-slate-900 text-base">Add New Customer</h3>
+        <button onclick="window.closeCustomerModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <form id="customer-form" class="space-y-4 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="space-y-1 sm:col-span-2">
+            <label class="font-bold text-slate-700">Customer Name <span class="text-rose-500">*</span></label>
+            <input type="text" name="customer_name" required placeholder="John Doe" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">Company Name</label>
+            <input type="text" name="company_name" placeholder="Acme Inc." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">Tax ID / GSTIN</label>
+            <input type="text" name="tax_number" placeholder="Tax ID" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">Email Address</label>
+            <input type="email" name="email" placeholder="john@example.com" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">Phone Number</label>
+            <input type="text" name="phone" placeholder="+1 (555) 000-0000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+
+          <div class="space-y-1 sm:col-span-2">
+            <label class="font-bold text-slate-700">Street Address</label>
+            <input type="text" name="address" placeholder="123 Market St" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">Opening Balance</label>
+            <input type="number" step="0.01" name="opening_balance" value="0.00" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold" />
+          </div>
+
+          <div class="space-y-1">
+            <label class="font-bold text-slate-700">City</label>
+            <input type="text" name="city" placeholder="San Francisco" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex justify-end gap-2">
+          <button type="button" onclick="window.closeCustomerModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shadow-xs">Save Customer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module" src="/js/customers.js"></script>
+</body>
+</html>

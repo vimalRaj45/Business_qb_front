@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complete Business Profile - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4 text-slate-900">
+
+  <!-- Application Splash Screen Overlay -->
+  <div id="app-splash-screen" class="no-print">
+    <div class="splash-glass-card space-y-4">
+      <div class="w-16 h-16 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-3xl font-black mx-auto shadow-lg splash-logo-pulse">
+        <i class="bi bi-building"></i>
+      </div>
+      <div class="space-y-1">
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight">BizSheet Platform</h2>
+        <p class="text-xs font-bold text-teal-700">Loading Business Onboarding Setup...</p>
+      </div>
+      <div class="splash-progress-track">
+        <div class="splash-progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-2xl w-full bg-white border border-slate-200 rounded-3xl p-6 md:p-8 shadow-xl space-y-6">
+    
+    <div class="text-center space-y-2 border-b border-slate-100 pb-6">
+      <div class="w-14 h-14 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl font-extrabold mx-auto shadow-md">
+        <i class="bi bi-building"></i>
+      </div>
+      <h2 class="text-2xl font-black text-slate-900">Welcome! Complete your Business Profile</h2>
+      <p class="text-slate-500 text-xs md:text-sm">Verify your business email address and set up your profile.</p>
+    </div>
+
+    <!-- Email OTP Verification Box -->
+    <div class="p-5 bg-teal-50/60 border border-teal-200/80 rounded-2xl space-y-3">
+      <div class="flex items-center justify-between">
+        <label class="font-bold text-slate-800 text-xs flex items-center gap-2">
+          <i class="bi bi-envelope-check-fill text-teal-600 text-sm"></i>
+          <span>Business Email Verification <span class="text-rose-500">*</span></span>
+        </label>
+        <span id="email-status-badge" class="hidden text-[11px] font-extrabold text-emerald-700 bg-emerald-100 border border-emerald-300 px-2.5 py-0.5 rounded-full">
+          <i class="bi bi-patch-check-fill"></i> Email Verified
+        </span>
+      </div>
+
+      <div class="flex flex-col sm:flex-row gap-2">
+        <input type="email" id="onboarding-email-input" required placeholder="business@example.com" class="flex-1 bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500 font-medium" />
+        <button type="button" id="send-otp-btn" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs transition shrink-0 flex items-center justify-center gap-1.5 shadow-xs">
+          <i class="bi bi-send"></i> Send OTP Code
+        </button>
+      </div>
+
+      <!-- OTP Input Box (Hidden initially) -->
+      <div id="otp-input-container" class="hidden pt-2 space-y-2 border-t border-teal-200/60">
+        <p class="text-[11px] text-slate-600">Enter the 6-digit code sent to your email via Brevo:</p>
+        <div class="flex gap-2">
+          <input type="text" id="otp-code-input" maxlength="6" placeholder="123456" class="w-36 bg-white border border-slate-300 rounded-xl px-3.5 py-2 text-xs font-mono font-bold tracking-widest text-center text-slate-900 focus:outline-none focus:border-teal-500" />
+          <button type="button" id="verify-otp-btn" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1 shadow-xs">
+            <i class="bi bi-shield-check"></i> Verify OTP
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Onboarding Form -->
+    <form id="onboarding-form" class="space-y-4 text-xs">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        
+        <div class="space-y-1 sm:col-span-2">
+          <label class="font-bold text-slate-700">Business Name <span class="text-rose-500">*</span></label>
+          <input type="text" name="business_name" required placeholder="e.g. Apex Tech Solutions" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Business Type / Sector <span class="text-rose-500">*</span></label>
+          <select name="business_type" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500">
+            <option value="Services & Agency">Services & Agency</option>
+            <option value="Retail & Shop">Retail & Shop</option>
+            <option value="Freelancer & Consultant">Freelancer & Consultant</option>
+            <option value="Contractor & Trades">Contractor & Trades</option>
+            <option value="B2B & Distribution">B2B & Distribution</option>
+            <option value="Small Business">Small Business</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Phone Number</label>
+          <input type="text" name="phone" placeholder="+1 (555) 000-0000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Tax Registration / GST Number</label>
+          <input type="text" name="tax_number" placeholder="Tax ID or GSTIN" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500" />
+        </div>
+
+        <div class="space-y-1 sm:col-span-2">
+          <label class="font-bold text-slate-700">Business Address</label>
+          <input type="text" name="address" placeholder="Street Address, Building, Suite" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">City</label>
+          <input type="text" name="city" placeholder="San Francisco" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Currency Symbol</label>
+          <select name="currency" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-teal-500">
+            <option value="USD $">USD ($)</option>
+            <option value="EUR €">EUR (€)</option>
+            <option value="GBP £">GBP (£)</option>
+            <option value="INR ₹">INR (₹)</option>
+            <option value="CAD $">CAD ($)</option>
+            <option value="AUD $">AUD ($)</option>
+          </select>
+        </div>
+
+      </div>
+
+      <div class="pt-4">
+        <button type="submit" id="submit-onboarding-btn" disabled class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold rounded-xl text-sm transition shadow-lg flex items-center justify-center gap-2 active:scale-95">
+          <span>Complete Setup & Launch Dashboard</span>
+          <i class="bi bi-arrow-right-short text-lg"></i>
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+  <script type="module">
+    import { API } from '/js/api.js';
+    import { showToast } from '/js/utils.js';
+
+    let isEmailVerified = false;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      setTimeout(() => {
+        const splash = document.getElementById('app-splash-screen');
+        if (splash) {
+          splash.classList.add('fade-out');
+          setTimeout(() => splash.remove(), 450);
+        }
+      }, 350);
+
+      // Pre-fill user email from auth session
+      try {
+        const me = await API.get('/api/auth/me');
+        if (me && me.user && me.user.email) {
+          document.getElementById('onboarding-email-input').value = me.user.email;
+        }
+      } catch (err) {
+        console.warn('Could not fetch user email:', err);
+      }
+    });
+
+    const sendOtpBtn = document.getElementById('send-otp-btn');
+    const verifyOtpBtn = document.getElementById('verify-otp-btn');
+    const emailInput = document.getElementById('onboarding-email-input');
+    const otpInput = document.getElementById('otp-code-input');
+    const otpContainer = document.getElementById('otp-input-container');
+    const badge = document.getElementById('email-status-badge');
+    const submitBtn = document.getElementById('submit-onboarding-btn');
+
+    sendOtpBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      if (!email) {
+        showToast('Please enter a valid email address', 'warning');
+        return;
+      }
+
+      sendOtpBtn.disabled = true;
+      sendOtpBtn.innerHTML = `<i class="bi bi-arrow-repeat animate-spin"></i> Sending OTP...`;
+
+      try {
+        const res = await API.post('/api/business/send-otp', { email });
+        showToast(res.message || 'OTP sent via Brevo!', 'success');
+        otpContainer.classList.remove('hidden');
+        sendOtpBtn.innerHTML = `<i class="bi bi-check-lg"></i> Resend OTP`;
+        sendOtpBtn.disabled = false;
+      } catch (err) {
+        showToast('Failed to send OTP: ' + err.message, 'error');
+        sendOtpBtn.disabled = false;
+        sendOtpBtn.innerHTML = `<i class="bi bi-send"></i> Send OTP Code`;
+      }
+    });
+
+    verifyOtpBtn.addEventListener('click', async () => {
+      const email = emailInput.value.trim();
+      const code = otpInput.value.trim();
+
+      if (!code || code.length !== 6) {
+        showToast('Please enter the 6-digit OTP code', 'warning');
+        return;
+      }
+
+      verifyOtpBtn.disabled = true;
+      verifyOtpBtn.innerHTML = `<i class="bi bi-arrow-repeat animate-spin"></i> Verifying...`;
+
+      try {
+        const res = await API.post('/api/business/verify-otp', { email, code });
+        showToast('Email verified successfully!', 'success');
+        isEmailVerified = true;
+        
+        badge.classList.remove('hidden');
+        emailInput.disabled = true;
+        sendOtpBtn.classList.add('hidden');
+        otpContainer.classList.add('hidden');
+        
+        submitBtn.disabled = false;
+      } catch (err) {
+        showToast(err.message, 'error');
+        verifyOtpBtn.disabled = false;
+        verifyOtpBtn.innerHTML = `<i class="bi bi-shield-check"></i> Verify OTP`;
+      }
+    });
+
+    document.getElementById('onboarding-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!isEmailVerified) {
+        showToast('Please verify your email address via OTP first', 'warning');
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<i class="bi bi-arrow-repeat animate-spin"></i> Saving Business Profile...`;
+
+      const formData = new FormData(e.target);
+      const payload = Object.fromEntries(formData.entries());
+      payload.email = emailInput.value;
+
+      try {
+        await API.post('/api/business/onboarding', payload);
+        showToast('Business profile created successfully!', 'success');
+        setTimeout(() => {
+          window.location.href = '/dashboard.html';
+        }, 600);
+      } catch (err) {
+        showToast('Setup error: ' + err.message, 'error');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = `<span>Complete Setup & Launch Dashboard</span> <i class="bi bi-arrow-right-short text-lg"></i>`;
+      }
+    });
+  </script>
+</body>
+</html>

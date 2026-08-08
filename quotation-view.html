@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quotation Preview - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- html2pdf.js for vector-crisp PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block no-print"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container" class="no-print"></div>
+
+    <main class="p-4 md:p-6 space-y-6 max-w-4xl w-full mx-auto pb-24 md:pb-6">
+      
+      <!-- Top Action Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 no-print bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <a href="/quotations.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900">
+          <i class="bi bi-arrow-left"></i> All Quotations
+        </a>
+
+        <div class="flex items-center gap-3">
+          <button onclick="window.downloadQuotationPDF()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
+            <i class="bi bi-file-earmark-pdf-fill text-rose-400 text-sm"></i> Download Professional PDF
+          </button>
+          <button onclick="window.print()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-printer-fill"></i> Print
+          </button>
+          <button id="convert-btn" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
+            <i class="bi bi-arrow-repeat"></i> Convert to Invoice
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable Quotation Document Card -->
+      <div id="printable-quotation-card" class="printable-document bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-md space-y-8">
+        
+        <!-- Header: Business & Document Title -->
+        <div class="flex justify-between items-start border-b border-slate-200 pb-8">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-black text-xl shadow-xs shrink-0">
+                <i class="bi bi-building"></i>
+              </div>
+              <div>
+                <h1 id="biz-name" class="text-xl md:text-2xl font-black text-slate-900">--</h1>
+                <div id="biz-type" class="text-xs font-semibold text-teal-700">--</div>
+              </div>
+            </div>
+            <div id="biz-details" class="text-xs text-slate-500 pt-2 space-y-0.5 leading-relaxed"></div>
+          </div>
+
+          <div class="text-right">
+            <h2 class="text-3xl md:text-4xl font-black text-teal-600 uppercase tracking-tight">QUOTATION</h2>
+            <div id="quo-number" class="text-sm font-bold text-slate-800 mt-1 font-mono">#QUO-00000</div>
+            <div id="quo-status-badge" class="mt-2"></div>
+          </div>
+        </div>
+
+        <!-- Meta Grid: Customer Info & Dates -->
+        <div class="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 text-xs">
+          <div>
+            <div class="font-extrabold text-slate-400 uppercase text-[10px] tracking-wider mb-1.5">Quotation Billed To:</div>
+            <div id="cust-name" class="font-black text-slate-900 text-sm">--</div>
+            <div id="cust-company" class="text-slate-700 font-semibold mt-0.5"></div>
+            <div id="cust-address" class="text-slate-500 mt-1 leading-relaxed"></div>
+            <div id="cust-tax" class="text-[11px] text-slate-600 font-mono mt-1"></div>
+          </div>
+          <div class="text-right space-y-1.5 self-center">
+            <div><span class="text-slate-400 font-semibold">Quotation Date:</span> <span id="quo-date" class="font-bold text-slate-900">--</span></div>
+            <div><span class="text-slate-400 font-semibold">Valid Until:</span> <span id="quo-valid" class="font-bold text-slate-900">--</span></div>
+          </div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-900 text-white uppercase font-extrabold rounded-xl text-[11px]">
+                <th class="py-3.5 px-4 rounded-l-xl">#</th>
+                <th class="py-3.5 px-4">Item & Description</th>
+                <th class="py-3.5 px-4 text-center">Qty</th>
+                <th class="py-3.5 px-4 text-right">Unit Price</th>
+                <th class="py-3.5 px-4 text-right">Tax Rate</th>
+                <th class="py-3.5 px-4 text-right rounded-r-xl">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="quo-items-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Calculations Summary -->
+        <div class="flex justify-end pt-4">
+          <div class="w-72 space-y-2 text-xs bg-slate-50 p-5 rounded-2xl border border-slate-100">
+            <div class="flex justify-between text-slate-600 font-medium"><span>Subtotal:</span> <span id="quo-subtotal" class="font-bold text-slate-900">$0.00</span></div>
+            <div class="flex justify-between text-slate-600 font-medium"><span>Tax Total:</span> <span id="quo-tax" class="font-bold text-slate-900">$0.00</span></div>
+            <div class="flex justify-between text-slate-600 font-medium"><span>Discount:</span> <span id="quo-discount" class="font-bold text-slate-900">$0.00</span></div>
+            <div class="border-t border-slate-300 pt-2 flex justify-between text-base font-black text-slate-900">
+              <span>Grand Total:</span>
+              <span id="quo-total" class="text-teal-600 font-mono">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms, Notes & Signature -->
+        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-slate-200 text-xs">
+          <div class="space-y-3">
+            <div>
+              <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Terms & Conditions:</div>
+              <p id="quo-terms" class="text-slate-500 text-[11px] mt-1 leading-relaxed">This quotation is valid until the specified date above.</p>
+            </div>
+            <div>
+              <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Client Notes:</div>
+              <p id="quo-notes" class="text-slate-500 text-[11px] mt-1 leading-relaxed">-</p>
+            </div>
+          </div>
+
+          <div class="text-right flex flex-col justify-end items-end space-y-4">
+            <div class="w-48 border-b-2 border-slate-300 pb-1 text-center font-bold text-slate-800">
+              <span id="biz-sign-name">Authorized Signature</span>
+            </div>
+            <div class="text-[10px] text-slate-400">Computer generated quotation document</div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { checkAuth } from '/js/auth.js';
+    import { renderLayout } from '/js/layout.js';
+    import { API } from '/js/api.js';
+    import { formatCurrency, formatDate, getStatusBadge, showToast } from '/js/utils.js';
+
+    let currentQuotation = null;
+    let currencySymbol = 'USD $';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = await checkAuth();
+      if (!auth) return;
+
+      renderLayout(auth.business, auth.user);
+      currencySymbol = auth.business.currency || 'USD $';
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const quotationId = urlParams.get('id');
+
+      if (!quotationId) {
+        window.location.href = '/quotations.html';
+        return;
+      }
+
+      loadQuotationDetails(quotationId, auth.business);
+    });
+
+    async function loadQuotationDetails(id, business) {
+      try {
+        const res = await API.get(`/api/quotations/${id}`);
+        currentQuotation = res.data;
+        populateQuotation(currentQuotation, business);
+      } catch (err) {
+        showToast('Error loading quotation: ' + err.message, 'error');
+      }
+    }
+
+    function populateQuotation(q, business) {
+      document.getElementById('biz-name').textContent = business.business_name || 'My Business';
+      document.getElementById('biz-type').textContent = business.business_type || '';
+      
+      const bizDetails = [
+        business.address,
+        [business.city, business.state, business.country].filter(Boolean).join(', '),
+        business.phone ? `Phone: ${business.phone}` : '',
+        business.tax_number ? `Tax ID / GST: ${business.tax_number}` : ''
+      ].filter(Boolean).join('<br/>');
+
+      document.getElementById('biz-details').innerHTML = bizDetails || 'Business Address Not Specified';
+      document.getElementById('biz-sign-name').textContent = business.business_name || 'Authorized Signatory';
+
+      document.getElementById('quo-number').textContent = q.quotation_number || '#QUO-0000';
+      document.getElementById('quo-status-badge').innerHTML = getStatusBadge(q.status);
+
+      document.getElementById('cust-name').textContent = q.customer_name || 'N/A';
+      document.getElementById('cust-company').textContent = q.customer_company || '';
+      document.getElementById('cust-address').textContent = q.customer_address || '';
+      document.getElementById('cust-tax').textContent = q.customer_tax_number ? `Tax ID: ${q.customer_tax_number}` : '';
+
+      document.getElementById('quo-date').textContent = formatDate(q.quotation_date);
+      document.getElementById('quo-valid').textContent = formatDate(q.valid_until);
+
+      document.getElementById('quo-subtotal').textContent = formatCurrency(q.subtotal, currencySymbol);
+      document.getElementById('quo-tax').textContent = formatCurrency(q.tax, currencySymbol);
+      document.getElementById('quo-discount').textContent = formatCurrency(q.discount, currencySymbol);
+      document.getElementById('quo-total').textContent = formatCurrency(q.total, currencySymbol);
+
+      document.getElementById('quo-terms').textContent = q.terms || 'This quotation is valid until the specified date above.';
+      document.getElementById('quo-notes').textContent = q.notes || 'None';
+
+      const itemsTbody = document.getElementById('quo-items-tbody');
+      const items = q.items || [];
+      if (!items.length) {
+        itemsTbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">No line items in quotation.</td></tr>`;
+      } else {
+        itemsTbody.innerHTML = items.map((item, index) => `
+          <tr class="border-b border-slate-100">
+            <td class="py-3 px-4 text-slate-400">${index + 1}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${item.description || 'Item'}</td>
+            <td class="py-3 px-4 text-center font-semibold">${item.quantity}</td>
+            <td class="py-3 px-4 text-right">${formatCurrency(item.unit_price, currencySymbol)}</td>
+            <td class="py-3 px-4 text-right">${item.tax_rate}%</td>
+            <td class="py-3 px-4 text-right font-extrabold text-slate-900">${formatCurrency(item.amount, currencySymbol)}</td>
+          </tr>
+        `).join('');
+      }
+
+      const convertBtn = document.getElementById('convert-btn');
+      if (convertBtn) {
+        if (q.status === 'Converted') {
+          convertBtn.disabled = true;
+          convertBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          convertBtn.textContent = 'Already Converted';
+        } else {
+          convertBtn.addEventListener('click', async () => {
+            try {
+              const res = await API.post(`/api/quotations/${q.quotation_id}/convert`);
+              showToast('Quotation converted to Invoice!', 'success');
+              setTimeout(() => {
+                window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`;
+              }, 600);
+            } catch (err) {
+              showToast(err.message, 'error');
+            }
+          });
+        }
+      }
+    }
+
+    // High-Resolution PDF Export Handler using html2pdf.js
+    window.downloadQuotationPDF = function() {
+      const element = document.getElementById('printable-quotation-card');
+      const num = document.getElementById('quo-number')?.textContent || 'Quotation';
+      const filename = `${num.replace('#', '').trim()}.pdf`;
+
+      const opt = {
+        margin:       [0.3, 0.3, 0.3, 0.3],
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      showToast('Generating professional PDF document...', 'info');
+      html2pdf().set(opt).from(element).save().then(() => {
+        showToast('Quotation PDF downloaded successfully!', 'success');
+      }).catch(err => {
+        showToast('PDF Export Error: ' + err.message, 'error');
+      });
+    };
+  </script>
+</body>
+</html>

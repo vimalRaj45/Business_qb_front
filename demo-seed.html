@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Feed & Test Data - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="p-4 md:p-6 space-y-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
+      
+      <!-- Top Google Sheet Link Hero Banner -->
+      <div class="bg-gradient-to-br from-slate-900 via-slate-800 to-teal-950 text-white p-6 md:p-8 rounded-3xl shadow-xl space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-700/60 pb-6">
+          <div class="space-y-1">
+            <div class="inline-flex items-center gap-2 text-xs font-extrabold text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/30">
+              <i class="bi bi-google"></i> Google Drive & Sheet Storage Active
+            </div>
+            <h1 class="text-2xl md:text-3xl font-black">Feed Sample Data & Test Google Sync</h1>
+            <p class="text-slate-300 text-xs md:text-sm max-w-2xl">
+              Click the button below to instantly populate realistic test records (Customers, Products, Quotations, Invoices, Payments, Expenses) into your Google Drive Spreadsheet and local workspace.
+            </p>
+          </div>
+
+          <div>
+            <a id="sheet-link-btn" href="#" target="_blank" class="px-5 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold rounded-2xl text-xs flex items-center gap-2 transition shadow-lg hover:scale-105 active:scale-95">
+              <i class="bi bi-file-earmark-spreadsheet-fill text-lg"></i>
+              <span>Open Google Sheet</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-4 pt-2">
+          <button id="seed-data-btn" class="px-6 py-3.5 bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-black rounded-2xl text-sm flex items-center gap-2 transition shadow-xl hover:scale-105 active:scale-95">
+            <i class="bi bi-lightning-charge-fill text-lg"></i>
+            <span>⚡ Feed Sample Test Data (1-Click)</span>
+          </button>
+
+          <button id="fetch-live-btn" class="px-5 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-2xl text-xs flex items-center gap-2 transition border border-slate-700">
+            <i class="bi bi-arrow-clockwise text-emerald-400"></i>
+            <span>Fetch & Refresh Live Sheet Data</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Live Entity Count Grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+        
+        <div class="card-premium p-4 text-center space-y-1">
+          <div class="text-xs font-bold text-slate-500 uppercase">Customers</div>
+          <div id="cnt-customers" class="text-2xl font-black text-slate-900">0</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Customers Tab</div>
+        </div>
+
+        <div class="card-premium p-4 text-center space-y-1">
+          <div class="text-xs font-bold text-slate-500 uppercase">Products</div>
+          <div id="cnt-products" class="text-2xl font-black text-slate-900">0</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Products Tab</div>
+        </div>
+
+        <div class="card-premium p-4 text-center space-y-1">
+          <div class="text-xs font-bold text-slate-500 uppercase">Quotations</div>
+          <div id="cnt-quotations" class="text-2xl font-black text-slate-900">0</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Quotations Tab</div>
+        </div>
+
+        <div class="card-premium p-4 text-center space-y-1">
+          <div class="text-xs font-bold text-slate-500 uppercase">Invoices</div>
+          <div id="cnt-invoices" class="text-2xl font-black text-slate-900">0</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Invoices Tab</div>
+        </div>
+
+        <div class="card-premium p-4 text-center space-y-1">
+          <div class="text-xs font-bold text-slate-500 uppercase">Expenses</div>
+          <div id="cnt-expenses" class="text-2xl font-black text-slate-900">0</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Expenses Tab</div>
+        </div>
+
+        <div class="card-premium p-4 text-center space-y-1">
+          <div class="text-xs font-bold text-slate-500 uppercase">Transactions</div>
+          <div id="cnt-transactions" class="text-2xl font-black text-slate-900">0</div>
+          <div class="text-[10px] text-emerald-600 font-semibold">Transactions Tab</div>
+        </div>
+
+      </div>
+
+      <!-- Live Data Inspector Tables -->
+      <div class="space-y-6">
+        
+        <!-- Customers Sheet Inspector -->
+        <div class="card-premium p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <i class="bi bi-people-fill text-teal-600"></i> Sample Customers in Sheet
+            </h3>
+            <a href="/customers.html" class="text-xs font-semibold text-teal-600 hover:underline">Manage Customers &rarr;</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-slate-400 font-semibold border-b border-slate-100">
+                  <th class="py-2">Customer Name</th>
+                  <th class="py-2">Company</th>
+                  <th class="py-2">Email</th>
+                  <th class="py-2">Phone</th>
+                  <th class="py-2 text-right">Tax ID</th>
+                </tr>
+              </thead>
+              <tbody id="inspect-customers-tbody">
+                <tr><td colspan="5" class="py-4 text-center text-slate-400">Click "⚡ Feed Sample Test Data" to populate records.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Invoices Sheet Inspector -->
+        <div class="card-premium p-5 space-y-3">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+            <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+              <i class="bi bi-receipt-cutoff text-emerald-600"></i> Sample Invoices in Sheet
+            </h3>
+            <a href="/invoices.html" class="text-xs font-semibold text-emerald-600 hover:underline">Manage Invoices &rarr;</a>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead>
+                <tr class="text-slate-400 font-semibold border-b border-slate-100">
+                  <th class="py-2">Invoice #</th>
+                  <th class="py-2">Due Date</th>
+                  <th class="py-2">Total Amount</th>
+                  <th class="py-2">Balance Due</th>
+                  <th class="py-2 text-right">Status</th>
+                </tr>
+              </thead>
+              <tbody id="inspect-invoices-tbody">
+                <tr><td colspan="5" class="py-4 text-center text-slate-400">Click "⚡ Feed Sample Test Data" to populate records.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module" src="/js/demo-seed.js"></script>
+</body>
+</html>

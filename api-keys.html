@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Keys - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
+      
+      <!-- Sub Nav -->
+      <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+        <a href="/developer.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Overview</a>
+        <a href="/api-keys.html" class="px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">API Keys</a>
+        <a href="/api-docs.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">API Documentation</a>
+        <a href="/api-usage.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Usage & Logs</a>
+        <a href="/webhooks.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Webhooks</a>
+      </div>
+
+      <!-- Top Action Bar -->
+      <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">Developer API Keys</h3>
+          <p class="text-xs text-slate-500">API keys grant access to your business records. Keep them secure.</p>
+        </div>
+        <button onclick="window.openKeyModal()" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
+          <i class="bi bi-key-fill"></i> Generate New API Key
+        </button>
+      </div>
+
+      <!-- Secret Key Banner (Hidden by default, shown once generated) -->
+      <div id="new-key-banner" class="hidden bg-emerald-950 border border-emerald-700 p-5 rounded-2xl text-emerald-200 space-y-2">
+        <div class="flex items-center gap-2 text-emerald-400 font-bold text-sm">
+          <i class="bi bi-shield-check text-lg"></i> API Key Generated Successfully!
+        </div>
+        <p class="text-xs text-emerald-300">Copy this API key now. For security reasons, it will not be shown again.</p>
+        <div class="flex items-center gap-2 pt-2">
+          <input type="text" id="raw-api-key-input" readonly class="w-full bg-slate-900 text-emerald-400 font-mono text-xs px-3 py-2 rounded-xl border border-emerald-800" />
+          <button onclick="window.copyApiKey()" class="px-4 py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow-md hover:bg-emerald-400">
+            <i class="bi bi-clipboard-check"></i> Copy
+          </button>
+        </div>
+      </div>
+
+      <!-- API Keys Table Card -->
+      <div class="card-premium overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">Key Name</th>
+                <th class="py-3.5 px-4">Key Prefix</th>
+                <th class="py-3.5 px-4">Permissions</th>
+                <th class="py-3.5 px-4">Created Date</th>
+                <th class="py-3.5 px-4">Last Used</th>
+                <th class="py-3.5 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="keys-tbody">
+              <tr><td colspan="6" class="py-8 text-center text-slate-400">Loading API keys...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Generate API Key Modal -->
+  <div id="key-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Generate API Key</h3>
+        <button onclick="window.closeKeyModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <form id="key-form" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Key Name / Identifier *</label>
+          <input type="text" id="key_name" required class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs" placeholder="e.g. Website Checkout Production" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Permissions Scope</label>
+          <div class="space-y-1 text-xs border border-slate-100 rounded-xl p-3 bg-slate-50">
+            <label class="flex items-center gap-2"><input type="checkbox" checked value="*" class="rounded text-teal-600" /> Full Business Access (All permissions)</label>
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="window.closeKeyModal()" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs">Generate Key</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { checkAuth } from '/js/auth.js';
+    import { renderLayout } from '/js/layout.js';
+    import { API } from '/js/api.js';
+    import { formatDate, showToast, showModal, hideModal } from '/js/utils.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = await checkAuth();
+      if (!auth) return;
+
+      renderLayout(auth.business, auth.user);
+      loadApiKeys();
+
+      document.getElementById('key-form').addEventListener('submit', handleKeySubmit);
+    });
+
+    async function loadApiKeys() {
+      try {
+        const res = await API.get('/api/developer/keys');
+        const keys = res.data || [];
+        const tbody = document.getElementById('keys-tbody');
+
+        if (!keys.length) {
+          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No active API keys. Click "Generate New API Key" above.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = keys.map(k => `
+          <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+            <td class="py-3.5 px-4 font-bold text-slate-900">${k.name}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-500 font-semibold">${k.key_prefix}</td>
+            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md font-semibold text-[10px]">${k.permissions}</span></td>
+            <td class="py-3.5 px-4 text-slate-600">${formatDate(k.created_at)}</td>
+            <td class="py-3.5 px-4 text-slate-600">${k.last_used_at ? formatDate(k.last_used_at) : 'Never'}</td>
+            <td class="py-3.5 px-4 text-right">
+              <button onclick="window.revokeKey('${k.key_id}')" class="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-[11px] font-semibold">Revoke</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    window.openKeyModal = () => showModal('key-modal');
+    window.closeKeyModal = () => hideModal('key-modal');
+
+    window.copyApiKey = function() {
+      const input = document.getElementById('raw-api-key-input');
+      input.select();
+      navigator.clipboard.writeText(input.value);
+      showToast('API Key copied to clipboard!', 'success');
+    };
+
+    window.revokeKey = async function(id) {
+      if (!confirm('Revoke this API key? External applications using it will immediately lose access.')) return;
+      try {
+        await API.delete(`/api/developer/keys/${id}`);
+        showToast('API key revoked', 'success');
+        loadApiKeys();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    };
+
+    async function handleKeySubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('key_name').value;
+      try {
+        const res = await API.post('/api/developer/keys', { name, permissions: ['*'] });
+        hideModal('key-modal');
+        
+        const banner = document.getElementById('new-key-banner');
+        document.getElementById('raw-api-key-input').value = res.data.api_key;
+        banner.classList.remove('hidden');
+
+        showToast('API Key generated successfully', 'success');
+        loadApiKeys();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

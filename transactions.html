@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transaction Ledger - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
+      
+      <!-- Filter Bar -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex flex-wrap items-center gap-2">
+          <input type="text" id="tx-search" placeholder="Search transactions..." class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none w-48" />
+          <select id="tx-type-filter" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs">
+            <option value="">All Types</option>
+            <option value="Income">Income</option>
+            <option value="Expense">Expense</option>
+          </select>
+          <input type="date" id="tx-from" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs" />
+          <span class="text-xs text-slate-400">to</span>
+          <input type="date" id="tx-to" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs" />
+          <button id="apply-filters-btn" class="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-semibold hover:bg-slate-800 transition">
+            Apply
+          </button>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <button id="export-tx-csv-btn" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-filetype-csv text-emerald-600 text-sm"></i> Export CSV
+          </button>
+          <button id="export-tx-pdf-btn" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-sm"></i> Export PDF
+          </button>
+        </div>
+      </div>
+
+      <!-- Ledger Table Card -->
+      <div id="transactions-table-card" class="card-premium overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">Date</th>
+                <th class="py-3.5 px-4">Type</th>
+                <th class="py-3.5 px-4">Reference</th>
+                <th class="py-3.5 px-4">Description</th>
+                <th class="py-3.5 px-4">Customer</th>
+                <th class="py-3.5 px-4 text-right">Income</th>
+                <th class="py-3.5 px-4 text-right">Expense</th>
+                <th class="py-3.5 px-4 text-right">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="transactions-tbody">
+              <tr><td colspan="8" class="py-8 text-center text-slate-400">Loading ledger...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module">
+    import { checkAuth } from '/js/auth.js';
+    import { renderLayout } from '/js/layout.js';
+    import { API } from '/js/api.js';
+    import { formatCurrency, formatDate, exportToCSV, exportTableToPDF } from '/js/utils.js';
+
+    let allTransactions = [];
+    let currencySymbol = 'USD $';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = await checkAuth();
+      if (!auth) return;
+
+      currencySymbol = auth.business.currency || 'USD $';
+      renderLayout(auth.business, auth.user);
+      loadTransactions();
+
+      document.getElementById('apply-filters-btn')?.addEventListener('click', applyFilters);
+      document.getElementById('export-tx-csv-btn')?.addEventListener('click', () => {
+        exportToCSV(allTransactions, 'transaction_ledger.csv');
+      });
+      document.getElementById('export-tx-pdf-btn')?.addEventListener('click', () => {
+        exportTableToPDF('transactions-table-card', 'transaction_ledger.pdf');
+      });
+    });
+
+    async function loadTransactions() {
+      try {
+        const res = await API.get('/api/transactions');
+        allTransactions = res.data || [];
+        renderTable(allTransactions);
+      } catch (err) {
+        console.error('Failed to load transactions:', err);
+      }
+    }
+
+    function applyFilters() {
+      const search = document.getElementById('tx-search')?.value.toLowerCase() || '';
+      const type = document.getElementById('tx-type-filter')?.value || '';
+      const from = document.getElementById('tx-from')?.value || '';
+      const to = document.getElementById('tx-to')?.value || '';
+
+      const filtered = allTransactions.filter(t => {
+        const matchesSearch = !search || 
+                              (t.description && t.description.toLowerCase().includes(search)) ||
+                              (t.reference_id && t.reference_id.toLowerCase().includes(search));
+        const matchesType = !type || t.transaction_type === type;
+        const matchesFrom = !from || new Date(t.transaction_date) >= new Date(from);
+        const matchesTo = !to || new Date(t.transaction_date) <= new Date(to);
+
+        return matchesSearch && matchesType && matchesFrom && matchesTo;
+      });
+
+      renderTable(filtered);
+    }
+
+    function renderTable(transactions) {
+      const tbody = document.getElementById('transactions-tbody');
+      if (!transactions.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">No ledger transactions found matching filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = transactions.map(t => {
+        const isIncome = t.transaction_type === 'Income';
+        return `
+          <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+            <td class="py-3.5 px-4 text-slate-600 font-semibold">${formatDate(t.transaction_date)}</td>
+            <td class="py-3.5 px-4">
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${isIncome ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200'}">
+                ${t.transaction_type}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-slate-700 font-bold">${t.reference_id || '-'}</td>
+            <td class="py-3.5 px-4 font-bold text-slate-900">${t.description}</td>
+            <td class="py-3.5 px-4 text-slate-600">${t.customer_name || '-'}</td>
+            <td class="py-3.5 px-4 text-right font-bold text-emerald-600">${parseFloat(t.income) > 0 ? formatCurrency(t.income, currencySymbol) : '-'}</td>
+            <td class="py-3.5 px-4 text-right font-bold text-rose-600">${parseFloat(t.expense) > 0 ? formatCurrency(t.expense, currencySymbol) : '-'}</td>
+            <td class="py-3.5 px-4 text-right font-extrabold text-slate-900 font-mono">${formatCurrency(t.balance, currencySymbol)}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+  </script>
+</body>
+</html>

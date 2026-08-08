@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Webhooks - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
+      
+      <!-- Sub Nav -->
+      <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+        <a href="/developer.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Overview</a>
+        <a href="/api-keys.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">API Keys</a>
+        <a href="/api-docs.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">API Documentation</a>
+        <a href="/api-usage.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Usage & Logs</a>
+        <a href="/webhooks.html" class="px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">Webhooks</a>
+      </div>
+
+      <!-- Top Action Bar -->
+      <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm">Webhook Endpoints</h3>
+          <p class="text-xs text-slate-500">Receive HTTP POST notifications when events occur in your business.</p>
+        </div>
+        <button onclick="window.openWebhookModal()" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
+          <i class="bi bi-broadcast"></i> Add Webhook Endpoint
+        </button>
+      </div>
+
+      <!-- Webhooks Table Card -->
+      <div class="card-premium overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">Endpoint URL</th>
+                <th class="py-3.5 px-4">Subscribed Events</th>
+                <th class="py-3.5 px-4">Secret Key</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="webhooks-tbody">
+              <tr><td colspan="5" class="py-8 text-center text-slate-400">Loading webhooks...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Webhook Delivery Logs -->
+      <div class="card-premium p-5 space-y-4">
+        <h3 class="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2">Recent Webhook Delivery Audit Logs</h3>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="text-slate-400 font-semibold border-b border-slate-100">
+                <th class="py-2">Timestamp</th>
+                <th class="py-2">Event</th>
+                <th class="py-2">Status Code</th>
+                <th class="py-2">Attempt</th>
+                <th class="py-2">Response</th>
+              </tr>
+            </thead>
+            <tbody id="webhook-logs-tbody">
+              <tr><td colspan="5" class="py-4 text-center text-slate-400">No delivery logs recorded yet.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Add Webhook Modal -->
+  <div id="webhook-modal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-base">Add Webhook Endpoint</h3>
+        <button onclick="window.closeWebhookModal()" class="text-slate-400 hover:text-slate-600 text-lg"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <form id="webhook-form" class="space-y-4 text-left">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Payload URL *</label>
+          <input type="url" id="wh_url" required class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono" placeholder="https://example.com/webhooks/billing" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-2">Event Subscriptions</label>
+          <div class="space-y-1.5 text-xs bg-slate-50 p-3 rounded-xl border border-slate-100 max-h-40 overflow-y-auto">
+            <label class="flex items-center gap-2"><input type="checkbox" checked value="*" /> All Events (*)</label>
+            <label class="flex items-center gap-2"><input type="checkbox" value="invoice.created" /> invoice.created</label>
+            <label class="flex items-center gap-2"><input type="checkbox" value="invoice.paid" /> invoice.paid</label>
+            <label class="flex items-center gap-2"><input type="checkbox" value="quotation.created" /> quotation.created</label>
+            <label class="flex items-center gap-2"><input type="checkbox" value="payment.created" /> payment.created</label>
+            <label class="flex items-center gap-2"><input type="checkbox" value="expense.created" /> expense.created</label>
+          </div>
+        </div>
+
+        <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
+          <button type="button" onclick="window.closeWebhookModal()" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs">Create Webhook</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { checkAuth } from '/js/auth.js';
+    import { renderLayout } from '/js/layout.js';
+    import { API } from '/js/api.js';
+    import { formatDate, showToast, showModal, hideModal } from '/js/utils.js';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = await checkAuth();
+      if (!auth) return;
+
+      renderLayout(auth.business, auth.user);
+      loadWebhooks();
+      loadWebhookLogs();
+
+      document.getElementById('webhook-form').addEventListener('submit', handleWebhookSubmit);
+    });
+
+    async function loadWebhooks() {
+      try {
+        const res = await API.get('/api/developer/webhooks');
+        const webhooks = res.data || [];
+        const tbody = document.getElementById('webhooks-tbody');
+
+        if (!webhooks.length) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No active webhook endpoints. Click "Add Webhook Endpoint" above.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = webhooks.map(w => `
+          <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+            <td class="py-3.5 px-4 font-mono font-bold text-slate-900">${w.url}</td>
+            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md font-semibold text-[10px]">${w.events}</span></td>
+            <td class="py-3.5 px-4 font-mono text-slate-500 text-[11px]">${w.secret}</td>
+            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md font-bold text-[10px]">${w.status}</span></td>
+            <td class="py-3.5 px-4 text-right">
+              <button onclick="window.deleteWebhook('${w.webhook_id}')" class="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-[11px] font-semibold">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    async function loadWebhookLogs() {
+      try {
+        const res = await API.get('/api/developer/logs');
+        const logs = res.data || [];
+        const tbody = document.getElementById('webhook-logs-tbody');
+
+        if (!logs.length) {
+          tbody.innerHTML = `<tr><td colspan="5" class="py-4 text-center text-slate-400">No webhook delivery logs yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = logs.map(l => `
+          <tr class="border-b border-slate-100">
+            <td class="py-2.5 font-medium text-slate-600">${formatDate(l.created_at)}</td>
+            <td class="py-2.5 font-bold text-teal-600">${l.event}</td>
+            <td class="py-2.5 font-bold ${l.status_code === '200' ? 'text-emerald-600' : 'text-rose-600'}">${l.status_code}</td>
+            <td class="py-2.5 text-slate-500">Attempt ${l.attempt}</td>
+            <td class="py-2.5 text-slate-600 font-mono text-[11px]">${l.response}</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    window.openWebhookModal = () => showModal('webhook-modal');
+    window.closeWebhookModal = () => hideModal('webhook-modal');
+
+    window.deleteWebhook = async function(id) {
+      if (!confirm('Delete this webhook endpoint?')) return;
+      try {
+        await API.delete(`/api/developer/webhooks/${id}`);
+        showToast('Webhook endpoint deleted', 'success');
+        loadWebhooks();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    };
+
+    async function handleWebhookSubmit(e) {
+      e.preventDefault();
+      const url = document.getElementById('wh_url').value;
+      const checkedEvents = Array.from(document.querySelectorAll('#webhook-modal input[type="checkbox"]:checked')).map(c => c.value);
+
+      try {
+        await API.post('/api/developer/webhooks', { url, events: checkedEvents });
+        showToast('Webhook created successfully', 'success');
+        hideModal('webhook-modal');
+        loadWebhooks();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice View - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <!-- html2pdf.js for vector-crisp PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block no-print"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container" class="no-print"></div>
+
+    <main class="p-4 md:p-6 space-y-6 max-w-4xl w-full mx-auto pb-24 md:pb-6">
+      
+      <!-- Top Action Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-3 no-print bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <a href="/invoices.html" class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-900">
+          <i class="bi bi-arrow-left"></i> All Invoices
+        </a>
+
+        <div class="flex items-center gap-3">
+          <button onclick="window.downloadInvoicePDF()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
+            <i class="bi bi-file-earmark-pdf-fill text-rose-400 text-sm"></i> Download Professional PDF
+          </button>
+          <button onclick="window.print()" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-printer-fill"></i> Print
+          </button>
+          <button id="record-pay-btn" onclick="window.openPaymentModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
+            <i class="bi bi-credit-card-fill"></i> Record Payment
+          </button>
+        </div>
+      </div>
+
+      <!-- Printable Invoice Document Card -->
+      <div id="printable-invoice-card" class="printable-document bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-md space-y-8">
+        
+        <!-- Header: Business & Document Title -->
+        <div class="flex justify-between items-start border-b border-slate-200 pb-8">
+          <div class="space-y-1">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-black text-xl shadow-xs shrink-0">
+                <i class="bi bi-receipt"></i>
+              </div>
+              <div>
+                <h1 id="biz-name" class="text-xl md:text-2xl font-black text-slate-900">--</h1>
+                <div id="biz-type" class="text-xs font-semibold text-teal-700">--</div>
+              </div>
+            </div>
+            <div id="biz-details" class="text-xs text-slate-500 pt-2 space-y-0.5 leading-relaxed"></div>
+          </div>
+
+          <div class="text-right">
+            <h2 class="text-3xl md:text-4xl font-black text-emerald-600 uppercase tracking-tight">INVOICE</h2>
+            <div id="inv-number" class="text-sm font-bold text-slate-800 mt-1 font-mono">#INV-00000</div>
+            <div id="inv-status-badge" class="mt-2"></div>
+          </div>
+        </div>
+
+        <!-- Meta Grid: Customer Info & Dates -->
+        <div class="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 text-xs">
+          <div>
+            <div class="font-extrabold text-slate-400 uppercase text-[10px] tracking-wider mb-1.5">Billed To Customer:</div>
+            <div id="cust-name" class="font-black text-slate-900 text-sm">--</div>
+            <div id="cust-company" class="text-slate-700 font-semibold mt-0.5"></div>
+            <div id="cust-address" class="text-slate-500 mt-1 leading-relaxed"></div>
+            <div id="cust-tax" class="text-[11px] text-slate-600 font-mono mt-1"></div>
+          </div>
+          <div class="text-right space-y-1.5 self-center">
+            <div><span class="text-slate-400 font-semibold">Invoice Date:</span> <span id="inv-date" class="font-bold text-slate-900">--</span></div>
+            <div><span class="text-slate-400 font-semibold">Payment Due:</span> <span id="inv-due" class="font-bold text-slate-900">--</span></div>
+          </div>
+        </div>
+
+        <!-- Line Items Table -->
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead>
+              <tr class="bg-slate-900 text-white uppercase font-extrabold rounded-xl text-[11px]">
+                <th class="py-3.5 px-4 rounded-l-xl">#</th>
+                <th class="py-3.5 px-4">Item & Description</th>
+                <th class="py-3.5 px-4 text-center">Qty</th>
+                <th class="py-3.5 px-4 text-right">Unit Price</th>
+                <th class="py-3.5 px-4 text-right">Tax Rate</th>
+                <th class="py-3.5 px-4 text-right rounded-r-xl">Amount</th>
+              </tr>
+            </thead>
+            <tbody id="inv-items-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Calculations Summary -->
+        <div class="flex flex-col sm:flex-row justify-between items-start pt-4 gap-6">
+          <div class="w-full sm:w-1/2 space-y-2 text-xs pr-4">
+            <div class="font-extrabold text-slate-800 uppercase tracking-wider text-[11px]">Payment Audit History:</div>
+            <div id="payment-history-list" class="space-y-1.5 text-slate-600 text-[11px] bg-slate-50 p-4 rounded-2xl border border-slate-100">
+              <div>No payments recorded yet.</div>
+            </div>
+          </div>
+
+          <div class="w-full sm:w-72 space-y-2 text-xs bg-slate-50 p-5 rounded-2xl border border-slate-100">
+            <div class="flex justify-between text-slate-600 font-medium"><span>Subtotal:</span> <span id="inv-subtotal" class="font-bold text-slate-900">$0.00</span></div>
+            <div class="flex justify-between text-slate-600 font-medium"><span>Tax Total:</span> <span id="inv-tax" class="font-bold text-slate-900">$0.00</span></div>
+            <div class="flex justify-between text-slate-600 font-medium"><span>Discount:</span> <span id="inv-discount" class="font-bold text-slate-900">$0.00</span></div>
+            <div class="flex justify-between text-slate-600 font-medium"><span>Amount Paid:</span> <span id="inv-paid" class="font-bold text-emerald-600">$0.00</span></div>
+            <div class="border-t border-slate-300 pt-2 flex justify-between text-base font-black text-slate-900">
+              <span>Balance Due:</span>
+              <span id="inv-balance" class="text-rose-600 font-mono">$0.00</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Terms, Notes & Signature -->
+        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-slate-200 text-xs">
+          <div class="space-y-3">
+            <div>
+              <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Payment Instructions & Terms:</div>
+              <p id="inv-terms" class="text-slate-500 text-[11px] mt-1 leading-relaxed">Please make payments before the due date specified above.</p>
+            </div>
+            <div>
+              <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Notes:</div>
+              <p id="inv-notes" class="text-slate-500 text-[11px] mt-1 leading-relaxed">Thank you for your business!</p>
+            </div>
+          </div>
+
+          <div class="text-right flex flex-col justify-end items-end space-y-4">
+            <div class="w-48 border-b-2 border-slate-300 pb-1 text-center font-bold text-slate-800">
+              <span id="biz-sign-name">Authorized Signature</span>
+            </div>
+            <div class="text-[10px] text-slate-400">Computer generated invoice document</div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Record Payment Modal -->
+  <div id="payment-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm no-print">
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <i class="bi bi-credit-card-fill text-emerald-600"></i> Record Payment Received
+        </h3>
+        <button onclick="window.closePaymentModal()" class="text-slate-400 hover:text-slate-900 text-lg"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <form id="record-payment-form" class="space-y-3 text-xs">
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Payment Amount <span class="text-rose-500">*</span></label>
+          <input type="number" step="0.01" name="amount" id="pay-amount-input" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold" />
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Payment Method</label>
+          <select name="payment_method" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs">
+            <option value="UPI / GPay / PhonePe">UPI / GPay / PhonePe</option>
+            <option value="Bank Transfer">Bank Transfer (NEFT/IMPS)</option>
+            <option value="Credit Card">Credit / Debit Card</option>
+            <option value="Cash">Cash</option>
+            <option value="Cheque">Cheque</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="font-bold text-slate-700">Reference / Transaction ID</label>
+          <input type="text" name="reference_number" placeholder="e.g. UPI/123456789" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        </div>
+
+        <div class="pt-2 flex justify-end gap-2">
+          <button type="button" onclick="window.closePaymentModal()" class="px-4 py-2 bg-slate-100 text-slate-700 rounded-xl font-bold">Cancel</button>
+          <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-xl font-bold">Submit Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    import { checkAuth } from '/js/auth.js';
+    import { renderLayout } from '/js/layout.js';
+    import { API } from '/js/api.js';
+    import { formatCurrency, formatDate, getStatusBadge, showToast } from '/js/utils.js';
+
+    let currentInvoice = null;
+    let currencySymbol = 'USD $';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const auth = await checkAuth();
+      if (!auth) return;
+
+      renderLayout(auth.business, auth.user);
+      currencySymbol = auth.business.currency || 'USD $';
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const invoiceId = urlParams.get('id');
+
+      if (!invoiceId) {
+        window.location.href = '/invoices.html';
+        return;
+      }
+
+      loadInvoiceDetails(invoiceId, auth.business);
+      setupPaymentForm(invoiceId);
+    });
+
+    async function loadInvoiceDetails(id, business) {
+      try {
+        const res = await API.get(`/api/invoices/${id}`);
+        currentInvoice = res.data;
+        populateInvoice(currentInvoice, business);
+      } catch (err) {
+        showToast('Error loading invoice: ' + err.message, 'error');
+      }
+    }
+
+    function populateInvoice(inv, business) {
+      document.getElementById('biz-name').textContent = business.business_name || 'My Business';
+      document.getElementById('biz-type').textContent = business.business_type || '';
+      
+      const bizDetails = [
+        business.address,
+        [business.city, business.state, business.country].filter(Boolean).join(', '),
+        business.phone ? `Phone: ${business.phone}` : '',
+        business.tax_number ? `Tax ID / GST: ${business.tax_number}` : ''
+      ].filter(Boolean).join('<br/>');
+
+      document.getElementById('biz-details').innerHTML = bizDetails || 'Business Address Not Specified';
+      document.getElementById('biz-sign-name').textContent = business.business_name || 'Authorized Signatory';
+
+      document.getElementById('inv-number').textContent = inv.invoice_number || '#INV-0000';
+      document.getElementById('inv-status-badge').innerHTML = getStatusBadge(inv.status);
+
+      document.getElementById('cust-name').textContent = inv.customer_name || 'N/A';
+      document.getElementById('cust-company').textContent = inv.customer_company || '';
+      document.getElementById('cust-address').textContent = inv.customer_address || '';
+      document.getElementById('cust-tax').textContent = inv.customer_tax_number ? `Tax ID: ${inv.customer_tax_number}` : '';
+
+      document.getElementById('inv-date').textContent = formatDate(inv.invoice_date);
+      document.getElementById('inv-due').textContent = formatDate(inv.due_date);
+
+      document.getElementById('inv-subtotal').textContent = formatCurrency(inv.subtotal, currencySymbol);
+      document.getElementById('inv-tax').textContent = formatCurrency(inv.tax, currencySymbol);
+      document.getElementById('inv-discount').textContent = formatCurrency(inv.discount, currencySymbol);
+      document.getElementById('inv-paid').textContent = formatCurrency(inv.paid_amount, currencySymbol);
+      document.getElementById('inv-balance').textContent = formatCurrency(inv.balance_due, currencySymbol);
+
+      document.getElementById('pay-amount-input').value = (parseFloat(inv.balance_due) || 0).toFixed(2);
+
+      document.getElementById('inv-terms').textContent = inv.terms || 'Please make payments before the due date specified above.';
+      document.getElementById('inv-notes').textContent = inv.notes || 'Thank you for your business!';
+
+      const itemsTbody = document.getElementById('inv-items-tbody');
+      const items = inv.items || [];
+      if (!items.length) {
+        itemsTbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">No line items in invoice.</td></tr>`;
+      } else {
+        itemsTbody.innerHTML = items.map((item, index) => `
+          <tr class="border-b border-slate-100">
+            <td class="py-3 px-4 text-slate-400">${index + 1}</td>
+            <td class="py-3 px-4 font-bold text-slate-800">${item.description || 'Item'}</td>
+            <td class="py-3 px-4 text-center font-semibold">${item.quantity}</td>
+            <td class="py-3 px-4 text-right">${formatCurrency(item.unit_price, currencySymbol)}</td>
+            <td class="py-3 px-4 text-right">${item.tax_rate}%</td>
+            <td class="py-3 px-4 text-right font-extrabold text-slate-900">${formatCurrency(item.amount, currencySymbol)}</td>
+          </tr>
+        `).join('');
+      }
+
+      // Render Payment Audit History
+      const payList = document.getElementById('payment-history-list');
+      const payments = inv.payments || [];
+      if (!payments.length) {
+        payList.innerHTML = `<div class="italic text-slate-400">No payments recorded yet.</div>`;
+      } else {
+        payList.innerHTML = payments.map(p => `
+          <div class="flex justify-between items-center py-1 border-b border-slate-100">
+            <div>
+              <span class="font-bold text-slate-800">${formatDate(p.payment_date)}</span>
+              <span class="text-slate-400"> (${p.payment_method || 'Payment'})</span>
+            </div>
+            <div class="font-bold text-emerald-600">+${formatCurrency(p.amount, currencySymbol)}</div>
+          </div>
+        `).join('');
+      }
+    }
+
+    window.openPaymentModal = function() {
+      const modal = document.getElementById('payment-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+    };
+
+    window.closePaymentModal = function() {
+      const modal = document.getElementById('payment-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    };
+
+    function setupPaymentForm(invoiceId) {
+      const form = document.getElementById('record-payment-form');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+
+        try {
+          await API.post(`/api/invoices/${invoiceId}/payments`, payload);
+          showToast('Payment recorded successfully!', 'success');
+          window.closePaymentModal();
+          location.reload();
+        } catch (err) {
+          showToast(err.message, 'error');
+        }
+      });
+    }
+
+    // High-Resolution PDF Export Handler using html2pdf.js
+    window.downloadInvoicePDF = function() {
+      const element = document.getElementById('printable-invoice-card');
+      const num = document.getElementById('inv-number')?.textContent || 'Invoice';
+      const filename = `${num.replace('#', '').trim()}.pdf`;
+
+      const opt = {
+        margin:       [0.3, 0.3, 0.3, 0.3],
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+
+      showToast('Generating professional PDF document...', 'info');
+      html2pdf().set(opt).from(element).save().then(() => {
+        showToast('Invoice PDF downloaded successfully!', 'success');
+      }).catch(err => {
+        showToast('PDF Export Error: ' + err.message, 'error');
+      });
+    };
+  </script>
+</body>
+</html>

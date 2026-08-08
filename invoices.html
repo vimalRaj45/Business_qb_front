@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoices - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900">
+
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
+    <div id="header-container"></div>
+
+    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
+      
+      <!-- Top Action Bar -->
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input type="text" id="inv-search" placeholder="Search invoice # or customer..." class="pl-3 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-teal-500 w-full sm:w-64" />
+          <select id="inv-status-filter" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none">
+            <option value="">All Statuses</option>
+            <option value="Unpaid">Unpaid</option>
+            <option value="Partially Paid">Partially Paid</option>
+            <option value="Paid">Paid</option>
+            <option value="Overdue">Overdue</option>
+          </select>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <button onclick="window.exportInvoicesCSV()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-filetype-csv text-emerald-600 text-sm"></i> Export CSV
+          </button>
+          <button onclick="window.exportInvoicesPDF()" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-sm"></i> Export PDF
+          </button>
+          <a href="/invoice-create.html" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition">
+            <i class="bi bi-plus-circle-fill"></i> Create New Invoice
+          </a>
+        </div>
+      </div>
+
+      <!-- Invoices Table Card -->
+      <div id="invoices-table-card" class="card-premium overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
+              <tr>
+                <th class="py-3.5 px-4">Invoice #</th>
+                <th class="py-3.5 px-4">Customer</th>
+                <th class="py-3.5 px-4">Date</th>
+                <th class="py-3.5 px-4">Due Date</th>
+                <th class="py-3.5 px-4">Status</th>
+                <th class="py-3.5 px-4 text-right font-bold">Total</th>
+                <th class="py-3.5 px-4 text-right text-emerald-600 font-bold">Paid</th>
+                <th class="py-3.5 px-4 text-right text-rose-600 font-bold">Balance</th>
+                <th class="py-3.5 px-4 text-right no-print">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="invoices-tbody">
+              <tr><td colspan="9" class="py-8 text-center text-slate-400">Loading invoices...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script type="module" src="/js/invoices.js"></script>
+</body>
+</html>

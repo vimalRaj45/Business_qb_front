@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service - Business Billing Platform</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  
+  <!-- Three.js & Vanta.js Globe Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="min-h-screen text-slate-900 p-4 md:p-8 relative overflow-x-hidden">
+
+  <!-- Vanta 3D Globe Animated Background Container -->
+  <div id="vanta-bg" class="fixed inset-0 z-0 pointer-events-none"></div>
+
+  <div class="max-w-4xl mx-auto glass-card p-6 md:p-10 space-y-6 relative z-10">
+    
+    <div class="flex items-center justify-between border-b border-slate-200/80 pb-6">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-2xl font-black">
+          <i class="bi bi-file-earmark-text-fill"></i>
+        </div>
+        <div>
+          <h1 class="text-xl md:text-2xl font-black text-slate-900">Terms of Service</h1>
+          <p class="text-xs text-slate-500">Last updated: August 8, 2026</p>
+        </div>
+      </div>
+      <a href="/login.html" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+        &larr; Back to Login
+      </a>
+    </div>
+
+    <div class="space-y-6 text-xs md:text-sm text-slate-600 leading-relaxed">
+      
+      <div class="space-y-2">
+        <h2 class="text-base font-bold text-slate-900">1. Agreement to Terms</h2>
+        <p>By accessing or using the Business Billing, Quotation & Developer API Platform, you agree to be bound by these Terms of Service. If you do not agree, do not use the application.</p>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-base font-bold text-slate-900">2. User Account & Google Authentication</h2>
+        <p>To use the platform, you must connect a Google Account. You are responsible for maintaining the security of your Google credentials and for all activities that occur under your account.</p>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-base font-bold text-slate-900">3. Data Ownership & Storage</h2>
+        <p>You retain full ownership of all data created using this platform. All records are stored directly inside your Google Drive spreadsheet. You can export or back up your data at any time directly through Google Drive.</p>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-base font-bold text-slate-900">4. Acceptable Use & Developer API</h2>
+        <p>You agree not to misuse the Developer API, perform unauthorized scraping, bypass rate limits, or engage in unlawful financial activities using the platform.</p>
+      </div>
+
+      <div class="space-y-2">
+        <h2 class="text-base font-bold text-slate-900">5. Termination</h2>
+        <p>You may stop using the platform at any time. You can permanently wipe your account and Google Drive data via the Settings menu.</p>
+      </div>
+
+    </div>
+
+    <div class="pt-6 border-t border-slate-200/80 flex justify-between text-xs text-slate-400">
+      <span>&copy; 2026 Business Billing Platform</span>
+      <div class="space-x-4">
+        <a href="/privacy.html" class="hover:text-slate-900">Privacy Policy</a>
+        <a href="/terms.html" class="text-teal-600 underline font-bold">Terms of Service</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.VANTA && window.VANTA.GLOBE) {
+        window.VANTA.GLOBE({
+          el: "#vanta-bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00,
+          color: 0x0d9488,
+          color2: 0x7c3aed,
+          size: 1.10,
+          backgroundColor: 0xf1f5f9
+        });
+      }
+    });
+  </script>
+</body>
+</html>
