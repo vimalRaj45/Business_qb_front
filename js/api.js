@@ -7,6 +7,12 @@ export const API = {
       'Content-Type': 'application/json'
     };
 
+    // Attach Bearer token from localStorage for mobile browser compatibility
+    const token = localStorage.getItem('session_token');
+    if (token) {
+      defaultHeaders['Authorization'] = `Bearer ${token}`;
+    }
+
     const fullUrl = endpoint.startsWith('http') ? endpoint : `${BACKEND_URL}${endpoint}`;
 
     const config = {

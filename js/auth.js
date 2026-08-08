@@ -5,6 +5,7 @@ export async function checkAuth() {
   try {
     const res = await API.get('/api/auth/me');
     if (!res.authenticated) {
+      localStorage.removeItem('session_token');
       window.location.href = '/login.html';
       return null;
     }
@@ -31,6 +32,7 @@ export async function checkAuth() {
     return res;
   } catch (err) {
     console.error('Auth check failed:', err);
+    localStorage.removeItem('session_token');
     window.location.href = '/login.html';
     return null;
   }
@@ -55,6 +57,7 @@ export async function logout(skipConfirm = false) {
   } catch (err) {
     console.error('Logout error:', err);
   } finally {
+    localStorage.removeItem('session_token');
     window.location.href = '/login.html';
   }
 }
