@@ -94,8 +94,8 @@
 
     document.getElementById('google-login-btn').addEventListener('click', async () => {
       try {
-        // Uses configured backend GOOGLE_REDIRECT_URI (https://business-qb-back.onrender.com/api/auth/google/callback)
-        const res = await API.get('/api/auth/google/url');
+        const frontendCallbackUrl = window.location.origin + '/auth-callback.html';
+        const res = await API.get(`/api/auth/google/url?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`);
         if (res.url) window.location.href = res.url;
       } catch (err) {
         showToast('Google OAuth Error: ' + err.message, 'error');
