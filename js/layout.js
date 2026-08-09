@@ -23,6 +23,7 @@ export function renderLayout(business = {}, user = {}) {
     { label: 'Transactions', href: '/transactions.html', icon: 'bi-journal-text' },
     { label: 'Reports', href: '/reports.html', icon: 'bi-bar-chart-line-fill' },
     { label: 'Developer API', href: '/developer.html', icon: 'bi-code-slash' },
+    { label: 'Team & Audit Logs', href: '/team.html', icon: 'bi-shield-lock-fill' },
     { label: 'Settings', href: '/settings.html', icon: 'bi-gear-fill' },
   ];
 
