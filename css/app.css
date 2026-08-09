@@ -404,6 +404,63 @@ a, button {
 }
 
 /* ==========================================================================
+   MOBILE FIRST RESPONSIVE VIEWPORT & UI OPTIMIZATIONS
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+
+  main {
+    width: 100% !important;
+    max-width: 100vw !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Prevent text input auto-zoom on iOS Safari */
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="password"],
+  input[type="date"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+
+  /* Action Toolbar Responsiveness */
+  .flex-col.sm\:flex-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  /* Tables container horizontal touch scrolling */
+  .overflow-x-auto {
+    width: 100% !important;
+    max-width: calc(100vw - 1.5rem) !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  table {
+    min-width: 580px !important;
+  }
+
+  /* Compact padding for cards on mobile */
+  .card-premium,
+  #quotation-printable-card,
+  #invoice-printable-card {
+    padding: 1rem !important;
+    border-radius: 1.25rem !important;
+  }
+}
+
+/* ==========================================================================
    PERFECT SINGLE PAGE A4 PRINT & PDF STYLING FOR INVOICES & QUOTATIONS
    ========================================================================== */
 
