@@ -2,9 +2,11 @@
   React-Hot-Toast & Tailwind Modal & Universal Export System
 **/
 
-export function formatCurrency(amount, currency = 'USD $') {
+export function formatCurrency(amount, currency = 'INR ₹') {
   const val = parseFloat(amount) || 0;
-  return `${currency} ${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const curr = currency || 'INR ₹';
+  const locale = (curr.includes('INR') || curr.includes('₹')) ? 'en-IN' : 'en-US';
+  return `${curr} ${val.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function numberToWords(amount, currencySymbol = 'INR ₹') {
