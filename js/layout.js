@@ -29,23 +29,12 @@ export function renderLayout(business = {}, user = {}) {
 
   const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Business Owner')}&background=0d9488&color=fff&font-size=0.45`;
   const avatarUrl = user.picture ? user.picture : fallbackAvatar;
-  const workspaces = user.workspaces || [];
-
-  const workspaceSwitcherHtml = workspaces.length > 1 ? `
-    <select id="workspace-switcher-select" class="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold border border-slate-300 rounded-xl text-xs focus:outline-none transition cursor-pointer">
-      ${workspaces.map(w => `
-        <option value="${w.business_id}" ${w.business_id === business.business_id ? 'selected' : ''}>
-          ${w.business_name || 'Business'} (${w.role === 'owner' ? 'Owner' : 'Staff Member'})
-        </option>
-      `).join('')}
-    </select>
-  ` : '';
 
   if (sidebarContainer) {
     sidebarContainer.innerHTML = `
-      <div class="h-full flex flex-col justify-between p-4 bg-white border-r border-slate-200 overflow-y-auto">
-        <div class="flex-1 flex flex-col min-h-0">
-          <div class="flex items-center gap-3 px-2 py-3 mb-4 border-b border-slate-100 shrink-0">
+      <div class="h-full flex flex-col justify-between p-4 bg-white border-r border-slate-200">
+        <div>
+          <div class="flex items-center gap-3 px-2 py-3 mb-6 border-b border-slate-100">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-white font-black text-xl shadow-md shrink-0">
               ${(business.business_name || 'B').charAt(0).toUpperCase()}
             </div>
@@ -57,7 +46,7 @@ export function renderLayout(business = {}, user = {}) {
             </div>
           </div>
 
-          <nav class="flex-1 overflow-y-auto min-h-0 space-y-1 pr-1">
+          <nav class="space-y-1">
             ${navItems.map(item => {
               const isActive = currentPath.endsWith(item.href);
               return `
@@ -70,7 +59,7 @@ export function renderLayout(business = {}, user = {}) {
           </nav>
         </div>
 
-        <div class="pt-4 mt-2 border-t border-slate-100 space-y-2 shrink-0">
+        <div class="pt-4 border-t border-slate-100 space-y-2">
           <a href="/settings.html" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition overflow-hidden">
             <img src="${avatarUrl}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${fallbackAvatar}';" class="w-8 h-8 rounded-full border border-slate-200 shrink-0 object-cover" alt="User Avatar" />
             <div class="overflow-hidden">
@@ -105,8 +94,6 @@ export function renderLayout(business = {}, user = {}) {
         </div>
 
         <div class="flex items-center gap-3">
-          ${workspaceSwitcherHtml}
-
           <a href="${business.spreadsheet_id && business.spreadsheet_id !== 'local_demo_spreadsheet_id' ? `https://docs.google.com/spreadsheets/d/${business.spreadsheet_id}` : '/settings.html'}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-2xs">
             <i class="bi bi-file-earmark-spreadsheet-fill text-emerald-600"></i> <span class="hidden sm:inline">Open Sheet</span>
           </a>
@@ -127,16 +114,7 @@ export function renderLayout(business = {}, user = {}) {
       logout();
     });
 
-    document.getElementById('workspace-switcher-select')?.addEventListener('change', async (e) => {
-      const targetId = e.target.value;
-      try {
-        const res = await API.post('/api/auth/switch-workspace', { business_id: targetId });
-        if (window.showToast) window.showToast(res.message || 'Switched workspace!', 'success');
-        setTimeout(() => window.location.reload(), 400);
-      } catch (err) {
-        if (window.showToast) window.showToast(err.message || 'Failed to switch workspace', 'error');
-      }
-    });
+    fetchAndRenderWorkspaceSwitcher(business);
   }
 
   renderMobileDrawer(navItems, currentPath, business, user, fallbackAvatar, avatarUrl);
@@ -146,11 +124,47 @@ export function renderLayout(business = {}, user = {}) {
   if (window.AOS) {
     window.AOS.init({ duration: 600, once: true });
   }
+}
 
-  // Hide owner-only elements for members
-  const isOwner = user.role === 'owner' || business.owner_google_id === user.googleId;
-  if (!isOwner) {
-    document.querySelectorAll('.owner-only').forEach(el => el.classList.add('hidden'));
+async function fetchAndRenderWorkspaceSwitcher(currentBusiness) {
+  try {
+    const res = await API.get('/api/auth/me');
+    if (!res || !res.workspaces || res.workspaces.length <= 1) return;
+
+    const headerRight = document.querySelector('header .flex.items-center.gap-3');
+    if (!headerRight || document.getElementById('workspace-switcher-select')) return;
+
+    const switcherContainer = document.createElement('div');
+    switcherContainer.className = 'relative flex items-center';
+    
+    const optionsHtml = res.workspaces.map(w => {
+      const isSelected = w.business_id === currentBusiness.business_id ? 'selected' : '';
+      const icon = w.is_owner ? '🏢' : '👥';
+      const roleText = w.is_owner ? 'Owner' : 'Staff';
+      return `<option value="${w.business_id}" ${isSelected}>${icon} ${w.business_name} (${roleText})</option>`;
+    }).join('');
+
+    switcherContainer.innerHTML = `
+      <select id="workspace-switcher-select" class="px-2.5 py-1.5 bg-slate-100 border border-slate-300 hover:border-teal-500 rounded-xl text-xs font-bold text-slate-800 focus:outline-none cursor-pointer transition">
+        ${optionsHtml}
+      </select>
+    `;
+
+    headerRight.insertBefore(switcherContainer, headerRight.firstChild);
+
+    document.getElementById('workspace-switcher-select').addEventListener('change', async (e) => {
+      const targetBizId = e.target.value;
+      if (!targetBizId) return;
+
+      try {
+        await API.post('/api/auth/switch-workspace', { business_id: targetBizId });
+        window.location.reload();
+      } catch (err) {
+        console.error('Workspace switch error:', err);
+      }
+    });
+  } catch (err) {
+    // ignore
   }
 }
 
@@ -201,24 +215,23 @@ function renderMobileDrawer(navItems, currentPath, business, user, fallbackAvata
 
   drawer.innerHTML = `
     <div class="h-full flex flex-col justify-between p-4 overflow-y-auto">
-      <div class="flex-1 flex flex-col min-h-0">
-        <div class="flex items-center justify-between px-2 py-3 mb-4 border-b border-slate-100 shrink-0">
+      <div>
+        <div class="flex items-center justify-between px-2 py-3 mb-4 border-b border-slate-100">
           <div class="flex items-center gap-2.5 overflow-hidden">
             <div class="w-9 h-9 rounded-xl bg-teal-600 text-white font-black text-lg flex items-center justify-center shrink-0">
               ${(business.business_name || 'B').charAt(0).toUpperCase()}
             </div>
             <div class="overflow-hidden">
-              <div class="font-extrabold text-slate-900 text-xs truncate">${business.business_name || 'My Business'}</div>
-              <div class="text-[10px] text-emerald-600 font-semibold">Google Drive Sync</div>
+              <h1 class="font-extrabold text-slate-900 text-xs truncate">${business.business_name || 'My Business'}</h1>
+              <span class="text-[9px] font-semibold text-emerald-700">Google Drive Ledger</span>
             </div>
           </div>
-
-          <button id="close-mobile-drawer-btn" class="w-8 h-8 text-slate-400 hover:text-slate-900 text-lg flex items-center justify-center rounded-lg">
+          <button id="close-drawer-btn" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center text-sm">
             <i class="bi bi-x-lg"></i>
           </button>
         </div>
 
-        <nav class="flex-1 overflow-y-auto min-h-0 space-y-1 pr-1">
+        <nav class="space-y-1">
           ${navItems.map(item => {
             const isActive = currentPath.endsWith(item.href);
             return `
@@ -231,197 +244,209 @@ function renderMobileDrawer(navItems, currentPath, business, user, fallbackAvata
         </nav>
       </div>
 
-      <div class="pt-4 mt-2 border-t border-slate-100 space-y-2 shrink-0">
+      <div class="pt-4 border-t border-slate-100 space-y-2">
         <a href="/settings.html" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-xl transition overflow-hidden">
           <img src="${avatarUrl}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${fallbackAvatar}';" class="w-8 h-8 rounded-full border border-slate-200 shrink-0 object-cover" alt="User Avatar" />
           <div class="overflow-hidden">
-            <div class="font-bold text-slate-800 truncate">${user.name || 'Owner'}</div>
-            <div class="text-[10px] text-slate-500 truncate">${user.email || 'owner@example.com'}</div>
+            <div class="font-bold text-slate-800 truncate">${user.name || 'User'}</div>
+            <div class="text-[10px] text-slate-500 truncate">${user.email || ''}</div>
           </div>
         </a>
-        <button id="mobile-logout-btn" class="w-full flex items-center gap-2 px-3 py-2.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl transition border border-rose-200/60">
+        <button id="drawer-logout-btn" class="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl transition">
           <i class="bi bi-box-arrow-right text-base"></i> Logout
         </button>
       </div>
     </div>
   `;
 
-  const openDrawer = () => {
+  const hamburgerBtn = document.getElementById('mobile-hamburger-btn');
+  const closeBtn = document.getElementById('close-drawer-btn');
+
+  function openDrawer() {
     backdrop.classList.add('active');
     drawer.classList.add('active');
-  };
+    document.body.style.overflow = 'hidden';
+  }
 
-  const closeDrawer = () => {
+  function closeDrawer() {
     backdrop.classList.remove('active');
     drawer.classList.remove('active');
-  };
+    document.body.style.overflow = '';
+  }
 
-  document.getElementById('mobile-hamburger-btn')?.addEventListener('click', openDrawer);
-  document.getElementById('close-mobile-drawer-btn')?.addEventListener('click', closeDrawer);
-  backdrop.addEventListener('click', closeDrawer);
-  document.getElementById('mobile-logout-btn')?.addEventListener('click', (e) => {
+  if (hamburgerBtn) hamburgerBtn.addEventListener('click', openDrawer);
+  if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  if (backdrop) backdrop.addEventListener('click', closeDrawer);
+
+  document.getElementById('drawer-logout-btn')?.addEventListener('click', (e) => {
     e.preventDefault();
     logout();
   });
 }
 
 function renderMobileBottomNav(currentPath) {
-  let nav = document.querySelector('.mobile-bottom-nav');
-  if (!nav) {
-    nav = document.createElement('nav');
-    nav.className = 'mobile-bottom-nav md:hidden no-print';
-    document.body.appendChild(nav);
-  }
+  if (document.querySelector('.mobile-bottom-nav')) return;
 
-  const items = [
-    { label: 'Home', href: '/dashboard.html', icon: 'bi-grid-1x2-fill' },
-    { label: 'Quotes', href: '/quotations.html', icon: 'bi-file-earmark-text-fill' },
-    { label: 'Invoices', href: '/invoices.html', icon: 'bi-receipt-cutoff' },
-    { label: 'Team', href: '/team.html', icon: 'bi-shield-lock-fill' },
-    { label: 'More', href: '/settings.html', icon: 'bi-gear-fill' },
-  ];
-
-  nav.innerHTML = items.map(item => {
-    const isActive = currentPath.endsWith(item.href);
-    return `
-      <a href="${item.href}" class="mobile-nav-item ${isActive ? 'active' : ''}">
-        <i class="bi ${item.icon}"></i>
-        <span>${item.label}</span>
-      </a>
-    `;
-  }).join('');
+  const nav = document.createElement('div');
+  nav.className = 'mobile-bottom-nav md:hidden no-print';
+  nav.innerHTML = `
+    <a href="/dashboard.html" class="mobile-nav-item ${currentPath.endsWith('/dashboard.html') ? 'active' : ''}">
+      <i class="bi bi-grid-1x2-fill"></i>
+      <span>Home</span>
+    </a>
+    <a href="/quotations.html" class="mobile-nav-item ${currentPath.endsWith('/quotations.html') ? 'active' : ''}">
+      <i class="bi bi-file-earmark-text-fill"></i>
+      <span>Quotes</span>
+    </a>
+    <a href="/invoices.html" class="mobile-nav-item ${currentPath.endsWith('/invoices.html') ? 'active' : ''}">
+      <i class="bi bi-receipt-cutoff"></i>
+      <span>Invoices</span>
+    </a>
+    <a href="/payments.html" class="mobile-nav-item ${currentPath.endsWith('/payments.html') ? 'active' : ''}">
+      <i class="bi bi-credit-card-fill"></i>
+      <span>Payments</span>
+    </a>
+    <a href="/team.html" class="mobile-nav-item ${currentPath.endsWith('/team.html') ? 'active' : ''}">
+      <i class="bi bi-shield-lock-fill"></i>
+      <span>Team</span>
+    </a>
+  `;
+  document.body.appendChild(nav);
 }
 
 function injectChatbotWidget() {
-  if (document.getElementById('ai-chatbot-widget')) return;
+  if (document.getElementById('ai-chatbot-floating-btn')) return;
 
-  const container = document.createElement('div');
-  container.id = 'ai-chatbot-widget';
-  container.className = 'no-print';
-  container.innerHTML = `
-    <!-- Floating AI emblem button -->
-    <button id="ai-chat-toggle" class="fixed bottom-20 md:bottom-6 right-6 z-50 bg-slate-900 hover:bg-black text-white p-3.5 rounded-full shadow-2xl transition transform hover:scale-105 active:scale-95 flex items-center justify-center border-2 border-slate-700/60">
-      <div class="relative flex items-center justify-center">
-        <i class="bi bi-cpu-fill text-xl text-teal-400"></i>
-        <span class="absolute -top-1 -right-1 flex h-3 w-3">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border border-slate-900"></span>
-        </span>
-      </div>
-    </button>
-
-    <!-- AI Chat Dialog -->
-    <div id="ai-chat-modal" class="fixed bottom-28 md:bottom-20 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] bg-white rounded-3xl border border-slate-200 shadow-2xl hidden flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-6 duration-200">
-      <div class="bg-slate-900 text-white p-4 flex items-center justify-between">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-full bg-teal-500/20 text-teal-400 flex items-center justify-center border border-teal-500/30">
-            <i class="bi bi-robot"></i>
-          </div>
-          <div>
-            <div class="font-extrabold text-xs">AI Financial Assistant</div>
-            <div class="text-[10px] text-teal-400 flex items-center gap-1">
-              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Connected to Sheet
-            </div>
-          </div>
-        </div>
-        <button id="ai-chat-close" class="text-slate-400 hover:text-white text-lg"><i class="bi bi-x-lg"></i></button>
-      </div>
-
-      <div id="ai-chat-messages" class="p-4 h-80 overflow-y-auto space-y-3 text-xs bg-slate-50">
-        <div class="bg-white p-3 rounded-2xl border border-slate-200 text-slate-700 shadow-2xs leading-relaxed">
-          👋 Hello! I am your AI Business Copilot. Ask me anything about your revenue, unpaid invoices, quotations, or customer balances!
-        </div>
-      </div>
-
-      <div class="p-3 bg-white border-t border-slate-100 flex items-center gap-2">
-        <input type="text" id="ai-chat-input" placeholder="Ask AI assistant..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
-        <button id="ai-chat-send" class="px-3 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl text-xs transition">
-          <i class="bi bi-send-fill text-teal-400"></i>
-        </button>
-      </div>
+  const btn = document.createElement('button');
+  btn.id = 'ai-chatbot-floating-btn';
+  btn.className = 'fixed bottom-20 md:bottom-6 right-6 z-40 p-3 bg-slate-900 hover:bg-black text-white rounded-full shadow-2xl transition hover:scale-105 active:scale-95 flex items-center justify-center border-2 border-white/20';
+  btn.setAttribute('title', 'Ask AI Assistant');
+  btn.innerHTML = `
+    <div class="relative flex items-center justify-center">
+      <i class="bi bi-stars text-xl text-white"></i>
+      <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-teal-500"></span>
+      </span>
     </div>
   `;
 
-  document.body.appendChild(container);
+  const drawer = document.createElement('div');
+  drawer.id = 'ai-chatbot-drawer';
+  drawer.className = 'fixed bottom-28 md:bottom-20 right-6 z-40 w-96 max-w-[90vw] h-[520px] bg-white rounded-3xl border border-slate-200 shadow-2xl hidden flex-col overflow-hidden no-print animate-in fade-in slide-in-from-bottom-5 duration-200';
+  drawer.innerHTML = `
+    <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-xl bg-teal-500 text-slate-900 flex items-center justify-center text-base font-black">
+          <i class="bi bi-stars"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-xs">AI Business Assistant</h3>
+          <span class="text-[10px] text-teal-400 font-semibold">Online • Sheet Integrated</span>
+        </div>
+      </div>
+      <button id="close-chat-btn" class="text-slate-300 hover:text-white text-base"><i class="bi bi-x-lg"></i></button>
+    </div>
 
-  const toggle = document.getElementById('ai-chat-toggle');
-  const modal = document.getElementById('ai-chat-modal');
-  const close = document.getElementById('ai-chat-close');
-  const input = document.getElementById('ai-chat-input');
-  const send = document.getElementById('ai-chat-send');
-  const messages = document.getElementById('ai-chat-messages');
+    <div id="chat-messages" class="flex-1 p-4 space-y-3 overflow-y-auto bg-slate-50 text-xs">
+      <div class="flex items-start gap-2.5">
+        <div class="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">AI</div>
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs max-w-[85%] text-slate-700">
+          Hello! I am your AI Business Assistant. How can I help you analyze sales, track invoices, or generate reports today?
+        </div>
+      </div>
+    </div>
 
-  toggle.addEventListener('click', () => {
-    modal.classList.toggle('hidden');
-    modal.classList.toggle('flex');
-    if (!modal.classList.contains('hidden')) {
-      input.focus();
+    <form id="chat-form" class="p-3 bg-white border-t border-slate-200 flex items-center gap-2">
+      <input type="text" id="chat-input" placeholder="Ask AI anything about your business..." required class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+      <button type="submit" class="p-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold shrink-0 transition">
+        <i class="bi bi-send-fill"></i>
+      </button>
+    </form>
+  `;
+
+  document.body.appendChild(btn);
+  document.body.appendChild(drawer);
+
+  btn.addEventListener('click', () => {
+    const isHidden = drawer.classList.contains('hidden');
+    if (isHidden) {
+      drawer.classList.remove('hidden');
+      drawer.classList.add('flex');
+    } else {
+      drawer.classList.add('hidden');
+      drawer.classList.remove('flex');
     }
   });
 
-  close.addEventListener('click', () => {
-    modal.classList.add('hidden');
-    modal.classList.remove('flex');
+  document.getElementById('close-chat-btn')?.addEventListener('click', () => {
+    drawer.classList.add('hidden');
+    drawer.classList.remove('flex');
   });
 
-  const sendMessage = async () => {
-    const text = input.value.trim();
-    if (!text) return;
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatMessages = document.getElementById('chat-messages');
 
-    messages.innerHTML += `
-      <div class="bg-teal-600 text-white p-3 rounded-2xl ml-auto max-w-[85%] font-medium leading-relaxed">
-        ${escapeHtml(text)}
-      </div>
-    `;
-    input.value = '';
-    messages.scrollTop = messages.scrollHeight;
+  if (chatForm) {
+    chatForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const message = chatInput.value.trim();
+      if (!message) return;
 
-    chatHistory.push({ role: 'user', content: text });
+      appendChatMessage('user', message);
+      chatInput.value = '';
 
-    const loadingId = 'ai-load-' + Date.now();
-    messages.innerHTML += `
-      <div id="${loadingId}" class="bg-white p-3 rounded-2xl border border-slate-200 text-slate-500 italic max-w-[85%] flex items-center gap-2">
-        <i class="bi bi-three-dots animate-pulse"></i> Thinking...
-      </div>
-    `;
-    messages.scrollTop = messages.scrollHeight;
+      const typingId = appendChatMessage('system', 'AI is thinking...');
 
-    try {
-      const res = await API.post('/api/chatbot', { messages: chatHistory });
-      document.getElementById(loadingId)?.remove();
+      try {
+        const res = await API.post('/api/chatbot/message', { message, history: chatHistory });
+        const reply = res.reply || 'No response generated.';
+        
+        removeChatMessage(typingId);
+        appendChatMessage('assistant', reply);
+        chatHistory.push({ role: 'user', content: message });
+        chatHistory.push({ role: 'assistant', content: reply });
+      } catch (err) {
+        removeChatMessage(typingId);
+        appendChatMessage('assistant', 'Sorry, I encountered an issue processing your request: ' + err.message);
+      }
+    });
+  }
 
-      const reply = res.reply || 'I processed your query successfully.';
-      chatHistory.push({ role: 'assistant', content: reply });
+  function appendChatMessage(role, text) {
+    const id = 'msg-' + Math.random().toString(36).substring(2, 9);
+    const div = document.createElement('div');
+    div.id = id;
+    div.className = 'flex items-start gap-2.5';
 
-      messages.innerHTML += `
-        <div class="bg-white p-3 rounded-2xl border border-slate-200 text-slate-800 shadow-2xs leading-relaxed">
-          ${escapeHtml(reply)}
+    if (role === 'user') {
+      div.className += ' justify-end';
+      div.innerHTML = `
+        <div class="bg-slate-900 text-white p-3 rounded-2xl max-w-[85%] text-xs shadow-xs">
+          ${escapeHtml(text)}
         </div>
       `;
-      messages.scrollTop = messages.scrollHeight;
-    } catch (err) {
-      document.getElementById(loadingId)?.remove();
-      messages.innerHTML += `
-        <div class="bg-rose-50 text-rose-700 p-3 rounded-2xl border border-rose-200 leading-relaxed">
-          Error: ${escapeHtml(err.message || 'Could not connect to AI service.')}
+    } else {
+      div.innerHTML = `
+        <div class="w-7 h-7 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">AI</div>
+        <div class="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs max-w-[85%] text-slate-700 leading-relaxed">
+          ${escapeHtml(text)}
         </div>
       `;
-      messages.scrollTop = messages.scrollHeight;
     }
-  };
 
-  send.addEventListener('click', sendMessage);
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') sendMessage();
-  });
-}
+    chatMessages.appendChild(div);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    return id;
+  }
 
-function escapeHtml(str) {
-  if (!str) return '';
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  function removeChatMessage(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function escapeHtml(str) {
+    return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
 }

@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Business Billing Platform</title>
+  <title>Login - Business Billing & Accounting Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="/css/app.css" />
 </head>
 <body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4 text-slate-900">
 
-  <!-- Light Professional Frosted Glass Splash Screen Overlay -->
+  <!-- Splash Screen Loader -->
   <div id="app-splash-screen" class="no-print">
-    <div class="splash-glass-card space-y-4">
+    <div class="splash-glass-card space-y-4 text-center">
       <div class="w-16 h-16 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-3xl font-black mx-auto shadow-lg splash-logo-pulse">
-        <i class="bi bi-receipt"></i>
+        <i class="bi bi-receipt-cutoff"></i>
       </div>
       <div class="space-y-1">
         <h2 class="text-2xl font-black text-slate-900 tracking-tight">BizSheet Platform</h2>
-        <p class="text-xs font-bold text-teal-700">Your Business. Your Data. Your Google Account.</p>
+        <p class="text-xs font-bold text-teal-700">Connecting Google Cloud Storage & Security...</p>
       </div>
       <div class="splash-progress-track">
         <div class="splash-progress-fill"></div>
@@ -26,22 +26,33 @@
     </div>
   </div>
 
-  <div class="max-w-md w-full bg-white border border-slate-200 rounded-3xl p-8 shadow-xl space-y-6 text-center">
+  <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-8 space-y-8 text-center relative overflow-hidden">
     
-    <div class="w-16 h-16 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-3xl font-extrabold mx-auto shadow-md">
-      <i class="bi bi-receipt"></i>
+    <div class="space-y-3">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-white font-black text-3xl mx-auto shadow-lg">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Welcome to BizSheet</h1>
+      <p class="text-xs text-slate-500 max-w-xs mx-auto">Your Google Sheet powered Quotation, Invoice, Transaction & Team Accounting Ledger.</p>
     </div>
 
-    <div>
-      <h2 class="text-2xl font-black text-slate-900">Sign in to your Business</h2>
-      <p class="text-slate-500 text-xs md:text-sm mt-1">Your Business. Your Data. Your Google Account.</p>
+    <!-- Invitation Alert Banner if invited -->
+    <div id="invite-banner" class="hidden p-3.5 bg-teal-50 border border-teal-200 rounded-2xl text-left text-xs space-y-1">
+      <div class="font-extrabold text-teal-900 flex items-center gap-1.5">
+        <i class="bi bi-envelope-open-fill text-teal-600"></i> Workspace Invitation
+      </div>
+      <p class="text-slate-600 text-[11px]">Sign in with your Google account to accept your team invitation and open the shared workspace.</p>
     </div>
 
-    <div id="error-alert" class="hidden p-3.5 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs text-left">
-      <span class="font-bold">OAuth Notice:</span> <span id="error-message">--</span>
+    <!-- Error Alert Banner -->
+    <div id="error-alert" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-2xl text-left text-xs text-rose-700 space-y-1">
+      <div class="font-bold flex items-center gap-1.5 text-rose-800">
+        <i class="bi bi-exclamation-triangle-fill"></i> Authentication Notice
+      </div>
+      <p id="error-message" class="text-rose-600">Sign in error occurred.</p>
     </div>
 
-    <div class="space-y-3 pt-2">
+    <div class="space-y-4">
       <button id="google-login-btn" class="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-3 active:scale-95">
         <svg class="w-5 h-5" viewBox="0 0 24 24">
           <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -56,9 +67,9 @@
     <div class="pt-4 border-t border-slate-100 text-left text-xs text-slate-500 space-y-2">
       <div class="font-bold text-slate-800">We use your Google account to:</div>
       <ul class="space-y-1 list-disc list-inside text-slate-600">
-        <li>Create your business spreadsheet (`Business Billing Data`)</li>
+        <li>Create or connect your business spreadsheet (`Business Billing Data`)</li>
         <li>Store, read, and update your business records</li>
-        <li>Keep your dashboard synchronized</li>
+        <li>Switch seamlessly between your owned & team workspaces</li>
       </ul>
     </div>
   </div>
@@ -83,6 +94,12 @@
       }, 350);
 
       const params = new URLSearchParams(window.location.search);
+      const inviteBiz = params.get('invite_biz');
+      if (inviteBiz) {
+        sessionStorage.setItem('invite_biz', inviteBiz);
+        document.getElementById('invite-banner').classList.remove('hidden');
+      }
+
       const err = params.get('error');
       if (err) {
         const box = document.getElementById('error-alert');

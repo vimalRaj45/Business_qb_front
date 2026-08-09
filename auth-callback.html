@@ -52,18 +52,22 @@
       }
 
       try {
-        statusText.textContent = 'Exchanging OAuth token & building Google Drive ledger...';
+        statusText.textContent = 'Exchanging OAuth token & connecting business ledger...';
 
+        const inviteBiz = urlParams.get('invite_biz') || sessionStorage.getItem('invite_biz') || '';
         const redirectUri = window.location.origin + '/auth-callback.html';
+
         const res = await API.post('/api/auth/google/exchange', {
           code,
-          redirect_uri: redirectUri
+          redirect_uri: redirectUri,
+          invite_biz: inviteBiz
         });
 
         if (res.success) {
           if (res.sessionToken) {
             localStorage.setItem('session_token', res.sessionToken);
           }
+          sessionStorage.removeItem('invite_biz');
           showToast('Google login successful!', 'success');
           setTimeout(() => {
             const isCompleted = res.onboarding_completed === true || 
