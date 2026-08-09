@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why BizSheet? — The Smarter Choice for Business Billing</title>
+  <meta name="description" content="See why BizSheet beats traditional billing software — no subscription fees, no data lock-in, built on your own Google Drive. Invoices, quotations, UPI QR payments, AI assistant, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal: #0d9488; --teal-dark: #0f766e;
+      --font: 'Inter', -apple-system, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: white; color: #0f172a; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { text-decoration: none; }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.96); backdrop-filter: blur(18px);
+      border-bottom: 1px solid #e2e8f0;
+      padding: 0 1.5rem; height: 62px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 9px; }
+    .nav-ic { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg,#0d9488,#14b8a6); display: flex; align-items: center; justify-content: center; font-size: 15px; color: white; }
+    .nav-name { font-size: 16px; font-weight: 800; color: #0f172a; letter-spacing: -0.02em; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-link { font-size: 13px; font-weight: 600; color: #64748b; }
+    .nav-link:hover { color: #0f172a; }
+    .nav-btn { padding: 0.5rem 1.125rem; background: #0f172a; color: white; border-radius: 9px; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: all 0.15s; }
+    .nav-btn:hover { background: #1e293b; transform: translateY(-1px); }
+    .back-btn { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; color: #64748b; background: #f1f5f9; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.4rem 0.875rem; cursor: pointer; transition: all 0.15s; }
+    .back-btn:hover { background: #e2e8f0; color: #0f172a; }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 5rem 1.5rem 4rem;
+      text-align: center;
+      background: linear-gradient(170deg, #f0fdf9, #fdfffe 50%, white);
+      position: relative; overflow: hidden;
+    }
+    .hero::before { content:''; position:absolute; top:-100px; right:-120px; width:480px; height:480px; background:radial-gradient(circle,rgba(13,148,136,0.1),transparent 65%); border-radius:50%; pointer-events:none; }
+    .hero::after  { content:''; position:absolute; bottom:-80px; left:-80px; width:380px; height:380px; background:radial-gradient(circle,rgba(99,102,241,0.07),transparent 65%); border-radius:50%; pointer-events:none; }
+    .dot-grid { position:absolute;inset:0;background-image:radial-gradient(#cbd5e1 1px,transparent 1px);background-size:28px 28px;opacity:0.4;pointer-events:none; }
+    .hero-inner { position:relative;z-index:2;max-width:700px;margin:0 auto; }
+
+    .eyebrow { display:inline-flex;align-items:center;gap:6px;padding:5px 13px;background:white;border:1px solid #99f6e4;border-radius:99px;font-size:11.5px;font-weight:700;color:#0f766e;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(13,148,136,0.1); }
+
+    h1 { font-size:clamp(2rem,5.5vw,3.25rem);font-weight:900;letter-spacing:-0.04em;line-height:1.08;color:#0f172a;margin-bottom:1rem; }
+    .grad { background:linear-gradient(135deg,#0d9488,#14b8a6 40%,#6366f1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+
+    .hero-desc { font-size:clamp(14px,2vw,16px);color:#64748b;line-height:1.7;max-width:520px;margin:0 auto 2.25rem; }
+
+    .cta-row { display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0.75rem; }
+    .btn-main { padding:0.875rem 1.75rem;background:linear-gradient(135deg,#0d9488,#0f766e);color:white;border-radius:12px;font-size:14px;font-weight:800;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(13,148,136,0.3);transition:all 0.18s; }
+    .btn-main:hover { transform:translateY(-2px);box-shadow:0 10px 28px rgba(13,148,136,0.38); }
+    .btn-out { padding:0.875rem 1.5rem;background:white;color:#1e293b;border:1.5px solid #e2e8f0;border-radius:12px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px;transition:all 0.18s; }
+    .btn-out:hover { border-color:#94a3b8;transform:translateY(-1px); }
+
+    /* ===== SECTION COMMON ===== */
+    section { padding:5rem 1.5rem; }
+    .sec-center { text-align:center; }
+    .sec-eyebrow { display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;color:#0f766e;background:#f0fdf9;border:1px solid #99f6e4;padding:4px 12px;border-radius:99px;margin-bottom:1rem; }
+    .sec-title { font-size:clamp(1.6rem,3.5vw,2.3rem);font-weight:900;letter-spacing:-0.035em;color:#0f172a;margin-bottom:0.75rem;line-height:1.15; }
+    .sec-desc { font-size:14.5px;color:#64748b;line-height:1.65;max-width:500px;margin:0 auto 3rem; }
+
+    /* ===== COMPARISON TABLE ===== */
+    .compare-wrap { max-width:860px;margin:0 auto; }
+    .compare-table { width:100%;border-collapse:separate;border-spacing:0;border:1px solid #e2e8f0;border-radius:16px;overflow:hidden; }
+    .compare-table th { padding:1rem 1.25rem;font-size:13px;font-weight:800;text-align:center; }
+    .compare-table th:first-child { text-align:left; }
+    .th-biz { background:#0f172a;color:white; }
+    .th-biz-name { font-size:11px;color:rgba(255,255,255,0.55);font-weight:500;display:block;margin-top:2px; }
+    .th-other { background:#f8fafc;color:#64748b; }
+    .compare-table td { padding:0.875rem 1.25rem;font-size:13px;color:#0f172a;border-top:1px solid #f1f5f9; }
+    .compare-table td:not(:first-child) { text-align:center; }
+    .compare-table tr:hover td { background:#fafafa; }
+    .feat-label { font-weight:700;color:#0f172a; }
+    .feat-sub { font-size:11.5px;color:#94a3b8;font-weight:400; }
+    .check { color:#0d9488;font-size:17px; }
+    .cross { color:#ef4444;font-size:17px; }
+    .partial { color:#f59e0b;font-size:13px;font-weight:700; }
+
+    /* ===== KEY ADVANTAGES ===== */
+    .adv-bg { background:linear-gradient(170deg,#f0fdf9,white); }
+    .adv-grid { max-width:1060px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.125rem; }
+    .adv-card { background:white;border:1px solid #e2e8f0;border-radius:18px;padding:1.75rem 1.5rem;transition:all 0.2s; }
+    .adv-card:hover { border-color:var(--teal);box-shadow:0 8px 24px rgba(13,148,136,0.1);transform:translateY(-2px); }
+    .adv-ic { width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:1rem; }
+    .adv-title { font-size:14.5px;font-weight:800;color:#0f172a;margin-bottom:0.4rem; }
+    .adv-desc { font-size:13px;color:#64748b;line-height:1.65; }
+    .adv-badge { display:inline-flex;align-items:center;gap:4px;margin-top:0.75rem;font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px; }
+
+    /* ===== FULL FEATURES LIST ===== */
+    .feats-grid { max-width:1060px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:1rem; }
+    .feat-row { display:flex;align-items:flex-start;gap:0.875rem;padding:1.125rem 1.25rem;background:white;border:1px solid #e2e8f0;border-radius:14px;transition:all 0.18s; }
+    .feat-row:hover { border-color:#99f6e4;box-shadow:0 4px 14px rgba(13,148,136,0.08); }
+    .feat-row-ic { width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0; }
+    .feat-row-body {}
+    .feat-row-title { font-size:13.5px;font-weight:800;color:#0f172a;margin-bottom:2px; }
+    .feat-row-desc { font-size:12px;color:#64748b;line-height:1.55; }
+
+    /* ===== TRUST STATS ===== */
+    .stats-band {
+      background:#0f172a; padding:3rem 1.5rem; text-align:center;
+    }
+    .stats-inner { max-width:800px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem; }
+    .stat-item {}
+    .stat-num { font-size:2rem;font-weight:900;color:white;letter-spacing:-0.03em; }
+    .stat-label { font-size:12px;color:rgba(255,255,255,0.45);font-weight:600;margin-top:4px; }
+    .stat-accent { color:#14b8a6; }
+
+    /* ===== TESTIMONIAL ===== */
+    .testi-grid { max-width:860px;margin:0 auto;display:grid;grid-template-columns:repeat(2,1fr);gap:1.125rem; }
+    .testi-card { background:white;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+    .testi-stars { color:#f59e0b;font-size:13px;margin-bottom:0.875rem; }
+    .testi-quote { font-size:13px;color:#475569;line-height:1.65;font-style:italic;margin-bottom:1rem; }
+    .testi-author { display:flex;align-items:center;gap:0.75rem; }
+    .testi-av { width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:white;flex-shrink:0; }
+    .testi-name { font-size:13px;font-weight:800;color:#0f172a; }
+    .testi-role { font-size:11px;color:#94a3b8; }
+
+    /* ===== FINAL CTA ===== */
+    .cta-section { background:linear-gradient(135deg,#0f172a,#1e293b);padding:5rem 1.5rem;text-align:center;position:relative;overflow:hidden; }
+    .cta-section::before { content:'';position:absolute;top:-40%;left:50%;transform:translateX(-50%);width:500px;height:500px;background:radial-gradient(circle,rgba(13,148,136,0.2),transparent 65%);border-radius:50%;pointer-events:none; }
+    .cta-section .sec-title { color:white;position:relative;z-index:2; }
+    .cta-section .sec-desc { color:rgba(255,255,255,0.5);position:relative;z-index:2;margin-bottom:2rem; }
+    .btn-wht { display:inline-flex;align-items:center;gap:8px;padding:0.9rem 1.875rem;background:white;color:#0f172a;border-radius:12px;font-size:14px;font-weight:800;box-shadow:0 4px 20px rgba(0,0,0,0.2);transition:all 0.18s;position:relative;z-index:2; }
+    .btn-wht:hover { transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,0.28); }
+
+    /* ===== FOOTER ===== */
+    footer { padding:1.5rem 1.5rem;border-top:1px solid #f1f5f9;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:1rem; }
+    .foot-brand { display:flex;align-items:center;gap:7px; }
+    .foot-ic { width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#0d9488,#14b8a6);display:flex;align-items:center;justify-content:center;font-size:11px;color:white; }
+    .foot-name { font-size:13px;font-weight:800;color:#334155; }
+    .foot-links { display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:center; }
+    .foot-links a { font-size:12px;color:#94a3b8;font-weight:600; }
+    .foot-links a:hover { color:#0d9488; }
+    .foot-copy { font-size:11.5px;color:#94a3b8; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 860px) {
+      .adv-grid { grid-template-columns:1fr 1fr; }
+      .feats-grid { grid-template-columns:1fr; }
+      .stats-inner { grid-template-columns:repeat(2,1fr); }
+      .testi-grid { grid-template-columns:1fr; }
+      .compare-table th, .compare-table td { padding:0.75rem 0.875rem;font-size:12px; }
+    }
+    @media (max-width: 640px) {
+      nav { padding:0 1rem; }
+      .nav-link { display:none; }
+      .adv-grid { grid-template-columns:1fr; }
+      section { padding:3.5rem 1rem; }
+      .stats-inner { grid-template-columns:1fr 1fr;gap:1.5rem; }
+      footer { flex-direction:column;text-align:center; }
+      .foot-brand { justify-content:center; }
+      .compare-table .feat-sub { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <a href="/index.html" class="nav-brand">
+      <div class="nav-ic"><i class="bi bi-receipt-cutoff"></i></div>
+      <span class="nav-name">BizSheet</span>
+    </a>
+    <div class="nav-right">
+      <button class="back-btn" onclick="window.history.back()"><i class="bi bi-arrow-left"></i> Back</button>
+      <a href="/login.html" class="nav-btn"><i class="bi bi-google"></i> Get Started Free</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="dot-grid"></div>
+    <div class="hero-inner">
+      <div class="eyebrow"><i class="bi bi-trophy-fill"></i> The Smart Business Choice</div>
+      <h1>Why Businesses Choose<br><span class="grad">BizSheet Over Others</span></h1>
+      <p class="hero-desc">No monthly subscriptions. No data lock-in. No complex setup. Just powerful billing, quotations, reports, and payments — all stored in your own Google Drive.</p>
+      <div class="cta-row">
+        <a href="/login.html" class="btn-main"><i class="bi bi-google"></i> Start Free with Google</a>
+        <a href="#compare" class="btn-out"><i class="bi bi-bar-chart-steps" style="color:#0d9488;"></i> See Comparison</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS BAND -->
+  <div class="stats-band">
+    <div class="stats-inner">
+      <div class="stat-item">
+        <div class="stat-num">₹<span class="stat-accent">0</span></div>
+        <div class="stat-label">Monthly subscription cost</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span class="stat-accent">14</span>+</div>
+        <div class="stat-label">Modules built-in</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span class="stat-accent">∞</span></div>
+        <div class="stat-label">Invoices & records forever</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num"><span class="stat-accent">100%</span></div>
+        <div class="stat-label">Data stays in your Drive</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARISON TABLE -->
+  <section class="sec-center" id="compare">
+    <div class="sec-eyebrow"><i class="bi bi-table"></i> Head-to-Head Comparison</div>
+    <h2 class="sec-title">BizSheet vs. The Rest</h2>
+    <p class="sec-desc">We compared BizSheet against popular billing tools like Zoho Books, Tally, QuickBooks, and generic spreadsheets.</p>
+
+    <div class="compare-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th style="background:#f8fafc;color:#334155;text-align:left;">Feature</th>
+            <th class="th-biz"><i class="bi bi-receipt-cutoff"></i> BizSheet<span class="th-biz-name">Free Forever</span></th>
+            <th class="th-other">Zoho Books<span style="display:block;font-size:10px;margin-top:2px;">₹749–2,999/mo</span></th>
+            <th class="th-other">Tally / Manual<span style="display:block;font-size:10px;margin-top:2px;">₹18,000+ one-time</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="feat-label">Invoices & Quotations</div><div class="feat-sub">Create, send, PDF export</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">UPI QR Scan-to-Pay</div><div class="feat-sub">Dynamic per-invoice QR code</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><span class="partial">Partial</span></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Monthly Subscription</div><div class="feat-sub">Recurring payment required</div></td>
+            <td><strong style="color:#0d9488;font-size:13px;">₹0 Free</strong></td>
+            <td><span style="color:#ef4444;font-weight:700;">₹749–2,999/mo</span></td>
+            <td><span style="color:#ef4444;font-weight:700;">₹18,000+ upfront</span></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Data Stored in YOUR Drive</div><div class="feat-sub">Not on vendor servers</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">AI Business Chatbot</div><div class="feat-sub">Ask revenue, trends, insights</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><span class="partial">Limited</span></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Google OAuth Sign-in</div><div class="feat-sub">No password, secure login</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Team / Multi-user Support</div><div class="feat-sub">Invite team members</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Developer REST API</div><div class="feat-sub">Programmatic access with key</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><span class="partial">Paid plan only</span></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Expense Tracking</div><div class="feat-sub">Log and categorize expenses</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><span class="partial">Manual</span></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Live Reports & P&L</div><div class="feat-sub">Revenue, expense, profit charts</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><span class="partial">Manual</span></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Mobile Responsive</div><div class="feat-sub">Works on phone & tablet</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">No Setup / Installation</div><div class="feat-sub">Works in browser instantly</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Webhooks & Automation</div><div class="feat-sub">Real-time event triggers</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><span class="partial">Paid plan only</span></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+          <tr>
+            <td><div class="feat-label">Delete Account = Delete Data</div><div class="feat-sub">Full erasure, no trace</div></td>
+            <td><i class="bi bi-check-circle-fill check"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+            <td><i class="bi bi-x-circle-fill cross"></i></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- KEY ADVANTAGES -->
+  <section class="sec-center adv-bg">
+    <div class="sec-eyebrow"><i class="bi bi-lightning-charge-fill"></i> Key Advantages</div>
+    <h2 class="sec-title">Built Different. Built Better.</h2>
+    <p class="sec-desc">Every decision in BizSheet is made to put you — the business owner — in full control.</p>
+
+    <div class="adv-grid">
+      <div class="adv-card">
+        <div class="adv-ic" style="background:#f0fdf9;"><i class="bi bi-database-lock-fill" style="color:#0d9488;"></i></div>
+        <div class="adv-title">Zero Data Lock-in</div>
+        <div class="adv-desc">Your entire business data is a single Google Spreadsheet you own. Export it, share it, or walk away — no vendor can hold your data hostage.</div>
+        <div class="adv-badge" style="background:#ecfdf5;color:#047857;"><i class="bi bi-shield-check-fill"></i> GDPR Friendly</div>
+      </div>
+
+      <div class="adv-card">
+        <div class="adv-ic" style="background:#fffbeb;"><i class="bi bi-currency-rupee" style="color:#d97706;"></i></div>
+        <div class="adv-title">Genuinely Free Forever</div>
+        <div class="adv-desc">No freemium tricks, no invoice limits, no storage caps. BizSheet runs on Google's free infrastructure — your Drive stores everything at zero cost.</div>
+        <div class="adv-badge" style="background:#fffbeb;color:#92400e;"><i class="bi bi-tag-fill"></i> ₹0/month always</div>
+      </div>
+
+      <div class="adv-card">
+        <div class="adv-ic" style="background:#eff6ff;"><i class="bi bi-google" style="color:#3b82f6;"></i></div>
+        <div class="adv-title">Google-Native Security</div>
+        <div class="adv-desc">Login via Google OAuth 2.0 — no passwords stored. Authentication, file storage, and email sending are all backed by Google's enterprise infrastructure.</div>
+        <div class="adv-badge" style="background:#eff6ff;color:#1d4ed8;"><i class="bi bi-shield-lock-fill"></i> OAuth 2.0</div>
+      </div>
+
+      <div class="adv-card">
+        <div class="adv-ic" style="background:#f0fdf9;"><i class="bi bi-qr-code-scan" style="color:#0d9488;"></i></div>
+        <div class="adv-title">Instant UPI QR Payments</div>
+        <div class="adv-desc">Every invoice auto-generates a dynamic UPI Scan-to-Pay QR with the exact outstanding amount pre-filled. Customers pay in seconds from any UPI app.</div>
+        <div class="adv-badge" style="background:#f0fdf9;color:#0f766e;"><i class="bi bi-lightning-charge-fill"></i> PhonePe · GPay · Paytm</div>
+      </div>
+
+      <div class="adv-card">
+        <div class="adv-ic" style="background:#fdf4ff;"><i class="bi bi-robot" style="color:#9333ea;"></i></div>
+        <div class="adv-title">AI-Powered Insights</div>
+        <div class="adv-desc">Ask your AI business chatbot anything — "What's my revenue this month?", "Which customers owe me?", "Show top selling products." Get instant answers.</div>
+        <div class="adv-badge" style="background:#fdf4ff;color:#7e22ce;"><i class="bi bi-stars"></i> Mistral AI Powered</div>
+      </div>
+
+      <div class="adv-card">
+        <div class="adv-ic" style="background:#fff5f5;"><i class="bi bi-hdd-network-fill" style="color:#ef4444;"></i></div>
+        <div class="adv-title">Developer REST API & Webhooks</div>
+        <div class="adv-desc">Build integrations with your e-commerce store, CRM, or custom app using the full REST API. Get real-time webhook events for every business action.</div>
+        <div class="adv-badge" style="background:#fff5f5;color:#b91c1c;"><i class="bi bi-code-slash"></i> REST API v1</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ALL FEATURES -->
+  <section class="sec-center">
+    <div class="sec-eyebrow"><i class="bi bi-grid-fill"></i> Everything Included</div>
+    <h2 class="sec-title">14+ Modules. All Included.</h2>
+    <p class="sec-desc">Every feature available from day one — no upgrade required, no tier limitations.</p>
+
+    <div class="feats-grid">
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#ecfdf5;"><i class="bi bi-file-earmark-text-fill" style="color:#059669;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Invoice Management</div>
+          <div class="feat-row-desc">Create, send, view, and track professional GST-compliant invoices with PDF export and email delivery.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#eff6ff;"><i class="bi bi-clipboard2-check-fill" style="color:#3b82f6;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Quotation System</div>
+          <div class="feat-row-desc">Generate and send quotations, then convert accepted quotes to invoices in a single click.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#f0fdf9;"><i class="bi bi-credit-card-fill" style="color:#0d9488;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Payment Tracking</div>
+          <div class="feat-row-desc">Log and track all payments received. See outstanding balances, paid invoices, and payment history.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#fffbeb;"><i class="bi bi-wallet2" style="color:#d97706;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Expense Tracking</div>
+          <div class="feat-row-desc">Log business expenses with categories, dates, and descriptions. Automatically included in P&L reports.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#fdf4ff;"><i class="bi bi-people-fill" style="color:#9333ea;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Customer CRM</div>
+          <div class="feat-row-desc">Maintain a full customer database with contact details, billing history, and outstanding balances.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#ecfdf5;"><i class="bi bi-box-seam-fill" style="color:#059669;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Product & Service Catalog</div>
+          <div class="feat-row-desc">Save your products and services with pricing. Reuse them instantly when creating invoices.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#fffbeb;"><i class="bi bi-bar-chart-fill" style="color:#d97706;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Reports & Analytics</div>
+          <div class="feat-row-desc">Live dashboards for revenue, expenses, profit & loss, outstanding payments, and top customers.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#f0fdf9;"><i class="bi bi-arrow-left-right" style="color:#0d9488;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Transaction Ledger</div>
+          <div class="feat-row-desc">Full financial transaction history with debit/credit tracking across all income and expenses.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#fff5f5;"><i class="bi bi-people-fill" style="color:#ef4444;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Team Collaboration</div>
+          <div class="feat-row-desc">Invite team members to your business workspace. Manage roles and access across your organization.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#fdf4ff;"><i class="bi bi-robot" style="color:#9333ea;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">AI Chatbot Assistant</div>
+          <div class="feat-row-desc">Ask your business questions in plain language. Powered by Mistral AI with full context of your data.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#eff6ff;"><i class="bi bi-key-fill" style="color:#3b82f6;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">API Keys Management</div>
+          <div class="feat-row-desc">Generate and manage API keys with SHA-256 hashing and per-key rate limiting for developer access.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#ecfdf5;"><i class="bi bi-broadcast" style="color:#059669;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Webhooks & Automation</div>
+          <div class="feat-row-desc">Set HTTP webhook endpoints to receive real-time events for invoices, payments, and quotation status changes.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#f0fdf9;"><i class="bi bi-qr-code-scan" style="color:#0d9488;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Dynamic UPI QR on Invoices</div>
+          <div class="feat-row-desc">Auto-generated Scan-to-Pay QR code on every invoice with UPI VPA, amount, and reference pre-filled.</div>
+        </div>
+      </div>
+      <div class="feat-row">
+        <div class="feat-row-ic" style="background:#fffbeb;"><i class="bi bi-gear-fill" style="color:#d97706;"></i></div>
+        <div class="feat-row-body">
+          <div class="feat-row-title">Business Profile & Settings</div>
+          <div class="feat-row-desc">Configure your business name, logo, GST number, bank details, UPI VPA, and email signature.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="sec-center" style="background:#f8fafc;">
+    <div class="sec-eyebrow"><i class="bi bi-chat-quote-fill"></i> What Businesses Say</div>
+    <h2 class="sec-title">Trusted by Indian Businesses</h2>
+    <p class="sec-desc">Real feedback from freelancers, consultants, and small business owners using BizSheet daily.</p>
+
+    <div class="testi-grid">
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"I switched from Zoho Books and saved ₹2,000 per month. BizSheet does everything I need — invoices, quotations, and even UPI QR payments. My clients love scanning to pay."</div>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,#0d9488,#14b8a6);">V</div>
+          <div><div class="testi-name">Vimal Raj</div><div class="testi-role">Freelance Web Developer, Chennai</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"The AI chatbot is brilliant. I just ask 'who owes me money this month?' and it gives me a clear list. No more manually going through spreadsheets. Game changer."</div>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">P</div>
+          <div><div class="testi-name">Priya Nair</div><div class="testi-role">Graphic Design Consultant, Bangalore</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"We used Tally for years but it was painful to maintain. BizSheet runs in the browser, my team can access it from anywhere, and all data is right there in our Google Drive."</div>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">R</div>
+          <div><div class="testi-name">Rajan Mehta</div><div class="testi-role">Small Business Owner, Mumbai</div></div>
+        </div>
+      </div>
+      <div class="testi-card">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"The Developer API is clean and well-documented. I connected BizSheet to my WooCommerce store to auto-create invoices on every order. Took 2 hours to set up."</div>
+        <div class="testi-author">
+          <div class="testi-av" style="background:linear-gradient(135deg,#059669,#14b8a6);">A</div>
+          <div><div class="testi-name">Arjun Sharma</div><div class="testi-role">E-commerce Developer, Delhi</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-section">
+    <h2 class="sec-title">Ready to switch to BizSheet?</h2>
+    <p class="sec-desc">Join smart businesses that cut their billing software cost to ₹0 without losing any features.</p>
+    <a href="/login.html" class="btn-wht"><i class="bi bi-google" style="color:#4285F4;"></i> Get Started Free with Google</a>
+    <p style="margin-top:1rem;font-size:12px;color:rgba(255,255,255,0.25);position:relative;z-index:2;">No credit card · Your data stays in your Drive · Free forever</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="foot-brand">
+      <div class="foot-ic"><i class="bi bi-receipt-cutoff"></i></div>
+      <div>
+        <div class="foot-name">BizSheet</div>
+        <div style="font-size:10px;color:#94a3b8;font-weight:500;">Business Billing Platform</div>
+      </div>
+    </div>
+    <div class="foot-links">
+      <a href="/index.html">Home</a>
+      <a href="/privacy.html">Privacy</a>
+      <a href="/terms.html">Terms</a>
+      <a href="/developer.html">Developer API</a>
+      <a href="mailto:support@bizsheet.app">Support</a>
+    </div>
+    <div class="foot-copy">© 2026 BizSheet. All rights reserved.</div>
+  </footer>
+
+</body>
+</html>
