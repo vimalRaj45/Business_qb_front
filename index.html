@@ -3,66 +3,570 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Business Billing, Quotation & Invoice Platform</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>BizSheet — Smart Business Billing, Invoicing & Accounting Platform</title>
+  <meta name="description" content="BizSheet is a zero-cost, Google Drive-powered billing platform. Create invoices, quotations, manage expenses, and get paid with UPI QR — all stored in your own Google Drive." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #0d9488;
+      --teal-dark: #0f766e;
+      --teal-50: #f0fdf9;
+      --teal-100: #ccfbf1;
+      --teal-200: #99f6e4;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-400: #94a3b8;
+      --slate-500: #64748b;
+      --slate-600: #475569;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: var(--font); background: white; color: var(--slate-900); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+    a { text-decoration: none; }
+
+    /* ======= NAVBAR ======= */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--slate-200);
+      padding: 0 2rem;
+      height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-brand { display: flex; align-items: center; gap: 10px; }
+    .nav-ic {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; color: white;
+      box-shadow: 0 4px 12px rgba(13,148,136,0.25);
+    }
+    .nav-name { font-size: 17px; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em; }
+    .nav-links { display: flex; align-items: center; gap: 1.5rem; }
+    .nav-links a { font-size: 13px; font-weight: 600; color: var(--slate-500); transition: color 0.15s; }
+    .nav-links a:hover { color: var(--slate-900); }
+    .nav-cta {
+      padding: 0.5rem 1.125rem;
+      background: var(--slate-900);
+      color: white;
+      border-radius: 10px;
+      font-size: 13px; font-weight: 700;
+      transition: all 0.15s ease;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nav-cta:hover { background: var(--slate-800); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+
+    /* ======= HERO ======= */
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 64px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center;
+      padding: 5rem 1.5rem 4rem;
+      overflow: hidden;
+      background: linear-gradient(170deg, #f0fdf9 0%, #fafffe 35%, white 70%);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; right: -150px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(13,148,136,0.1) 0%, transparent 60%);
+      border-radius: 50%;
+      animation: floatBlob 10s ease-in-out infinite;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(99,102,241,0.07) 0%, transparent 65%);
+      border-radius: 50%;
+      animation: floatBlob 13s ease-in-out infinite reverse;
+    }
+    @keyframes floatBlob { 0%,100%{transform:translate(0,0);} 50%{transform:translate(30px,-25px);} }
+
+    .hero-dot-grid {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(var(--slate-200) 1px, transparent 1px);
+      background-size: 30px 30px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .hero-content { position: relative; z-index: 2; max-width: 780px; }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px;
+      background: white;
+      border: 1px solid var(--teal-200);
+      border-radius: 99px;
+      font-size: 11.5px; font-weight: 700; color: var(--teal-dark);
+      margin-bottom: 1.75rem;
+      box-shadow: 0 2px 8px rgba(13,148,136,0.1);
+    }
+    .eyebrow i { font-size: 12px; color: var(--teal); }
+
+    h1 {
+      font-size: clamp(2.25rem, 5vw, 3.75rem);
+      font-weight: 900;
+      line-height: 1.06;
+      letter-spacing: -0.04em;
+      color: var(--slate-900);
+      margin-bottom: 1.25rem;
+    }
+    h1 .gradient-text {
+      background: linear-gradient(135deg, #0d9488 0%, #14b8a6 40%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 4s linear infinite;
+      background-size: 200%;
+    }
+    @keyframes shimmer { 0%{background-position:0%;} 100%{background-position:200%;} }
+
+    .hero-desc {
+      font-size: clamp(15px, 2vw, 17px);
+      color: var(--slate-500);
+      line-height: 1.7;
+      max-width: 580px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .cta-group { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.875rem; }
+    .btn-primary {
+      padding: 0.875rem 1.875rem;
+      background: linear-gradient(135deg, #0d9488, #0f766e);
+      color: white;
+      border-radius: 13px;
+      font-size: 14.5px; font-weight: 800;
+      transition: all 0.18s ease;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 6px 20px rgba(13,148,136,0.3);
+      letter-spacing: -0.01em;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(13,148,136,0.38); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .btn-secondary {
+      padding: 0.875rem 1.625rem;
+      background: white;
+      color: var(--slate-800);
+      border: 1.5px solid var(--slate-200);
+      border-radius: 13px;
+      font-size: 14.5px; font-weight: 700;
+      transition: all 0.18s ease;
+      display: flex; align-items: center; gap: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    .btn-secondary:hover { border-color: var(--slate-300); box-shadow: 0 4px 16px rgba(0,0,0,0.09); transform: translateY(-1px); }
+
+    /* Social proof below CTA */
+    .trust-proof {
+      margin-top: 1.75rem;
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1.5rem;
+      font-size: 12px; color: var(--slate-400); font-weight: 600;
+    }
+    .trust-proof span { display: flex; align-items: center; gap: 5px; }
+    .trust-proof i { color: #10b981; font-size: 13px; }
+
+    /* Preview Card */
+    .preview-wrap {
+      position: relative; z-index: 2;
+      margin-top: 4rem;
+      max-width: 900px; width: 100%;
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 20px;
+      box-shadow: 0 25px 60px rgba(15,23,42,0.08), 0 4px 12px rgba(15,23,42,0.04);
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+    .preview-bar {
+      display: flex; align-items: center; gap: 6px; margin-bottom: 1.25rem;
+    }
+    .preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .preview-bar-title { font-size: 12px; color: var(--slate-400); font-weight: 600; margin-left: 0.5rem; flex: 1; text-align: center; }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 1rem;
+      height: 240px;
+    }
+    .preview-sidebar {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-100);
+      border-radius: 14px;
+      padding: 1rem 0.875rem;
+      display: flex; flex-direction: column; gap: 0.35rem;
+    }
+    .pv-nav {
+      padding: 0.45rem 0.7rem; border-radius: 8px;
+      font-size: 11.5px; font-weight: 600; color: var(--slate-500);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .pv-nav.active { background: var(--teal); color: white; }
+    .pv-nav i { font-size: 13px; }
+    .preview-main {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem;
+    }
+    .pv-card {
+      background: var(--slate-50); border: 1px solid var(--slate-100);
+      border-radius: 12px; padding: 0.875rem 0.875rem;
+    }
+    .pv-card-label { font-size: 10px; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+    .pv-card-val { font-size: 1.15rem; font-weight: 900; color: var(--slate-900); letter-spacing: -0.02em; }
+    .pv-card-sub { font-size: 10px; color: #10b981; font-weight: 600; margin-top: 2px; }
+    .pv-table { grid-column: 1 / -1; background: white; border: 1px solid var(--slate-100); border-radius: 10px; overflow: hidden; }
+    .pv-table-row {
+      display: grid; grid-template-columns: 1fr 80px 80px 80px;
+      padding: 0.4rem 0.75rem; font-size: 11px; border-bottom: 1px solid var(--slate-50);
+      align-items: center;
+    }
+    .pv-table-row.header { background: var(--slate-900); color: white; font-weight: 700; border-bottom: none; }
+    .pv-badge { padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; }
+    .pv-paid { background: #ecfdf5; color: #047857; }
+    .pv-unpaid { background: #fef2f2; color: #b91c1c; }
+
+    /* ======= FEATURES SECTION ======= */
+    .section { padding: 5rem 1.5rem; }
+    .section-center { text-align: center; }
+    .section-title { font-size: clamp(1.75rem, 3.5vw, 2.5rem); font-weight: 900; letter-spacing: -0.035em; margin-bottom: 0.75rem; }
+    .section-desc { font-size: 15px; color: var(--slate-500); line-height: 1.65; max-width: 520px; margin: 0 auto 3rem; }
+
+    .features-grid {
+      max-width: 1100px; margin: 0 auto;
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem;
+    }
+    .feat-card {
+      background: white;
+      border: 1px solid var(--slate-200);
+      border-radius: 18px;
+      padding: 1.75rem 1.5rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    }
+    .feat-card:hover { border-color: var(--teal-200); box-shadow: 0 8px 24px rgba(13,148,136,0.1); transform: translateY(-2px); }
+    .feat-icon {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 1rem;
+    }
+    .feat-name { font-size: 15px; font-weight: 800; color: var(--slate-900); margin-bottom: 0.5rem; }
+    .feat-desc { font-size: 13px; color: var(--slate-500); line-height: 1.6; }
+
+    /* ======= HOW IT WORKS ======= */
+    .how-bg { background: linear-gradient(170deg, var(--teal-50), white); }
+    .steps { max-width: 860px; margin: 0 auto; display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+    .step { text-align: center; }
+    .step-num {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: white; border: 2px solid var(--teal-200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 900; color: var(--teal);
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 12px rgba(13,148,136,0.1);
+    }
+    .step-title { font-size: 15px; font-weight: 800; color: var(--slate-800); margin-bottom: 0.5rem; }
+    .step-desc { font-size: 13px; color: var(--slate-500); line-height: 1.6; }
+    .step-arrow {
+      font-size: 24px; color: var(--teal-200);
+      display: flex; align-items: center; justify-content: center;
+      margin-top: -2rem;
+    }
+
+    /* ======= FINAL CTA ======= */
+    .cta-section {
+      padding: 5rem 1.5rem;
+      text-align: center;
+      background: linear-gradient(135deg, var(--slate-900), #1e293b);
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(13,148,136,0.2) 0%, transparent 65%);
+      border-radius: 50%; pointer-events: none;
+    }
+    .cta-section .section-title { color: white; position: relative; z-index: 2; }
+    .cta-section .section-desc { color: rgba(255,255,255,0.55); position: relative; z-index: 2; }
+    .cta-section .cta-group { position: relative; z-index: 2; }
+    .btn-white {
+      padding: 0.875rem 1.875rem;
+      background: white;
+      color: var(--slate-900);
+      border-radius: 13px;
+      font-size: 14.5px; font-weight: 800;
+      display: flex; align-items: center; gap: 8px;
+      transition: all 0.18s ease;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    }
+    .btn-white:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.3); }
+
+    /* ======= FOOTER ======= */
+    footer {
+      padding: 1.75rem 2rem;
+      border-top: 1px solid var(--slate-100);
+      display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem;
+    }
+    .footer-brand { display: flex; align-items: center; gap: 8px; }
+    .footer-ic {
+      width: 28px; height: 28px; border-radius: 8px;
+      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; color: white;
+    }
+    .footer-name { font-size: 14px; font-weight: 800; color: var(--slate-800); }
+    .footer-links { display: flex; gap: 1.25rem; align-items: center; }
+    .footer-links a { font-size: 12px; color: var(--slate-400); font-weight: 600; }
+    .footer-links a:hover { color: var(--teal); }
+    .footer-copy { font-size: 12px; color: var(--slate-400); }
+
+    /* ======= RESPONSIVE ======= */
+    @media (max-width: 900px) {
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .steps { grid-template-columns: 1fr; gap: 1.5rem; }
+      .preview-grid { grid-template-columns: 1fr; height: auto; }
+      .preview-sidebar { display: none; }
+      .preview-main { grid-template-columns: repeat(3,1fr); }
+    }
+    @media (max-width: 640px) {
+      nav { padding: 0 1rem; }
+      .nav-links .hide-sm { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .preview-main { grid-template-columns: 1fr 1fr; }
+      .btn-primary, .btn-secondary, .btn-white { font-size: 13.5px; padding: 0.8rem 1.375rem; }
+      .section { padding: 3.5rem 1rem; }
+      footer { flex-direction: column; text-align: center; }
+      .footer-links { justify-content: center; }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 min-h-screen text-slate-900 flex flex-col justify-between">
+<body>
 
-  <!-- Navbar -->
-  <nav class="p-6 max-w-7xl w-full mx-auto flex items-center justify-between">
-    <div class="flex items-center gap-3">
-      <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-black text-xl shadow-md">
-        <i class="bi bi-receipt"></i>
-      </div>
-      <span class="text-xl font-black tracking-tight text-slate-900">BizSheet</span>
-    </div>
-
-    <div class="flex items-center gap-4">
-      <a href="/privacy.html" class="text-xs font-bold text-slate-600 hover:text-slate-900 hidden sm:inline">Privacy</a>
-      <a href="/terms.html" class="text-xs font-bold text-slate-600 hover:text-slate-900 hidden sm:inline">Terms</a>
-      <a href="/login.html" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-xs transition shadow-md">
-        Sign In with Google
+  <!-- NAVBAR -->
+  <nav>
+    <a href="/index.html" class="nav-brand">
+      <div class="nav-ic"><i class="bi bi-receipt-cutoff"></i></div>
+      <span class="nav-name">BizSheet</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features" class="hide-sm">Features</a>
+      <a href="#how" class="hide-sm">How it Works</a>
+      <a href="/developer.html" class="hide-sm">API</a>
+      <a href="/login.html" class="nav-cta">
+        <i class="bi bi-google"></i> Sign in Free
       </a>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <main class="max-w-4xl w-full mx-auto p-6 text-center space-y-8 my-auto">
-    <div class="inline-flex items-center gap-2 text-xs font-extrabold text-teal-700 bg-teal-50 px-4 py-1.5 rounded-full border border-teal-200 shadow-xs">
-      <i class="bi bi-google"></i> Google Account & Drive Storage Native
-    </div>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-dot-grid"></div>
+    <div class="hero-content">
+      <div class="eyebrow"><i class="bi bi-stars"></i> Powered by Your Google Drive · Zero Data Lock-in</div>
 
-    <h1 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight">
-      YOUR BUSINESS DATA.<br/>
-      <span class="bg-gradient-to-r from-teal-600 via-emerald-600 to-purple-600 bg-clip-text text-transparent">YOUR GOOGLE ACCOUNT.</span><br/>
-      YOUR CONTROL.
-    </h1>
+      <h1>
+        The Smarter Way to<br>
+        <span class="gradient-text">Bill, Invoice & Get Paid</span>
+      </h1>
 
-    <p class="text-slate-600 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-      The generic Business Billing, Quotations, Invoices, Payments, Expenses, and Financial Transaction Platform powered directly inside your Google Drive Spreadsheet.
-    </p>
+      <p class="hero-desc">
+        Create professional quotations and invoices, track payments, manage expenses, and run business reports — all stored directly in your own Google Drive spreadsheet. No monthly fees. Total ownership.
+      </p>
 
-    <div class="flex flex-wrap items-center justify-center gap-4 pt-4">
-      <a href="/login.html" class="px-8 py-4 bg-teal-600 hover:bg-teal-700 text-white font-black rounded-2xl text-sm transition shadow-xl hover:scale-105 active:scale-95 flex items-center gap-2">
-        <i class="bi bi-google"></i> Get Started Free with Google
-      </a>
-      <a href="/developer.html" class="px-7 py-4 bg-white border border-slate-200 text-slate-900 font-extrabold rounded-2xl text-sm transition shadow-md hover:bg-slate-50 flex items-center gap-2">
-        <i class="bi bi-code-slash text-teal-600"></i> Developer API
-      </a>
-    </div>
-  </main>
+      <div class="cta-group">
+        <a href="/login.html" class="btn-primary">
+          <i class="bi bi-google"></i> Get Started Free with Google
+        </a>
+        <a href="#features" class="btn-secondary">
+          <i class="bi bi-play-circle" style="color:#0d9488;"></i> See All Features
+        </a>
+      </div>
 
-  <!-- Footer -->
-  <footer class="p-6 text-center text-xs text-slate-500 border-t border-slate-200">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-      <span>&copy; 2026 BizSheet Platform. All rights reserved.</span>
-      <div class="space-x-4">
-        <a href="/privacy.html" class="hover:text-teal-600 font-semibold">Privacy Policy</a>
-        <a href="/terms.html" class="hover:text-teal-600 font-semibold">Terms of Service</a>
+      <div class="trust-proof">
+        <span><i class="bi bi-shield-lock-fill"></i> SSL Encrypted</span>
+        <span><i class="bi bi-database-lock-fill"></i> Your Google Drive</span>
+        <span><i class="bi bi-check-circle-fill"></i> No Credit Card Required</span>
+        <span><i class="bi bi-currency-rupee" style="color:#10b981;font-size:12px;"></i> Always Free Storage</span>
       </div>
     </div>
+
+    <!-- App Preview Card -->
+    <div class="preview-wrap">
+      <div class="preview-bar">
+        <div class="preview-dot" style="background:#f87171;"></div>
+        <div class="preview-dot" style="background:#fbbf24;"></div>
+        <div class="preview-dot" style="background:#34d399;"></div>
+        <div class="preview-bar-title">BizSheet Dashboard — Invoices & Reports</div>
+      </div>
+      <div class="preview-grid">
+        <div class="preview-sidebar">
+          <div style="display:flex;align-items:center;gap:8px;padding:0.5rem 0.7rem;margin-bottom:0.5rem;">
+            <div style="width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#0d9488,#14b8a6);display:flex;align-items:center;justify-content:center;font-size:13px;color:white;"><i class="bi bi-receipt-cutoff"></i></div>
+            <div style="font-size:12px;font-weight:800;color:#0f172a;">BizSheet</div>
+          </div>
+          <div class="pv-nav active"><i class="bi bi-grid-fill"></i> Dashboard</div>
+          <div class="pv-nav"><i class="bi bi-file-earmark-text"></i> Quotations</div>
+          <div class="pv-nav"><i class="bi bi-receipt"></i> Invoices</div>
+          <div class="pv-nav"><i class="bi bi-credit-card"></i> Payments</div>
+          <div class="pv-nav"><i class="bi bi-people"></i> Customers</div>
+          <div class="pv-nav"><i class="bi bi-bar-chart"></i> Reports</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <div class="preview-main">
+            <div class="pv-card">
+              <div class="pv-card-label">Revenue</div>
+              <div class="pv-card-val">₹2.4L</div>
+              <div class="pv-card-sub">↑ 18% this month</div>
+            </div>
+            <div class="pv-card">
+              <div class="pv-card-label">Invoices</div>
+              <div class="pv-card-val">34</div>
+              <div class="pv-card-sub">12 unpaid</div>
+            </div>
+            <div class="pv-card">
+              <div class="pv-card-label">Quotations</div>
+              <div class="pv-card-val">18</div>
+              <div class="pv-card-sub">5 pending</div>
+            </div>
+          </div>
+          <div class="pv-table">
+            <div class="pv-table-row header">
+              <span>Invoice</span><span>Customer</span><span>Amount</span><span>Status</span>
+            </div>
+            <div class="pv-table-row">
+              <span style="font-weight:700;color:#0f172a;">#INV-0021</span>
+              <span style="color:#64748b;">Acme Corp</span>
+              <span style="font-weight:700;">₹18,500</span>
+              <span><div class="pv-badge pv-paid">Paid</div></span>
+            </div>
+            <div class="pv-table-row">
+              <span style="font-weight:700;color:#0f172a;">#INV-0022</span>
+              <span style="color:#64748b;">TechStart Ltd</span>
+              <span style="font-weight:700;">₹42,000</span>
+              <span><div class="pv-badge pv-unpaid">Unpaid</div></span>
+            </div>
+            <div class="pv-table-row" style="border-bottom:none;">
+              <span style="font-weight:700;color:#0f172a;">#INV-0023</span>
+              <span style="color:#64748b;">Nova Retail</span>
+              <span style="font-weight:700;">₹9,800</span>
+              <span><div class="pv-badge pv-paid">Paid</div></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section class="section section-center" id="features">
+    <p class="eyebrow" style="margin: 0 auto 1rem;"><i class="bi bi-lightning-charge-fill"></i> Everything Your Business Needs</p>
+    <h2 class="section-title">One Platform. Total Control.</h2>
+    <p class="section-desc">Built for Indian freelancers, consultants, and small businesses who want professional billing without the enterprise price tag.</p>
+
+    <div class="features-grid">
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#ecfdf5;"><i class="bi bi-file-earmark-text-fill" style="color:#059669;"></i></div>
+        <div class="feat-name">Smart Invoices & Quotations</div>
+        <div class="feat-desc">Create GST-compliant invoices and quotations. Convert quotes to invoices in one click. Send PDFs directly via Gmail.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#f0fdf9;"><i class="bi bi-qr-code-scan" style="color:#0d9488;"></i></div>
+        <div class="feat-name">Instant UPI QR Payments</div>
+        <div class="feat-desc">Embed dynamic Scan-to-Pay QR codes on every invoice with your UPI VPA pre-filled with the exact outstanding amount.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#fffbeb;"><i class="bi bi-bar-chart-fill" style="color:#d97706;"></i></div>
+        <div class="feat-name">Live Financial Reports</div>
+        <div class="feat-desc">Track revenue, expenses, net profit, outstanding receivables, and P&L — all computed live from your Google Sheets data.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#eff6ff;"><i class="bi bi-people-fill" style="color:#3b82f6;"></i></div>
+        <div class="feat-name">Customer & Product CRM</div>
+        <div class="feat-desc">Maintain a full customer directory and product catalog. Reuse saved items when creating invoices for blazing-fast billing.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#fdf4ff;"><i class="bi bi-robot" style="color:#9333ea;"></i></div>
+        <div class="feat-name">AI Business Assistant</div>
+        <div class="feat-desc">Ask your AI assistant about revenue trends, unpaid invoices, expense analysis, and get actionable insights instantly.</div>
+      </div>
+      <div class="feat-card">
+        <div class="feat-icon" style="background:#fff5f5;"><i class="bi bi-hdd-network-fill" style="color:#ef4444;"></i></div>
+        <div class="feat-name">Developer REST API</div>
+        <div class="feat-desc">Programmatically create invoices, customers, and products via a secure REST API with your personal API key.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="section section-center how-bg" id="how">
+    <p class="eyebrow" style="margin: 0 auto 1rem;"><i class="bi bi-arrow-right-circle-fill"></i> Simple Onboarding</p>
+    <h2 class="section-title">Up and running in 60 seconds</h2>
+    <p class="section-desc">No complex setup. No credit card. Just your Google account.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-title">Sign in with Google</div>
+        <div class="step-desc">One-click authentication using your existing Google account. We use OAuth 2.0 — no password stored ever.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-title">Connect your Drive</div>
+        <div class="step-desc">BizSheet automatically creates a "Business Billing Data" spreadsheet in your Google Drive to store all your records.</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-title">Start Billing</div>
+        <div class="step-desc">Create your first invoice, add customers, and send professional PDFs — all within 60 seconds of sign-in.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="cta-section">
+    <h2 class="section-title" style="font-size:2.25rem;margin-bottom:0.875rem;">Ready to simplify your billing?</h2>
+    <p class="section-desc">Join businesses already managing their invoices, quotations, and payments with BizSheet.</p>
+    <div class="cta-group">
+      <a href="/login.html" class="btn-white">
+        <i class="bi bi-google" style="color:#4285F4;"></i> Get Started Free with Google
+      </a>
+    </div>
+    <p style="margin-top:1.25rem;font-size:12px;color:rgba(255,255,255,0.3);position:relative;z-index:2;">No credit card required · Your data stays in your Google Drive · Free forever</p>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">
+      <div class="footer-ic"><i class="bi bi-receipt-cutoff"></i></div>
+      <div>
+        <div class="footer-name">BizSheet</div>
+        <div style="font-size:10.5px;color:#94a3b8;font-weight:500;">Business Billing Platform</div>
+      </div>
+    </div>
+    <div class="footer-links">
+      <a href="/privacy.html">Privacy Policy</a>
+      <a href="/terms.html">Terms of Service</a>
+      <a href="/developer.html">Developer API</a>
+      <a href="mailto:support@bizsheet.app">Support</a>
+    </div>
+    <div class="footer-copy">© 2026 BizSheet. All rights reserved.</div>
   </footer>
 
 </body>
