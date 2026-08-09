@@ -3,121 +3,723 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Business Billing & Accounting Platform</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>BizSheet — Smart Business Billing & Accounting Platform</title>
+  <meta name="description" content="Sign in to BizSheet — Your Google Drive-powered Invoice, Quotation & Accounting Platform for Modern Businesses." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --teal: #0d9488;
+      --teal-dark: #0f766e;
+      --teal-light: #ccfbf1;
+      --navy: #0c1826;
+      --navy-mid: #162032;
+      --navy-light: #1e2d42;
+      --slate-50: #f8fafc;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-400: #94a3b8;
+      --slate-600: #475569;
+      --slate-800: #1e293b;
+      --slate-900: #0f172a;
+      --white: #ffffff;
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--slate-50);
+      color: var(--slate-900);
+      min-height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ========== SPLASH SCREEN ========== */
+    #splash {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #splash.hide { opacity: 0; visibility: hidden; }
+
+    .splash-logo {
+      width: 64px;
+      height: 64px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: white;
+      animation: pulse 1.8s ease-in-out infinite;
+      box-shadow: 0 0 40px rgba(13,148,136,0.5);
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.08);} }
+    .splash-track { width: 180px; height: 3px; background: rgba(255,255,255,0.1); border-radius: 99px; overflow:hidden; }
+    .splash-fill { height: 100%; width: 40%; background: linear-gradient(90deg, #0d9488, #14b8a6); animation: slide 1.4s linear infinite; }
+    @keyframes slide { 0%{transform:translateX(-100%);} 100%{transform:translateX(350%);} }
+    .splash-text { color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500; letter-spacing: 0.02em; }
+
+    /* ========== LAYOUT ========== */
+    .login-container {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* ========== LEFT PANEL ========== */
+    .left-panel {
+      flex: 0 0 54%;
+      background: var(--navy);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem 3rem 2.5rem 3rem;
+      overflow: hidden;
+    }
+
+    /* Animated background mesh */
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 700px;
+      height: 700px;
+      background: radial-gradient(circle, rgba(13,148,136,0.18) 0%, transparent 65%);
+      border-radius: 50%;
+      animation: float1 8s ease-in-out infinite;
+    }
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -15%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99,102,241,0.12) 0%, transparent 65%);
+      border-radius: 50%;
+      animation: float2 10s ease-in-out infinite;
+    }
+    @keyframes float1 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(-30px,30px);} }
+    @keyframes float2 { 0%,100%{transform:translate(0,0);} 50%{transform:translate(25px,-20px);} }
+
+    /* Grid dots overlay */
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      pointer-events: none;
+    }
+
+    .left-top { position: relative; z-index: 2; }
+    .left-main { position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 2rem 0; }
+    .left-bottom { position: relative; z-index: 2; }
+
+    /* Logo in left panel */
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+    .brand-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 4px 20px rgba(13,148,136,0.4);
+    }
+    .brand-name { font-size: 20px; font-weight: 800; color: white; letter-spacing: -0.02em; }
+    .brand-tag { font-size: 11px; font-weight: 500; color: rgba(255,255,255,0.45); margin-top: 1px; }
+
+    /* Hero copy */
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      background: rgba(13,148,136,0.15);
+      border: 1px solid rgba(13,148,136,0.35);
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #5eead4;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    .hero-eyebrow i { font-size: 12px; }
+
+    .hero-title {
+      font-size: 2.625rem;
+      font-weight: 900;
+      color: white;
+      line-height: 1.08;
+      letter-spacing: -0.035em;
+      margin-bottom: 1.25rem;
+    }
+    .hero-title span {
+      background: linear-gradient(135deg, #14b8a6, #5eead4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-desc {
+      font-size: 0.9375rem;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.65;
+      max-width: 460px;
+      font-weight: 400;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Feature pills */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      max-width: 480px;
+    }
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      padding: 0.75rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    .feature-pill:hover {
+      background: rgba(13,148,136,0.12);
+      border-color: rgba(13,148,136,0.3);
+      transform: translateY(-1px);
+    }
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .feature-text { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.75); line-height: 1.3; }
+    .feature-sub { font-size: 10.5px; color: rgba(255,255,255,0.38); font-weight: 400; }
+
+    /* Stats row */
+    .stats-row {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .stat-item {}
+    .stat-num { font-size: 1.5rem; font-weight: 900; color: white; letter-spacing: -0.03em; }
+    .stat-label { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 500; margin-top: 1px; }
+
+    /* Bottom testimonial */
+    .testimonial-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .testi-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0d9488, #6366f1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    .testi-quote { font-size: 12.5px; color: rgba(255,255,255,0.7); line-height: 1.55; font-style: italic; }
+    .testi-author { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.5); margin-top: 0.5rem; }
+
+    /* ========== RIGHT PANEL ========== */
+    .right-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2.5rem;
+      background: white;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .right-top-bar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--slate-100);
+    }
+    .right-top-bar-title { font-size: 13px; color: var(--slate-400); font-weight: 500; }
+    .help-link { font-size: 12.5px; color: var(--teal); font-weight: 600; text-decoration: none; display: flex; align-items: center; gap: 4px; }
+    .help-link:hover { text-decoration: underline; }
+
+    .login-card {
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-brand-mini {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 2rem;
+    }
+    .login-brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      color: white;
+    }
+    .login-brand-name { font-size: 18px; font-weight: 800; color: var(--slate-900); letter-spacing: -0.02em; }
+
+    .login-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.03em;
+      margin-bottom: 0.5rem;
+      line-height: 1.15;
+    }
+    .login-subtitle {
+      font-size: 14px;
+      color: var(--slate-400);
+      margin-bottom: 2rem;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    /* Alert banners */
+    .alert-box {
+      padding: 0.875rem 1rem;
+      border-radius: 12px;
+      font-size: 12.5px;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+      text-align: left;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.625rem;
+    }
+    .alert-invite { background: #f0fdf9; border: 1px solid #99f6e4; color: #0f766e; }
+    .alert-error { background: #fff5f5; border: 1px solid #fecaca; color: #b91c1c; }
+    .alert-icon { font-size: 15px; margin-top: 1px; flex-shrink: 0; }
+    .alert-title { font-weight: 700; font-size: 12px; margin-bottom: 2px; }
+
+    /* Google Sign-in button */
+    .google-btn {
+      width: 100%;
+      padding: 0.9rem 1.25rem;
+      background: var(--slate-900);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 14.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      transition: all 0.18s ease;
+      box-shadow: 0 4px 15px rgba(15,23,42,0.18);
+      letter-spacing: -0.01em;
+      margin-bottom: 1.5rem;
+    }
+    .google-btn:hover { background: #1e293b; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(15,23,42,0.22); }
+    .google-btn:active { transform: scale(0.99); }
+    .google-btn.loading { opacity: 0.7; pointer-events: none; }
+    .google-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+    /* Or divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--slate-400);
+      font-size: 12px;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--slate-200);
+    }
+
+    /* Security trust badges */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    .trust-badge {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--slate-400);
+      font-weight: 600;
+    }
+    .trust-badge i { font-size: 13px; color: #10b981; }
+
+    /* Permissions mini info */
+    .permissions-box {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: 12px;
+      padding: 1rem 1.125rem;
+      text-align: left;
+      margin-bottom: 1.5rem;
+    }
+    .permissions-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--slate-800);
+      margin-bottom: 0.625rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .permissions-title i { color: var(--teal); }
+    .permissions-list { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; }
+    .permissions-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--slate-600);
+      line-height: 1.4;
+    }
+    .permissions-list li i { font-size: 11px; color: #10b981; margin-top: 1px; flex-shrink: 0; }
+
+    /* Footer links */
+    .login-footer {
+      font-size: 11.5px;
+      color: var(--slate-400);
+      text-align: center;
+    }
+    .login-footer a { color: var(--slate-500); text-decoration: none; font-weight: 600; }
+    .login-footer a:hover { color: var(--teal); }
+    .login-footer span { margin: 0 6px; }
+
+    /* ========== MOBILE ========== */
+    @media (max-width: 768px) {
+      body { flex-direction: column; overflow: auto; }
+      .left-panel { flex: 0 0 auto; padding: 2rem 1.5rem; min-height: auto; }
+      .hero-title { font-size: 1.75rem; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .stats-row { gap: 1.5rem; }
+      .right-panel { padding: 2rem 1.5rem; min-height: auto; }
+      .right-top-bar { display: none; }
+      .login-card { max-width: 100%; }
+      .left-main { padding: 1.5rem 0; }
+    }
+  </style>
 </head>
-<body class="bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4 text-slate-900">
+<body>
 
-  <!-- Splash Screen Loader -->
-  <div id="app-splash-screen" class="no-print">
-    <div class="splash-glass-card space-y-4 text-center">
-      <div class="w-16 h-16 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-3xl font-black mx-auto shadow-lg splash-logo-pulse">
-        <i class="bi bi-receipt-cutoff"></i>
-      </div>
-      <div class="space-y-1">
-        <h2 class="text-2xl font-black text-slate-900 tracking-tight">BizSheet Platform</h2>
-        <p class="text-xs font-bold text-teal-700">Connecting Google Cloud Storage & Security...</p>
-      </div>
-      <div class="splash-progress-track">
-        <div class="splash-progress-fill"></div>
-      </div>
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="splash-logo"><i class="bi bi-receipt-cutoff"></i></div>
+    <div style="text-align:center;">
+      <div style="color:white;font-weight:800;font-size:18px;margin-bottom:4px;font-family:Inter,sans-serif;">BizSheet Platform</div>
+      <div class="splash-text">Initializing Secure Session...</div>
     </div>
+    <div class="splash-track"><div class="splash-fill"></div></div>
   </div>
 
-  <div class="max-w-md w-full bg-white rounded-3xl border border-slate-200 shadow-2xl p-8 space-y-8 text-center relative overflow-hidden">
-    
-    <div class="space-y-3">
-      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-white font-black text-3xl mx-auto shadow-lg">
-        <i class="bi bi-shield-lock-fill"></i>
+  <div class="login-container">
+
+    <!-- ===== LEFT PANEL ===== -->
+    <div class="left-panel">
+      <div class="grid-overlay"></div>
+
+      <!-- Brand -->
+      <div class="left-top">
+        <div class="brand-logo">
+          <div class="brand-icon"><i class="bi bi-receipt-cutoff"></i></div>
+          <div>
+            <div class="brand-name">BizSheet</div>
+            <div class="brand-tag">Business Billing Platform</div>
+          </div>
+        </div>
       </div>
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Welcome to BizSheet</h1>
-      <p class="text-xs text-slate-500 max-w-xs mx-auto">Your Google Sheet powered Quotation, Invoice, Transaction & Team Accounting Ledger.</p>
-    </div>
 
-    <!-- Invitation Alert Banner if invited -->
-    <div id="invite-banner" class="hidden p-3.5 bg-teal-50 border border-teal-200 rounded-2xl text-left text-xs space-y-1">
-      <div class="font-extrabold text-teal-900 flex items-center gap-1.5">
-        <i class="bi bi-envelope-open-fill text-teal-600"></i> Workspace Invitation
+      <!-- Hero Content -->
+      <div class="left-main">
+        <div class="hero-eyebrow">
+          <i class="bi bi-stars"></i> Powered by Google Drive &amp; Mistral AI
+        </div>
+        <h1 class="hero-title">
+          Run Your Business<br />
+          on <span>Auto-Pilot</span>
+        </h1>
+        <p class="hero-desc">
+          Manage quotations, invoices, payments, expenses, and customers — all stored directly in your own Google Drive. Zero data lock-in. Total ownership.
+        </p>
+
+        <div class="features-grid">
+          <div class="feature-pill">
+            <div class="feature-icon" style="background:rgba(13,148,136,0.18);">
+              <i class="bi bi-file-earmark-text-fill" style="color:#5eead4;"></i>
+            </div>
+            <div>
+              <div class="feature-text">Smart Invoices</div>
+              <div class="feature-sub">PDF + Email ready</div>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="feature-icon" style="background:rgba(99,102,241,0.18);">
+              <i class="bi bi-clipboard2-check-fill" style="color:#a5b4fc;"></i>
+            </div>
+            <div>
+              <div class="feature-text">Quotations</div>
+              <div class="feature-sub">Convert to Invoice</div>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="feature-icon" style="background:rgba(245,158,11,0.15);">
+              <i class="bi bi-bar-chart-fill" style="color:#fcd34d;"></i>
+            </div>
+            <div>
+              <div class="feature-text">Live Reports</div>
+              <div class="feature-sub">Revenue &amp; Expenses</div>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="feature-icon" style="background:rgba(16,185,129,0.15);">
+              <i class="bi bi-qr-code-scan" style="color:#6ee7b7;"></i>
+            </div>
+            <div>
+              <div class="feature-text">UPI QR Payments</div>
+              <div class="feature-sub">Instant Scan to Pay</div>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="feature-icon" style="background:rgba(239,68,68,0.12);">
+              <i class="bi bi-people-fill" style="color:#fca5a5;"></i>
+            </div>
+            <div>
+              <div class="feature-text">Customer CRM</div>
+              <div class="feature-sub">Full contact history</div>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="feature-icon" style="background:rgba(52,211,153,0.12);">
+              <i class="bi bi-robot" style="color:#6ee7b7;"></i>
+            </div>
+            <div>
+              <div class="feature-text">AI Assistant</div>
+              <div class="feature-sub">Your business advisor</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-num">100%</div>
+            <div class="stat-label">Your Google Drive</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">₹0</div>
+            <div class="stat-label">No storage cost</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-num">∞</div>
+            <div class="stat-label">Records & Invoices</div>
+          </div>
+        </div>
       </div>
-      <p class="text-slate-600 text-[11px]">Sign in with your Google account to accept your team invitation and open the shared workspace.</p>
-    </div>
 
-    <!-- Error Alert Banner -->
-    <div id="error-alert" class="hidden p-4 bg-rose-50 border border-rose-200 rounded-2xl text-left text-xs text-rose-700 space-y-1">
-      <div class="font-bold flex items-center gap-1.5 text-rose-800">
-        <i class="bi bi-exclamation-triangle-fill"></i> Authentication Notice
+      <!-- Bottom Testimonial -->
+      <div class="left-bottom">
+        <div class="testimonial-card">
+          <div class="testi-avatar">V</div>
+          <div>
+            <div class="testi-quote">"BizSheet replaced three separate tools for our agency. Our invoices now go to clients in seconds, and everything is right there in Google Drive."</div>
+            <div class="testi-author">— Vimal Raj, Freelance Consultant</div>
+          </div>
+        </div>
       </div>
-      <p id="error-message" class="text-rose-600">Sign in error occurred.</p>
     </div>
 
-    <div class="space-y-4">
-      <button id="google-login-btn" class="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-sm transition shadow-md flex items-center justify-center gap-3 active:scale-95">
-        <svg class="w-5 h-5" viewBox="0 0 24 24">
-          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-        </svg>
-        <span>Sign in with Google</span>
-      </button>
+    <!-- ===== RIGHT PANEL ===== -->
+    <div class="right-panel">
+
+      <div class="right-top-bar">
+        <div class="right-top-bar-title">Sign in to BizSheet</div>
+        <a href="mailto:support@bizsheet.app" class="help-link"><i class="bi bi-question-circle"></i> Need help?</a>
+      </div>
+
+      <div class="login-card">
+
+        <!-- Mini brand for mobile -->
+        <div class="login-brand-mini">
+          <div class="login-brand-icon"><i class="bi bi-receipt-cutoff"></i></div>
+          <div class="login-brand-name">BizSheet</div>
+        </div>
+
+        <h1 class="login-title">Welcome back</h1>
+        <p class="login-subtitle">Sign in to access your business dashboard, invoices, and reports.</p>
+
+        <!-- Invite banner -->
+        <div id="invite-banner" class="alert-box alert-invite" style="display:none;">
+          <i class="bi bi-envelope-open-fill alert-icon"></i>
+          <div>
+            <div class="alert-title">Workspace Invitation</div>
+            Sign in with Google to accept your invitation and access the shared business workspace.
+          </div>
+        </div>
+
+        <!-- Error banner -->
+        <div id="error-alert" class="alert-box alert-error" style="display:none;">
+          <i class="bi bi-exclamation-triangle-fill alert-icon"></i>
+          <div>
+            <div class="alert-title">Authentication Notice</div>
+            <span id="error-message">An error occurred during sign in.</span>
+          </div>
+        </div>
+
+        <!-- Google Sign-in Button -->
+        <button id="google-login-btn" class="google-btn">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="divider">Secure sign-in via Google OAuth 2.0</div>
+
+        <!-- Trust badges -->
+        <div class="trust-row">
+          <div class="trust-badge"><i class="bi bi-shield-lock-fill"></i> Bank-grade SSL</div>
+          <div class="trust-badge"><i class="bi bi-google"></i> Google OAuth</div>
+          <div class="trust-badge"><i class="bi bi-database-lock-fill"></i> Your Drive</div>
+        </div>
+
+        <!-- Permissions box -->
+        <div class="permissions-box">
+          <div class="permissions-title"><i class="bi bi-info-circle-fill"></i> We use your Google account to:</div>
+          <ul class="permissions-list">
+            <li><i class="bi bi-check-circle-fill"></i> Create & access your Business Billing spreadsheet in Google Drive</li>
+            <li><i class="bi bi-check-circle-fill"></i> Send invoice & quotation emails via Gmail (with your permission)</li>
+            <li><i class="bi bi-check-circle-fill"></i> Verify your identity securely — we never store your password</li>
+          </ul>
+        </div>
+
+        <div class="login-footer">
+          <a href="/privacy.html">Privacy Policy</a><span>•</span>
+          <a href="/terms.html">Terms of Service</a><span>•</span>
+          <a href="mailto:support@bizsheet.app">Contact Support</a>
+        </div>
+
+      </div>
     </div>
 
-    <div class="pt-4 border-t border-slate-100 text-left text-xs text-slate-500 space-y-2">
-      <div class="font-bold text-slate-800">We use your Google account to:</div>
-      <ul class="space-y-1 list-disc list-inside text-slate-600">
-        <li>Create or connect your business spreadsheet (`Business Billing Data`)</li>
-        <li>Store, read, and update your business records</li>
-        <li>Switch seamlessly between your owned & team workspaces</li>
-      </ul>
-    </div>
   </div>
-
-  <footer class="mt-6 text-center text-xs text-slate-500 space-x-4">
-    <a href="/privacy.html" class="hover:text-teal-600 font-semibold transition">Privacy Policy</a>
-    <span>•</span>
-    <a href="/terms.html" class="hover:text-teal-600 font-semibold transition">Terms of Service</a>
-  </footer>
 
   <script type="module">
     import { API } from '/js/api.js';
-    import { showToast } from '/js/utils.js';
 
+    // Hide splash
+    setTimeout(() => {
+      const s = document.getElementById('splash');
+      if (s) { s.classList.add('hide'); setTimeout(() => s.remove(), 500); }
+    }, 600);
+
+    // Check URL params
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        const splash = document.getElementById('app-splash-screen');
-        if (splash) {
-          splash.classList.add('fade-out');
-          setTimeout(() => splash.remove(), 450);
-        }
-      }, 350);
-
       const params = new URLSearchParams(window.location.search);
       const inviteBiz = params.get('invite_biz');
       if (inviteBiz) {
         sessionStorage.setItem('invite_biz', inviteBiz);
-        document.getElementById('invite-banner').classList.remove('hidden');
+        document.getElementById('invite-banner').style.display = 'flex';
       }
 
       const err = params.get('error');
       if (err) {
         const box = document.getElementById('error-alert');
-        const msg = document.getElementById('error-message');
-        box.classList.remove('hidden');
-        msg.textContent = decodeURIComponent(err);
+        document.getElementById('error-message').textContent = decodeURIComponent(err);
+        box.style.display = 'flex';
       }
     });
 
+    // Google Sign-in
     document.getElementById('google-login-btn').addEventListener('click', async () => {
+      const btn = document.getElementById('google-login-btn');
+      btn.classList.add('loading');
+      btn.innerHTML = `<i class="bi bi-arrow-repeat" style="animation:spin 0.8s linear infinite;font-size:18px;"></i><span>Redirecting to Google...</span>`;
+
       try {
         const frontendCallbackUrl = window.location.origin + '/auth-callback.html';
         const res = await API.get(`/api/auth/google/url?redirect_uri=${encodeURIComponent(frontendCallbackUrl)}`);
         if (res.url) window.location.href = res.url;
       } catch (err) {
-        showToast('Google OAuth Error: ' + err.message, 'error');
+        btn.classList.remove('loading');
+        btn.innerHTML = `<svg viewBox="0 0 24 24" style="width:20px;height:20px;flex-shrink:0"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/></svg><span>Continue with Google</span>`;
+        const box = document.getElementById('error-alert');
+        document.getElementById('error-message').textContent = 'Failed to reach the sign-in server. Please try again.';
+        box.style.display = 'flex';
       }
     });
   </script>
+  <style>
+    @keyframes spin { from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+  </style>
 </body>
 </html>
