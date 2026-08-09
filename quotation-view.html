@@ -86,14 +86,11 @@
               <span class="text-slate-500">Quotation Date:</span>
               <span id="quo-date" class="font-bold text-slate-900">--</span>
             </div>
-            <div class="flex justify-between border-b border-slate-200/80 pb-1">
+            <div class="flex justify-between">
               <span class="text-slate-500">Valid Until:</span>
               <span id="quo-valid" class="font-bold text-slate-900">--</span>
             </div>
-            <div class="flex justify-between">
-              <span class="text-slate-500">Currency:</span>
-              <span id="quo-currency" class="font-mono font-bold text-teal-700">--</span>
-            </div>
+          </div>
           </div>
         </div>
 
@@ -304,7 +301,6 @@
       document.getElementById('quo-status').innerHTML = getStatusBadge(q.status || 'Draft');
       document.getElementById('quo-date').textContent = formatDate(q.quotation_date);
       document.getElementById('quo-valid').textContent = formatDate(q.valid_until);
-      document.getElementById('quo-currency').textContent = biz.currency || 'USD $';
 
       const taxVal = parseFloat(q.tax) || 0;
       const halfTax = taxVal / 2;
