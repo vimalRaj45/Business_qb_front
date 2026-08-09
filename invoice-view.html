@@ -138,19 +138,32 @@
           
           <!-- Left: Bank Details & Remittance -->
           <div class="space-y-3 text-xs">
-            <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200 space-y-2">
-              <div class="font-black text-emerald-900 uppercase text-[10px] tracking-wider flex items-center gap-1.5">
-                <i class="bi bi-bank2"></i> Bank Remittance Details:
+            <div class="bg-emerald-50/60 p-4 rounded-2xl border border-emerald-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="space-y-2 flex-1 min-w-0">
+                <div class="font-black text-emerald-900 uppercase text-[10px] tracking-wider flex items-center gap-1.5">
+                  <i class="bi bi-bank2"></i> Bank Remittance Details:
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[11px]">
+                  <div><span class="text-slate-500">Beneficiary:</span> <div id="bank-beneficiary" class="font-bold text-slate-900 truncate">--</div></div>
+                  <div><span class="text-slate-500">Account No:</span> <div id="bank-acc" class="font-mono font-extrabold text-slate-900 truncate">--</div></div>
+                  <div><span class="text-slate-500">IFSC Code:</span> <div id="bank-ifsc" class="font-mono font-bold text-slate-900 truncate">--</div></div>
+                  <div><span class="text-slate-500">Bank Name:</span> <div id="bank-name" class="font-bold text-slate-900 truncate">--</div></div>
+                </div>
+                <div class="pt-1.5 border-t border-emerald-200/80 flex items-center justify-between text-[11px]">
+                  <span class="text-slate-500 font-bold">UPI / QR ID:</span>
+                  <span id="bank-upi" class="font-mono font-black text-teal-700 bg-white px-2 py-0.5 rounded border border-teal-200">--</span>
+                </div>
               </div>
-              <div class="grid grid-cols-2 gap-2 text-[11px]">
-                <div><span class="text-slate-500">Beneficiary:</span> <div id="bank-beneficiary" class="font-bold text-slate-900">--</div></div>
-                <div><span class="text-slate-500">Account No:</span> <div id="bank-acc" class="font-mono font-extrabold text-slate-900">--</div></div>
-                <div><span class="text-slate-500">IFSC Code:</span> <div id="bank-ifsc" class="font-mono font-bold text-slate-900">--</div></div>
-                <div><span class="text-slate-500">Bank Name:</span> <div id="bank-name" class="font-bold text-slate-900">--</div></div>
-              </div>
-              <div class="pt-1.5 border-t border-emerald-200/80 flex items-center justify-between text-[11px]">
-                <span class="text-slate-500 font-bold">UPI / QR ID:</span>
-                <span id="bank-upi" class="font-mono font-black text-teal-700 bg-white px-2 py-0.5 rounded border border-teal-200">--</span>
+
+              <!-- Dynamic Payment QR Code Box -->
+              <div id="payment-qr-container" class="flex flex-col items-center justify-center p-2 bg-white rounded-xl border border-emerald-200 shrink-0 text-center space-y-1 shadow-2xs">
+                <img id="payment-qr-img" src="" alt="Scan to Pay QR" class="w-24 h-24 rounded-lg object-contain hidden" />
+                <div id="payment-qr-fallback" class="w-24 h-24 rounded-lg bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[10px] text-slate-400 text-center font-bold px-1">
+                  No UPI ID Set
+                </div>
+                <div class="text-[9px] font-black text-emerald-800 uppercase tracking-tight flex items-center gap-1">
+                  <i class="bi bi-qr-code-scan"></i> Scan to Pay
+                </div>
               </div>
             </div>
 
@@ -285,25 +298,27 @@
         return;
       }
 
-      await loadInvoice(invId);
+      await loadInvoiceDetails(invId, session.business);
       setupPaymentForm(invId);
     });
 
-    async function loadInvoice(invId) {
+    async function loadInvoiceDetails(invoiceId, userBiz = {}) {
       try {
-        const res = await API.get(`/api/invoices/${invId}`);
-        const inv = res.data;
-        if (!inv) throw new Error('Invoice not found');
+        const res = await API.get(`/api/invoices/${invoiceId}`);
+        const invoice = res.data;
+        if (!invoice) {
+          showToast('Invoice not found', 'error');
+          return;
+        }
 
-        populateInvoiceView(inv);
-
+        populateInvoiceView(invoice, userBiz);
       } catch (err) {
         showToast(err.message || 'Failed to load invoice', 'error');
       }
     }
 
-    function populateInvoiceView(inv) {
-      const biz = inv.business || {};
+    function populateInvoiceView(inv, userBiz = {}) {
+      const biz = (inv.business && inv.business.business_name) ? inv.business : userBiz;
       const cust = inv.customer || {};
       window.currentInvoiceCustomerEmail = cust.email || inv.customer_email || '';
 
@@ -317,11 +332,36 @@
       document.getElementById('biz-tax').textContent = biz.tax_number ? `GST / TAX ID: ${biz.tax_number}` : '';
       document.getElementById('sign-biz-name').textContent = `For ${biz.business_name || 'Business'}`;
 
+      const upiVpa = biz.bank_upi || '';
       document.getElementById('bank-beneficiary').textContent = biz.bank_beneficiary || biz.business_name || '--';
       document.getElementById('bank-acc').textContent = biz.bank_acc_no || '--';
       document.getElementById('bank-ifsc').textContent = biz.bank_ifsc || '--';
       document.getElementById('bank-name').textContent = biz.bank_name || '--';
-      document.getElementById('bank-upi').textContent = biz.bank_upi || '--';
+      document.getElementById('bank-upi').textContent = upiVpa || '--';
+
+      const totalVal = parseFloat(inv.total) || 0;
+      const paidVal = parseFloat(inv.paid_amount) || 0;
+      const balanceVal = parseFloat(inv.balance_due) !== undefined ? parseFloat(inv.balance_due) : (totalVal - paidVal);
+
+      // Generate Dynamic Payment QR Code for Invoice
+      const qrImg = document.getElementById('payment-qr-img');
+      const qrFallback = document.getElementById('payment-qr-fallback');
+
+      if (upiVpa && upiVpa.trim() !== '' && upiVpa !== '--') {
+        const invNum = inv.invoice_number || 'INV-00000';
+        const amountToPay = Math.max(0, balanceVal > 0 ? balanceVal : totalVal);
+        const upiUri = `upi://pay?pa=${encodeURIComponent(upiVpa.trim())}&pn=${encodeURIComponent(biz.business_name || 'Business')}&am=${encodeURIComponent(amountToPay.toFixed(2))}&cu=INR&tn=${encodeURIComponent('Payment for Invoice ' + invNum)}`;
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(upiUri)}`;
+
+        if (qrImg) {
+          qrImg.src = qrUrl;
+          qrImg.classList.remove('hidden');
+        }
+        if (qrFallback) qrFallback.classList.add('hidden');
+      } else {
+        if (qrImg) qrImg.classList.add('hidden');
+        if (qrFallback) qrFallback.classList.remove('hidden');
+      }
 
       document.getElementById('cust-name').textContent = inv.customer_name || cust.customer_name || 'Customer';
       document.getElementById('cust-company').textContent = inv.customer_company || cust.company_name || '';
