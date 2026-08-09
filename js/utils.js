@@ -286,6 +286,44 @@ showToast.info = (msg, title) => showToast(msg, 'info', title);
 window.toast = showToast;
 
 /**
+ * Uiverse.io System-wide Action Loading Overlay
+ */
+export function showActionLoading(message = 'Processing Action...') {
+  let overlay = document.getElementById('action-loading-overlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'action-loading-overlay';
+    overlay.className = 'fixed inset-0 z-[9999999] flex flex-col items-center justify-center bg-slate-900/70 backdrop-blur-md transition-all duration-300';
+    overlay.innerHTML = `
+      <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-slate-200/80 flex flex-col items-center gap-5 max-w-xs w-full text-center animate-in fade-in zoom-in duration-200">
+        <div class="uiverse-loader"></div>
+        <div class="space-y-1">
+          <h4 id="action-loading-title" class="font-extrabold text-slate-900 text-sm tracking-tight">${message}</h4>
+          <p class="text-[11px] text-slate-500 font-semibold">Updating Google Drive Ledger...</p>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  } else {
+    const titleEl = document.getElementById('action-loading-title');
+    if (titleEl) titleEl.textContent = message;
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex');
+  }
+}
+
+export function hideActionLoading() {
+  const overlay = document.getElementById('action-loading-overlay');
+  if (overlay) {
+    overlay.classList.add('hidden');
+    overlay.classList.remove('flex');
+  }
+}
+
+window.showActionLoading = showActionLoading;
+window.hideActionLoading = hideActionLoading;
+
+/**
  * Tailwind CSS Confirmation Modal Promise Dialog
  */
 export function confirmModal({

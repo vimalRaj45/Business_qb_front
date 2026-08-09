@@ -1,5 +1,5 @@
 import { BACKEND_URL } from './config.js';
-import { showToast } from './utils.js';
+import { showToast, showActionLoading, hideActionLoading } from './utils.js';
 
 export const API = {
   async request(endpoint, options = {}) {
@@ -27,6 +27,12 @@ export const API = {
       config.body = typeof payload === 'string' ? payload : JSON.stringify(payload);
     }
 
+    const isMutatingAction = config.method !== 'GET';
+    if (isMutatingAction) {
+      const actionTitle = options.loadingTitle || getActionTitle(endpoint, config.method);
+      showActionLoading(actionTitle);
+    }
+
     try {
       const response = await fetch(fullUrl, config);
       const data = await response.json();
@@ -41,6 +47,10 @@ export const API = {
     } catch (err) {
       console.error(`[API Error] ${fullUrl}:`, err);
       throw err;
+    } finally {
+      if (isMutatingAction) {
+        hideActionLoading();
+      }
     }
   },
 
@@ -60,3 +70,17 @@ export const API = {
     return this.request(endpoint, { ...options, method: 'DELETE' });
   }
 };
+
+function getActionTitle(endpoint, method) {
+  if (endpoint.includes('customer')) return method === 'DELETE' ? 'Deleting Customer...' : 'Saving Customer...';
+  if (endpoint.includes('invoice')) return method === 'DELETE' ? 'Deleting Invoice...' : 'Generating Invoice...';
+  if (endpoint.includes('quotation')) return method === 'DELETE' ? 'Deleting Quotation...' : 'Generating Quotation...';
+  if (endpoint.includes('product')) return method === 'DELETE' ? 'Deleting Item...' : 'Saving Product...';
+  if (endpoint.includes('expense')) return method === 'DELETE' ? 'Deleting Expense...' : 'Saving Expense...';
+  if (endpoint.includes('payment')) return method === 'DELETE' ? 'Removing Payment...' : 'Recording Payment...';
+  if (endpoint.includes('business')) return 'Saving Settings...';
+  if (endpoint.includes('team')) return method === 'DELETE' ? 'Revoking Access...' : 'Inviting Member...';
+  if (endpoint.includes('webhook')) return method === 'DELETE' ? 'Deleting Webhook...' : 'Saving Webhook...';
+  if (endpoint.includes('key')) return method === 'DELETE' ? 'Revoking Key...' : 'Generating Key...';
+  return 'Processing Request...';
+}

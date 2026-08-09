@@ -148,6 +148,48 @@ a, button {
   color: #ffffff;
 }
 
+/* ==========================================================================
+   UIVERSE.IO MORPHING LOADER & SYSTEM-WIDE ACTION OVERLAY
+   ========================================================================== */
+
+.uiverse-loader {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 7px solid transparent;
+  border-top: 7px solid #0d9488;
+  border-right: 7px solid #6366f1;
+  border-bottom: 7px solid #10b981;
+  border-left: 7px solid #f59e0b;
+
+  animation:
+    rotate-color 2s linear infinite,
+    morph 2s ease-in-out infinite;
+}
+
+@keyframes rotate-color {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes morph {
+  0%,
+  100% {
+    border-radius: 50%;
+    width: 70px;
+    height: 70px;
+  }
+  50% {
+    border-radius: 12%;
+    width: 85px;
+    height: 85px;
+  }
+}
+
 /* Status Badges */
 .badge-status {
   padding: 0.25rem 0.65rem;
