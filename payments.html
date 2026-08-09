@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Payments - Business Billing Platform</title>
+  <title>Payments Received - Business Billing Platform</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <link rel="stylesheet" href="/css/app.css" />
 </head>
 <body class="bg-slate-50 min-h-screen flex text-slate-900">
@@ -16,36 +17,44 @@
   <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
     <div id="header-container"></div>
 
-    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
+    <main class="p-4 md:p-6 space-y-6 max-w-7xl w-full mx-auto pb-28 md:pb-8">
       
-      <div id="payments-table-card" class="card-premium p-5 space-y-4">
-        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-100 pb-3">
-          <h3 class="font-bold text-slate-800 text-sm">Received Payments Log</h3>
-
-          <div class="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-between sm:justify-end">
-            <button id="export-pay-csv-btn" class="flex-1 sm:flex-none px-2.5 sm:px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap">
-              <i class="bi bi-filetype-csv text-emerald-600 text-xs sm:text-sm"></i> Export CSV
-            </button>
-            <button id="export-pay-pdf-btn" class="flex-1 sm:flex-none px-2.5 sm:px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap">
-              <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-xs sm:text-sm"></i> Export PDF
-            </button>
-          </div>
+      <!-- Top Action Bar -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+        <div class="flex items-center gap-2 w-full sm:w-auto">
+          <input type="text" id="pay-search" placeholder="Search payment ID, invoice, customer..." class="pl-3 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-teal-500 w-full sm:w-64" />
         </div>
 
+        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+          <button id="export-pay-csv-btn" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-filetype-csv text-emerald-600 text-sm"></i> Export CSV
+          </button>
+          <button id="export-pay-pdf-btn" class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+            <i class="bi bi-file-earmark-pdf-fill text-rose-500 text-sm"></i> Export PDF
+          </button>
+          <a href="/invoices.html" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition">
+            <i class="bi bi-plus-circle-fill"></i> Record Invoice Payment
+          </a>
+        </div>
+      </div>
+
+      <!-- Payments Table Card -->
+      <div id="payments-table-card" class="card-premium overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
               <tr>
-                <th class="py-3 px-4">Payment ID</th>
-                <th class="py-3 px-4">Date</th>
-                <th class="py-3 px-4">Customer</th>
-                <th class="py-3 px-4">Invoice #</th>
-                <th class="py-3 px-4">Payment Method</th>
-                <th class="py-3 px-4 text-right">Amount</th>
+                <th class="py-3.5 px-4">Payment ID</th>
+                <th class="py-3.5 px-4">Date</th>
+                <th class="py-3.5 px-4">Customer</th>
+                <th class="py-3.5 px-4">Invoice #</th>
+                <th class="py-3.5 px-4">Payment Method</th>
+                <th class="py-3.5 px-4 text-right">Amount Paid</th>
+                <th class="py-3.5 px-4 text-right no-print">Actions</th>
               </tr>
             </thead>
             <tbody id="payments-tbody">
-              <tr><td colspan="6" class="py-8 text-center text-slate-400">Loading payments...</td></tr>
+              <tr><td colspan="7" class="py-8 text-center text-slate-400">Loading payments...</td></tr>
             </tbody>
           </table>
         </div>
@@ -58,16 +67,18 @@
     import { checkAuth } from '/js/auth.js';
     import { renderLayout } from '/js/layout.js';
     import { API } from '/js/api.js';
-    import { formatCurrency, formatDate, exportToCSV, exportTableToPDF } from '/js/utils.js';
+    import { formatCurrency, formatDate, showToast, confirmModal, exportToCSV, exportTableToPDF } from '/js/utils.js';
 
     let allPayments = [];
+    let activeCurrency = 'USD $';
 
     document.addEventListener('DOMContentLoaded', async () => {
       const auth = await checkAuth();
       if (!auth) return;
 
       renderLayout(auth.business, auth.user);
-      loadPayments(auth.business.currency);
+      activeCurrency = auth.business.currency || 'USD $';
+      await loadPayments(activeCurrency);
 
       document.getElementById('export-pay-csv-btn')?.addEventListener('click', () => {
         exportToCSV(allPayments, 'payments_log.csv');
@@ -75,33 +86,73 @@
       document.getElementById('export-pay-pdf-btn')?.addEventListener('click', () => {
         exportTableToPDF('payments-table-card', 'payments_log.pdf');
       });
+
+      document.getElementById('pay-search')?.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        const filtered = allPayments.filter(p => 
+          (p.payment_id || '').toLowerCase().includes(q) ||
+          (p.customer_name || '').toLowerCase().includes(q) ||
+          (p.invoice_number || '').toLowerCase().includes(q)
+        );
+        renderTable(filtered, activeCurrency);
+      });
     });
 
     async function loadPayments(currency) {
       try {
         const res = await API.get('/api/payments');
         allPayments = res.data || [];
-        const tbody = document.getElementById('payments-tbody');
-
-        if (!allPayments.length) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No payment logs found yet.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = allPayments.map(p => `
-          <tr class="border-b border-slate-100 hover:bg-slate-50/60">
-            <td class="py-3 px-4 font-mono font-bold text-slate-900">${p.payment_id || '-'}</td>
-            <td class="py-3 px-4 text-slate-600">${formatDate(p.payment_date)}</td>
-            <td class="py-3 px-4 font-semibold text-slate-800">${p.customer_name || 'Customer'}</td>
-            <td class="py-3 px-4 font-mono text-teal-600 font-bold">${p.invoice_number || '-'}</td>
-            <td class="py-3 px-4 text-slate-600">${p.payment_method || 'Other'}</td>
-            <td class="py-3 px-4 text-right font-extrabold text-emerald-600">${formatCurrency(p.amount, currency)}</td>
-          </tr>
-        `).join('');
+        renderTable(allPayments, currency);
       } catch (err) {
         console.error('Error loading payments:', err);
       }
     }
+
+    function renderTable(payments, currency) {
+      const tbody = document.getElementById('payments-tbody');
+      if (!tbody) return;
+
+      if (!payments.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">No payment logs found yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = payments.map(p => `
+        <tr class="border-b border-slate-100 hover:bg-slate-50/60">
+          <td class="py-3 px-4 font-mono font-bold text-slate-900">${p.payment_id || '-'}</td>
+          <td class="py-3 px-4 text-slate-600">${formatDate(p.payment_date)}</td>
+          <td class="py-3 px-4 font-semibold text-slate-800">${p.customer_name || 'Customer'}</td>
+          <td class="py-3 px-4 font-mono text-teal-600 font-bold">${p.invoice_number || '-'}</td>
+          <td class="py-3 px-4 text-slate-600">${p.payment_method || 'Other'}</td>
+          <td class="py-3 px-4 text-right font-extrabold text-emerald-600">${formatCurrency(p.amount, currency)}</td>
+          <td class="py-3 px-4 text-right no-print">
+            <button onclick="window.deletePayment('${p.payment_id}')" class="owner-only px-2 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[11px] font-semibold" title="Delete Payment">
+              <i class="bi bi-trash-fill"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    window.deletePayment = async function(paymentId) {
+      const confirmed = await confirmModal({
+        title: 'Delete Payment Log?',
+        message: 'Are you sure you want to delete this payment record?',
+        confirmText: 'Yes, Delete',
+        cancelText: 'Cancel',
+        type: 'danger'
+      });
+
+      if (!confirmed) return;
+
+      try {
+        await API.delete(`/api/payments/${paymentId}`);
+        showToast('Payment log deleted successfully', 'success');
+        setTimeout(() => window.location.reload(), 400);
+      } catch (err) {
+        showToast('Failed to delete payment log: ' + err.message, 'error');
+      }
+    };
   </script>
 </body>
 </html>

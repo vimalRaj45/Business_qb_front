@@ -1,30 +1,21 @@
 import { checkAuth } from './auth.js';
 import { renderLayout } from './layout.js';
 import { API } from './api.js';
-import { formatCurrency, formatDate, getStatusBadge, showToast, confirmModal, exportToCSV, exportTableToPDF } from './utils.js';
+import { formatCurrency, formatDate, getStatusBadge, showToast, confirmModal, exportToCSV, exportToPDF } from './utils.js';
 
 let allQuotations = [];
-let currencySymbol = 'USD $';
+let currencySymbol = '₹';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const auth = await checkAuth();
-  if (!auth) return;
+  const session = await checkAuth();
+  if (!session) return;
 
-  currencySymbol = auth.business.currency || 'USD $';
-  renderLayout(auth.business, auth.user);
-  loadQuotations();
+  renderLayout(session.business, session.user);
+  currencySymbol = session.business.currency ? session.business.currency.split(' ')[1] || session.business.currency : '₹';
 
-  document.getElementById('quo-search')?.addEventListener('input', applyFilters);
-  document.getElementById('quo-status-filter')?.addEventListener('change', applyFilters);
+  await loadQuotations();
+  setupEventListeners();
 });
-
-window.exportQuotationsCSV = function() {
-  exportToCSV(allQuotations, 'quotations_list.csv');
-};
-
-window.exportQuotationsPDF = function() {
-  exportTableToPDF('quotations-table-card', 'quotations_list.pdf');
-};
 
 async function loadQuotations() {
   try {
@@ -32,19 +23,27 @@ async function loadQuotations() {
     allQuotations = res.data || [];
     renderTable(allQuotations);
   } catch (err) {
-    console.error('Failed to load quotations:', err);
+    showToast('Failed to load quotations: ' + err.message, 'error');
   }
 }
 
-function applyFilters() {
-  const searchVal = document.getElementById('quo-search').value.toLowerCase();
-  const statusVal = document.getElementById('quo-status-filter').value;
+function setupEventListeners() {
+  const searchInput = document.getElementById('quo-search');
+  const statusFilter = document.getElementById('quo-status-filter');
+
+  if (searchInput) searchInput.addEventListener('input', filterQuotations);
+  if (statusFilter) statusFilter.addEventListener('change', filterQuotations);
+}
+
+function filterQuotations() {
+  const search = document.getElementById('quo-search')?.value.toLowerCase().trim() || '';
+  const status = document.getElementById('quo-status-filter')?.value || '';
 
   const filtered = allQuotations.filter(q => {
-    const matchesSearch = (q.quotation_number && q.quotation_number.toLowerCase().includes(searchVal)) ||
-                          (q.customer_name && q.customer_name.toLowerCase().includes(searchVal));
-    const matchesStatus = !statusVal || q.status === statusVal;
-    return matchesSearch && matchesStatus;
+    const matchSearch = (q.quotation_number || '').toLowerCase().includes(search) || 
+                        (q.customer_name || '').toLowerCase().includes(search);
+    const matchStatus = !status || q.status === status;
+    return matchSearch && matchStatus;
   });
 
   renderTable(filtered);
@@ -52,6 +51,8 @@ function applyFilters() {
 
 function renderTable(quotations) {
   const tbody = document.getElementById('quotations-tbody');
+  if (!tbody) return;
+
   if (!quotations.length) {
     tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">No quotations found. Click "Create New Quotation" above.</td></tr>`;
     return;
@@ -67,11 +68,14 @@ function renderTable(quotations) {
       <td class="py-3.5 px-4 text-slate-600">${formatDate(q.valid_until)}</td>
       <td class="py-3.5 px-4">${getStatusBadge(q.status)}</td>
       <td class="py-3.5 px-4 text-right font-extrabold text-slate-900">${formatCurrency(q.total, currencySymbol)}</td>
-      <td class="py-3.5 px-4 text-right space-x-2 no-print">
+      <td class="py-3.5 px-4 text-right space-x-1.5 no-print">
         <a href="/quotation-view.html?id=${q.quotation_id}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-semibold">View</a>
         ${q.status !== 'Converted' ? `
-          <button onclick="window.convertToInvoice('${q.quotation_id}')" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold">Convert → Invoice</button>
+          <button onclick="window.convertToInvoice('${q.quotation_id}')" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold">Convert</button>
         ` : ''}
+        <button onclick="window.deleteQuotation('${q.quotation_id}')" class="owner-only px-2 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[11px] font-semibold" title="Delete Quotation">
+          <i class="bi bi-trash-fill"></i>
+        </button>
       </td>
     </tr>
   `).join('');
@@ -98,3 +102,26 @@ window.convertToInvoice = async function(quotationId) {
     showToast(err.message, 'error');
   }
 };
+
+window.deleteQuotation = async function(quotationId) {
+  const confirmed = await confirmModal({
+    title: 'Delete Quotation?',
+    message: 'Are you sure you want to delete this quotation? This action cannot be undone.',
+    confirmText: 'Yes, Delete',
+    cancelText: 'Cancel',
+    type: 'danger'
+  });
+
+  if (!confirmed) return;
+
+  try {
+    await API.delete(`/api/quotations/${quotationId}`);
+    showToast('Quotation deleted successfully', 'success');
+    setTimeout(() => window.location.reload(), 400);
+  } catch (err) {
+    showToast('Failed to delete quotation: ' + err.message, 'error');
+  }
+};
+
+window.exportQuotationsCSV = () => exportToCSV(allQuotations, 'Quotations_Export');
+window.exportQuotationsPDF = () => exportToPDF('quotations-table-card', 'Quotations_Report');

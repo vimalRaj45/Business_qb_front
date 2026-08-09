@@ -156,6 +156,7 @@ function setupEventListeners() {
       try {
         showToast('Deleting business spreadsheet & account...', 'info');
         await API.delete('/api/business');
+        localStorage.removeItem('session_token');
         showToast('Account deleted successfully', 'success');
         setTimeout(() => {
           window.location.href = '/login.html';
