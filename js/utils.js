@@ -208,9 +208,12 @@ export function exportTableToPDF(elementOrId, filename = 'document.pdf', orienta
   }
 }
 
+export const exportToPDF = exportTableToPDF;
+
 window.exportToCSV = exportToCSV;
 window.exportToJSON = exportToJSON;
 window.exportTableToPDF = exportTableToPDF;
+window.exportToPDF = exportTableToPDF;
 
 /**
  * React-Hot-Toast Official Bottom-Right Floating Notifications System
