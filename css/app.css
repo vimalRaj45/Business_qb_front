@@ -98,123 +98,111 @@ a, button {
   background: linear-gradient(90deg, #0d9488, #10b981, #0d9488);
   background-size: 200% 100%;
   border-radius: 999px;
-  animation: splashFill 1.4s infinite ease-in-out;
+  animation: splashProgress 1.4s infinite ease-in-out;
 }
 
-@keyframes splashFill {
+@keyframes splashProgress {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(200%); }
 }
 
-/* Premium Card Utilities */
+/* Base Card Style */
 .card-premium {
   background: #ffffff;
   border: 1px solid var(--border-subtle);
   border-radius: 1.25rem;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
-  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.card-premium:hover {
-  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+.card-premium-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -5px rgba(15, 23, 42, 0.06), 0 4px 6px -2px rgba(15, 23, 42, 0.03);
 }
 
-/* Custom Scrollbars */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f5f9;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
-}
-
-/* Sidebar Navigation Styling */
+/* Sidebar Custom Links */
 .nav-link {
   display: flex;
-  align-items: center;
+  items-center: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.875rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 0.85rem;
   color: var(--text-secondary);
   font-weight: 600;
-  font-size: 0.875rem;
-  text-decoration: none;
-  transition: all 0.15s ease-in-out;
+  font-size: 0.8125rem;
+  transition: all 0.15s ease;
 }
 
 .nav-link:hover {
-  background-color: #f1f5f9;
+  background: #f1f5f9;
   color: var(--text-primary);
 }
 
 .nav-link.active {
-  background-color: var(--accent-light);
-  color: var(--accent-primary);
-  border: 1px solid rgba(13, 148, 136, 0.2);
+  background: var(--accent-primary);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
 }
 
-.nav-link i {
-  font-size: 1.1rem;
+.nav-link.active i {
+  color: #ffffff;
 }
 
-/* Mobile Drawer Backdrop */
-#mobile-drawer-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 99998;
-  opacity: 0;
-  visibility: hidden;
-  transition: all 0.3s ease;
+/* Status Badges */
+.badge-status {
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-#mobile-drawer-backdrop.active {
-  opacity: 1;
-  visibility: visible;
+.badge-paid {
+  background-color: #ecfdf5;
+  color: #047857;
+  border: 1px solid #a7f3d0;
 }
 
-#mobile-sidebar-drawer {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  width: 17.5rem;
-  background: #ffffff;
-  z-index: 99999;
-  transform: translateX(-100%);
-  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+.badge-partially-paid {
+  background-color: #fffbeb;
+  color: #b45309;
+  border: 1px solid #fde68a;
 }
 
-#mobile-sidebar-drawer.active {
-  transform: translateX(0);
+.badge-unpaid {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
-/* Mobile Fixed Bottom Navigation Bar */
+.badge-overdue {
+  background-color: #7f1d1d;
+  color: #ffffff;
+}
+
+.badge-converted {
+  background-color: #f3e8ff;
+  color: #6b21a8;
+  border: 1px solid #e9d5ff;
+}
+
+/* Mobile Bottom Navigation Bar */
 .mobile-bottom-nav {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
   height: 4rem;
-  background: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(16px);
-  border-top: 1px solid var(--border-subtle);
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  z-index: 9999;
+  z-index: 50;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
@@ -223,13 +211,11 @@ a, button {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: #64748b;
+  font-size: 0.6875rem;
+  font-weight: 700;
   gap: 0.15rem;
-  color: var(--text-secondary);
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.15s ease;
-  flex: 1;
+  width: 20%;
   height: 100%;
 }
 
@@ -238,223 +224,85 @@ a, button {
 }
 
 .mobile-nav-item.active {
-  color: var(--accent-primary);
-  font-weight: 800;
+  color: #0d9488;
 }
 
-/* ==========================================================================
-   GLOBAL MOBILE RESPONSIVE OPTIMIZATIONS ACROSS ALL PAGES
-   ========================================================================== */
-
-@media (max-width: 767px) {
-  html, body {
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-  }
-
-  .flex-1.md\:pl-64 {
-    width: 100% !important;
-    max-width: 100vw !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Main content container bounds */
-  main {
-    width: 100% !important;
-    max-width: 100vw !important;
-    box-sizing: border-box !important;
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-    padding-bottom: 7.5rem !important;
-  }
-
-  /* Grid layouts fallback to single column on mobile */
-  .grid {
-    grid-template-columns: minmax(0, 1fr) !important;
-  }
-
-  /* Card Containers & Printable Document Responsiveness */
-  .card-premium,
-  .printable-document {
-    padding: 1rem !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-  /* Make data tables horizontally touch-scrollable without expanding viewport width */
-  .overflow-x-auto {
-    display: block !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  /* Ensure table elements have reasonable minimum width for horizontal scroll */
-  table {
-    min-width: 580px;
-  }
-
-  /* Prevent auto-zoom on iOS Safari on input focus */
-  input[type="text"],
-  input[type="email"],
-  input[type="number"],
-  input[type="date"],
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
-
-  /* Action Bar & Button Wrappers across all pages */
-  .flex-wrap {
-    width: 100% !important;
-  }
-
-  /* Universal button whitespace and font auto-scaling on mobile */
-  button,
-  a[class*="px-"] {
-    white-space: nowrap !important;
-  }
-
-  /* Universal Modal Overlay Z-Index & Mobile Viewport Padding */
-  div[id*="modal"],
-  .modal-container {
-    z-index: 100000 !important;
-    padding-top: 1rem !important;
-    padding-bottom: 5.5rem !important;
-    padding-left: 0.75rem !important;
-    padding-right: 0.75rem !important;
-    align-items: flex-start !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-
-  /* Inner Modal Dialog Box Responsiveness */
-  div[id*="modal"] > div,
-  .modal-container > div {
-    width: 100% !important;
-    max-width: 100% !important;
-    max-height: calc(100vh - 7rem) !important;
-    overflow-y: auto !important;
-    margin-top: 0.5rem !important;
-    margin-bottom: 1.5rem !important;
-    padding: 1rem 1rem 1.25rem 1rem !important;
-    border-radius: 1.25rem !important;
-    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4) !important;
-  }
-
-  /* Ensure Modal Footer (Submit & Cancel Buttons) Stays Sticky & Pinned Above Nav Bar */
-  div[id*="modal"] form > div:last-child,
-  .modal-footer {
-    position: sticky !important;
-    bottom: 0 !important;
-    background: #ffffff !important;
-    padding-top: 0.75rem !important;
-    padding-bottom: 0.5rem !important;
-    margin-top: 0.5rem !important;
-    border-top: 1px solid #f1f5f9 !important;
-    z-index: 30 !important;
-  }
+/* Mobile Drawer Overlay */
+#mobile-drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 40;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
 }
 
-
-/* Printable & PDF Export Page Break Guards */
-.printable-document {
-  page-break-inside: avoid !important;
-  break-inside: avoid !important;
-  box-sizing: border-box !important;
+#mobile-drawer-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.printable-document tr,
-.printable-document div,
-.printable-document table {
-  page-break-inside: avoid;
-  break-inside: avoid;
+#mobile-sidebar-drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 16rem;
+  background: #ffffff;
+  z-index: 45;
+  transform: translateX(-100%);
+  transition: transform 0.25s ease;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
 }
 
-@media print {
-  @page {
-    margin: 0.3in;
-    size: portrait;
-  }
-  body {
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-  .no-print {
-    display: none !important;
-  }
-  .printable-document {
-    border: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
-  }
+#mobile-sidebar-drawer.active {
+  transform: translateX(0);
 }
 
-/* ==========================================================================
-   REACT-HOT-TOAST OFFICIAL BOTTOM-RIGHT PILL NOTIFICATION SYSTEM
-   ========================================================================== */
-
+/* React Hot Toast Custom Floating Container */
 #toast-container {
   position: fixed;
   bottom: 1.5rem;
   right: 1.5rem;
-  z-index: 999999;
+  z-index: 99999;
   display: flex;
-  flex-direction: column-reverse;
-  gap: 0.625rem;
-  max-width: 22rem;
-  width: calc(100vw - 3rem);
+  flex-direction: column;
+  gap: 0.5rem;
   pointer-events: none;
-}
-
-@media (max-width: 639px) {
-  #toast-container {
-    bottom: 5.25rem;
-    right: 1rem;
-    left: 1rem;
-    width: calc(100vw - 2rem);
-    max-width: none;
-  }
 }
 
 .react-hot-toast-pill {
   pointer-events: auto;
+  min-width: 280px;
+  max-width: 380px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
   display: flex;
   align-items: center;
-  gap: 0.625rem;
-  padding: 0.625rem 0.875rem 0.625rem 0.75rem;
-  background: #ffffff;
-  color: #1e293b;
-  border-radius: 9999px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.05);
-  transform: translateY(20px) scale(0.95);
+  gap: 0.75rem;
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
   opacity: 0;
-  transition: all 0.25s cubic-bezier(0.21, 1.02, 0.73, 1);
-  font-family: var(--font-family);
+  transform: translateY(12px) scale(0.95);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .react-hot-toast-pill.show {
-  transform: translateY(0) scale(1);
   opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
 .rht-icon {
-  width: 1.375rem;
-  height: 1.375rem;
+  width: 1.75rem;
+  height: 1.75rem;
   border-radius: 9999px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 900;
+  font-size: 0.9rem;
   flex-shrink: 0;
 }
 
@@ -465,9 +313,9 @@ a, button {
 }
 
 .rht-icon-error {
-  background-color: #f43f5e;
+  background-color: #ef4444;
   color: #ffffff;
-  box-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.3);
 }
 
 .rht-icon-warning {
@@ -524,10 +372,7 @@ a, button {
   background-color: #f1f5f9;
 }
 
-/* ==========================================================================
-   AI CHATBOT MOBILE RESPONSIVE OPTIMIZATIONS
-   ========================================================================== */
-
+/* AI Chatbot Mobile Responsive Optimizations */
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -558,3 +403,80 @@ a, button {
   }
 }
 
+/* ==========================================================================
+   PERFECT SINGLE PAGE A4 PRINT & PDF STYLING FOR INVOICES & QUOTATIONS
+   ========================================================================== */
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 5mm 8mm;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 11px !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Hide header, sidebar, navigation, floating buttons, chatbot */
+  .no-print,
+  header,
+  aside,
+  #sidebar-container,
+  #header-container,
+  #ai-chatbot-floating-btn,
+  #ai-chatbot-drawer,
+  .mobile-bottom-nav,
+  #app-splash-screen {
+    display: none !important;
+    visibility: hidden !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  #quotation-printable-card,
+  #invoice-printable-card {
+    border: none !important;
+    box-shadow: none !important;
+    padding: 10px 14px !important;
+    margin: 0 auto !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Compact header */
+  #quotation-printable-card > div:first-child,
+  #invoice-printable-card > div:first-child {
+    padding-bottom: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* Compact grid paddings */
+  .grid {
+    gap: 10px !important;
+  }
+
+  /* Compact table padding */
+  table th,
+  table td {
+    padding: 4px 6px !important;
+    font-size: 10px !important;
+  }
+
+  /* Prevent extra empty page breaks */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+  }
+}

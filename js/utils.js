@@ -191,12 +191,12 @@ export function exportTableToPDF(elementOrId, filename = 'document.pdf', orienta
 
   function doExport() {
     const opt = {
-      margin:       [0.25, 0.25, 0.25, 0.25],
+      margin:       [0.15, 0.15, 0.15, 0.15],
       filename:     filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
       html2canvas:  { scale: 2, useCORS: true, logging: false, scrollY: 0 },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: orientation },
-      pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+      jsPDF:        { unit: 'in', format: 'a4', orientation: orientation },
+      pagebreak:    { mode: ['avoid-all'] }
     };
 
     showToast('Generating high-resolution PDF document...', 'info');
