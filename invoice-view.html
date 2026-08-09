@@ -373,11 +373,6 @@
       document.getElementById('inv-date').textContent = formatDate(inv.invoice_date);
       document.getElementById('inv-due').textContent = formatDate(inv.due_date);
       document.getElementById('inv-quo-ref').textContent = inv.quotation_id ? `QUO #${inv.quotation_id.slice(-5)}` : 'Direct Invoice';
-      document.getElementById('inv-currency').textContent = biz.currency || 'USD $';
-
-      const totalVal = parseFloat(inv.total) || 0;
-      const paidVal = parseFloat(inv.paid_amount) || 0;
-      const balanceVal = parseFloat(inv.balance_due) || (totalVal - paidVal);
       const taxVal = parseFloat(inv.tax) || 0;
       const halfTax = taxVal / 2;
 
