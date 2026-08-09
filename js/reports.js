@@ -13,6 +13,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   currencySymbol = auth.business.currency || 'USD $';
   renderLayout(auth.business, auth.user);
+  
+  if (document.getElementById('rep-biz-name')) {
+    document.getElementById('rep-biz-name').textContent = auth.business.business_name || 'My Business';
+  }
+  if (document.getElementById('rep-date')) {
+    document.getElementById('rep-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
   loadReports();
 
   document.getElementById('export-rep-pdf-btn')?.addEventListener('click', () => {

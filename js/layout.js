@@ -276,8 +276,8 @@ function injectChatbotWidget() {
   root.className = 'no-print';
 
   root.innerHTML = `
-    <button id="chatbot-toggle-btn" aria-label="Toggle AI Assistant" class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[99998] w-13 h-13 sm:w-14 sm:h-14 bg-slate-900 hover:bg-black text-white rounded-full shadow-2xl border border-slate-700/80 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all duration-300 group">
-      <i class="bi bi-stars text-xl sm:text-2xl text-white group-hover:rotate-12 transition-all duration-300"></i>
+    <button id="chatbot-toggle-btn" aria-label="Toggle AI Assistant" class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[99998] w-14 h-14 sm:w-16 sm:h-16 bg-slate-900 hover:bg-black text-white rounded-full shadow-2xl border-2 border-slate-700/80 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 group">
+      <i class="bi bi-stars text-2xl sm:text-3xl text-amber-400 group-hover:rotate-12 transition-all duration-300"></i>
       <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
         <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-slate-900"></span>

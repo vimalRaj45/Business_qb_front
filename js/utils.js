@@ -7,6 +7,62 @@ export function formatCurrency(amount, currency = 'USD $') {
   return `${currency} ${val.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
+export function numberToWords(amount, currencySymbol = 'INR ₹') {
+  const num = Math.abs(parseFloat(amount) || 0);
+  const integerPart = Math.floor(num);
+  const decimalPart = Math.round((num - integerPart) * 100);
+
+  const units = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 
+    'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+  const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+  function convertChunk(n) {
+    if (n === 0) return '';
+    if (n < 20) return units[n];
+    if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + units[n % 10] : '');
+    return units[Math.floor(n / 100)] + ' Hundred' + (n % 100 !== 0 ? ' ' + convertChunk(n % 100) : '');
+  }
+
+  function inWords(n) {
+    if (n === 0) return 'Zero';
+    let str = '';
+    const crore = Math.floor(n / 10000000);
+    n %= 10000000;
+    const lakh = Math.floor(n / 100000);
+    n %= 100000;
+    const thousand = Math.floor(n / 1000);
+    n %= 1000;
+
+    if (crore > 0) str += convertChunk(crore) + ' Crore ';
+    if (lakh > 0) str += convertChunk(lakh) + ' Lakh ';
+    if (thousand > 0) str += convertChunk(thousand) + ' Thousand ';
+    if (n > 0) str += convertChunk(n);
+
+    return str.trim();
+  }
+
+  const intWords = inWords(integerPart);
+  let mainCurrency = 'Rupees';
+  let subCurrency = 'Paise';
+
+  if (currencySymbol.includes('USD') || currencySymbol.includes('$')) {
+    mainCurrency = 'Dollars';
+    subCurrency = 'Cents';
+  } else if (currencySymbol.includes('EUR') || currencySymbol.includes('€')) {
+    mainCurrency = 'Euros';
+    subCurrency = 'Cents';
+  } else if (currencySymbol.includes('GBP') || currencySymbol.includes('£')) {
+    mainCurrency = 'Pounds';
+    subCurrency = 'Pence';
+  }
+
+  let result = `${intWords} ${mainCurrency}`;
+  if (decimalPart > 0) {
+    result += ` and ${convertChunk(decimalPart)} ${subCurrency}`;
+  }
+  return result + ' Only';
+}
+
 export function formatDate(dateString) {
   if (!dateString) return '-';
   const d = new Date(dateString);
@@ -156,7 +212,7 @@ window.exportToJSON = exportToJSON;
 window.exportTableToPDF = exportTableToPDF;
 
 /**
- * React-Hot-Toast Style Floating Notifications
+ * React-Hot-Toast Official Bottom-Right Floating Notifications System
  */
 export function showToast(message, type = 'info', title = '') {
   let container = document.getElementById('toast-container');
@@ -167,24 +223,37 @@ export function showToast(message, type = 'info', title = '') {
   }
 
   const toast = document.createElement('div');
-  toast.className = `react-hot-toast ${type}`;
+  toast.className = `react-hot-toast-pill ${type}`;
 
-  let iconHtml = '<i class="bi bi-info-circle-fill text-blue-400 text-lg shrink-0"></i>';
+  let iconHtml = `
+    <div class="rht-icon rht-icon-info">
+      <i class="bi bi-info-circle-fill"></i>
+    </div>`;
+
   if (type === 'success') {
-    iconHtml = '<div class="w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-sm font-black shrink-0"><i class="bi bi-check-lg"></i></div>';
+    iconHtml = `
+      <div class="rht-icon rht-icon-success">
+        <i class="bi bi-check-lg"></i>
+      </div>`;
   } else if (type === 'error') {
-    iconHtml = '<div class="w-6 h-6 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-sm font-black shrink-0"><i class="bi bi-exclamation-triangle-fill"></i></div>';
+    iconHtml = `
+      <div class="rht-icon rht-icon-error">
+        <i class="bi bi-x-lg"></i>
+      </div>`;
   } else if (type === 'warning') {
-    iconHtml = '<div class="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center text-sm font-black shrink-0"><i class="bi bi-exclamation-circle-fill"></i></div>';
+    iconHtml = `
+      <div class="rht-icon rht-icon-warning">
+        <i class="bi bi-exclamation-lg"></i>
+      </div>`;
   }
 
   toast.innerHTML = `
     ${iconHtml}
-    <div class="flex-1 overflow-hidden pr-2">
-      ${title ? `<div class="font-bold text-xs leading-tight text-white">${title}</div>` : ''}
-      <div class="text-xs font-medium text-slate-200 leading-snug break-words">${message}</div>
+    <div class="rht-content">
+      ${title ? `<div class="rht-title">${escapeHtml(title)}</div>` : ''}
+      <div class="rht-message">${escapeHtml(message)}</div>
     </div>
-    <button class="text-slate-400 hover:text-white text-xs pl-1 text-base transition focus:outline-none" onclick="this.parentElement.remove()">
+    <button class="rht-close-btn" aria-label="Close Toast" onclick="this.closest('.react-hot-toast-pill').remove()">
       <i class="bi bi-x"></i>
     </button>
   `;
@@ -197,9 +266,15 @@ export function showToast(message, type = 'info', title = '') {
 
   setTimeout(() => {
     toast.classList.remove('show');
-    setTimeout(() => toast.remove(), 350);
-  }, 3800);
+    setTimeout(() => toast.remove(), 250);
+  }, 4000);
 }
+
+showToast.success = (msg, title) => showToast(msg, 'success', title);
+showToast.error = (msg, title) => showToast(msg, 'error', title);
+showToast.warning = (msg, title) => showToast(msg, 'warning', title);
+showToast.info = (msg, title) => showToast(msg, 'info', title);
+window.toast = showToast;
 
 /**
  * Tailwind CSS Confirmation Modal Promise Dialog

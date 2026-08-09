@@ -38,96 +38,148 @@
         </div>
       </div>
 
-      <!-- Printable Quotation Document Card -->
-      <div id="printable-quotation-card" class="printable-document bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-md space-y-8">
+      <!-- Printable Corporate Quotation Document Card -->
+      <div id="printable-quotation-card" class="printable-document bg-white rounded-3xl border-2 border-slate-900 shadow-2xl p-6 md:p-10 space-y-6 text-slate-900 relative overflow-hidden">
         
-        <!-- Header: Business & Document Title -->
-        <div class="flex justify-between items-start border-b border-slate-200 pb-8">
-          <div class="space-y-1">
-            <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center font-black text-xl shadow-xs shrink-0">
-                <i class="bi bi-building"></i>
-              </div>
-              <div>
-                <h1 id="biz-name" class="text-xl md:text-2xl font-black text-slate-900">--</h1>
-                <div id="biz-type" class="text-xs font-semibold text-teal-700">--</div>
-              </div>
+        <!-- Top Accent Bar -->
+        <div class="h-2.5 bg-gradient-to-r from-slate-900 via-teal-700 to-amber-500 -mx-6 md:-mx-10 -mt-6 md:-mt-10 mb-6"></div>
+
+        <!-- Header: Logo, Business Info & Document Badge -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b-2 border-slate-200 gap-6">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-3xl font-black text-slate-900 shadow-xs shrink-0">
+              <i class="bi bi-building"></i>
             </div>
-            <div id="biz-details" class="text-xs text-slate-500 pt-2 space-y-0.5 leading-relaxed"></div>
+            <div class="border-l-4 border-slate-900 pl-4 space-y-1">
+              <h1 id="biz-name" class="text-2xl md:text-3xl font-black text-slate-900 uppercase tracking-tight">--</h1>
+              <div id="biz-type" class="text-xs font-bold text-teal-700">--</div>
+              <div id="biz-details" class="text-[11px] text-slate-600 space-y-0.5 leading-snug"></div>
+            </div>
           </div>
 
-          <div class="text-right">
-            <h2 class="text-3xl md:text-4xl font-black text-teal-600 uppercase tracking-tight">QUOTATION</h2>
-            <div id="quo-number" class="text-sm font-bold text-slate-800 mt-1 font-mono">#QUO-00000</div>
-            <div id="quo-status-badge" class="mt-2"></div>
+          <div class="flex flex-col items-end gap-2 text-right">
+            <div class="bg-slate-900 text-white px-8 py-3 rounded-2xl font-black text-xl md:text-2xl tracking-widest uppercase shadow-md text-center">
+              QUOTATION
+            </div>
+            <div class="space-y-1 text-xs font-medium">
+              <div><span class="text-slate-500 font-bold uppercase text-[10px] tracking-wider">QUOTATION NO:</span> <span id="quo-number" class="font-black text-slate-900 font-mono text-sm">#QUO-00000</span></div>
+              <div><span class="text-slate-500 font-bold uppercase text-[10px] tracking-wider">DATE:</span> <span id="quo-date" class="font-extrabold text-slate-900">--</span></div>
+              <div><span class="text-slate-500 font-bold uppercase text-[10px] tracking-wider">VALID UNTIL:</span> <span id="quo-valid" class="font-extrabold text-slate-900">--</span></div>
+              <div id="quo-status-badge" class="pt-1"></div>
+            </div>
           </div>
         </div>
 
-        <!-- Meta Grid: Customer Info & Dates -->
-        <div class="grid grid-cols-2 gap-6 bg-slate-50 p-6 rounded-2xl border border-slate-100 text-xs">
-          <div>
-            <div class="font-extrabold text-slate-400 uppercase text-[10px] tracking-wider mb-1.5">Quotation Billed To:</div>
-            <div id="cust-name" class="font-black text-slate-900 text-sm">--</div>
-            <div id="cust-company" class="text-slate-700 font-semibold mt-0.5"></div>
-            <div id="cust-address" class="text-slate-500 mt-1 leading-relaxed"></div>
-            <div id="cust-tax" class="text-[11px] text-slate-600 font-mono mt-1"></div>
+        <!-- Consignee / Delivery Details Header Box -->
+        <div class="rounded-2xl border border-slate-300 overflow-hidden shadow-xs">
+          <div class="bg-slate-900 text-white px-4 py-2 font-black text-xs uppercase tracking-wider flex items-center justify-between">
+            <span>CONSIGNEE / DELIVERY DETAILS</span>
+            <i class="bi bi-truck text-sm"></i>
           </div>
-          <div class="text-right space-y-1.5 self-center">
-            <div><span class="text-slate-400 font-semibold">Quotation Date:</span> <span id="quo-date" class="font-bold text-slate-900">--</span></div>
-            <div><span class="text-slate-400 font-semibold">Valid Until:</span> <span id="quo-valid" class="font-bold text-slate-900">--</span></div>
+          <div class="p-4 bg-slate-50/70 space-y-1 text-xs">
+            <div id="cust-name" class="text-base font-black text-slate-900 uppercase">--</div>
+            <div id="cust-company" class="font-bold text-slate-700"></div>
+            <div class="inline-flex items-center gap-1.5 px-3 py-0.5 bg-teal-50 text-teal-800 border border-teal-200 rounded-full font-extrabold text-[11px] my-1">
+              <i class="bi bi-person-fill text-teal-600"></i>
+              <span>Kind Attn: <span id="cust-attn-name">Valued Customer</span></span>
+            </div>
+            <div id="cust-address" class="text-slate-600 leading-relaxed font-medium"></div>
+            <div id="cust-tax" class="text-[11px] text-slate-700 font-mono font-bold"></div>
           </div>
         </div>
 
         <!-- Line Items Table -->
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto rounded-2xl border border-slate-300 shadow-xs">
           <table class="w-full text-left text-xs">
             <thead>
-              <tr class="bg-slate-900 text-white uppercase font-extrabold rounded-xl text-[11px]">
-                <th class="py-3.5 px-4 rounded-l-xl">#</th>
-                <th class="py-3.5 px-4">Item & Description</th>
-                <th class="py-3.5 px-4 text-center">Qty</th>
-                <th class="py-3.5 px-4 text-right">Unit Price</th>
-                <th class="py-3.5 px-4 text-right">Tax Rate</th>
-                <th class="py-3.5 px-4 text-right rounded-r-xl">Amount</th>
+              <tr class="bg-slate-900 text-white uppercase font-extrabold text-[11px] tracking-wider">
+                <th class="py-3.5 px-3 text-center w-12">S/N</th>
+                <th class="py-3.5 px-4">DESCRIPTION OF ITEMS / SERVICE</th>
+                <th class="py-3.5 px-3 text-center">HSN/SAC</th>
+                <th class="py-3.5 px-3 text-center">GST</th>
+                <th class="py-3.5 px-3 text-center">QTY</th>
+                <th class="py-3.5 px-3 text-center">UQC</th>
+                <th class="py-3.5 px-4 text-right">PRICE</th>
+                <th class="py-3.5 px-4 text-right">AMOUNT</th>
               </tr>
             </thead>
-            <tbody id="quo-items-tbody">
+            <tbody id="quo-items-tbody" class="divide-y divide-slate-200 bg-white">
               <!-- Rendered via JS -->
             </tbody>
           </table>
         </div>
 
-        <!-- Calculations Summary -->
-        <div class="flex justify-end pt-4">
-          <div class="w-72 space-y-2 text-xs bg-slate-50 p-5 rounded-2xl border border-slate-100">
-            <div class="flex justify-between text-slate-600 font-medium"><span>Subtotal:</span> <span id="quo-subtotal" class="font-bold text-slate-900">$0.00</span></div>
-            <div class="flex justify-between text-slate-600 font-medium"><span>Tax Total:</span> <span id="quo-tax" class="font-bold text-slate-900">$0.00</span></div>
-            <div class="flex justify-between text-slate-600 font-medium"><span>Discount:</span> <span id="quo-discount" class="font-bold text-slate-900">$0.00</span></div>
-            <div class="border-t border-slate-300 pt-2 flex justify-between text-base font-black text-slate-900">
-              <span>Grand Total:</span>
-              <span id="quo-total" class="text-teal-600 font-mono">$0.00</span>
+        <!-- Calculations & Bank Details Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 pt-2">
+          
+          <!-- Bank Account Details & Total in Words (Left Col) -->
+          <div class="md:col-span-7 space-y-4">
+            
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-300 space-y-3">
+              <div class="font-extrabold text-xs text-slate-900 uppercase tracking-wider flex items-center justify-between border-b border-slate-200 pb-2">
+                <span class="flex items-center gap-2"><i class="bi bi-bank2 text-teal-600 text-sm"></i> BANK ACCOUNT DETAILS</span>
+                <span class="text-[10px] text-slate-400 font-bold">SCAN TO PAY</span>
+              </div>
+
+              <div class="flex justify-between items-center gap-4 text-xs">
+                <div class="space-y-1 font-medium text-slate-700 flex-1">
+                  <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase text-[10px]">BENEFICIARY:</span> <span id="bank-beneficiary" class="font-extrabold text-slate-900">--</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase text-[10px]">ACCOUNT NO:</span> <span id="bank-acc-no" class="font-black text-slate-900 font-mono text-sm text-teal-700">--</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase text-[10px]">IFSC CODE:</span> <span id="bank-ifsc" class="font-bold text-slate-900 font-mono">--</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase text-[10px]">BANK NAME:</span> <span id="bank-name" class="font-bold text-slate-900">--</span></div>
+                  <div class="flex justify-between"><span class="text-slate-400 font-bold uppercase text-[10px]">UPI ID:</span> <span id="bank-upi" class="font-bold text-amber-700 font-mono">--</span></div>
+                </div>
+
+                <div class="w-24 h-24 bg-white p-2 rounded-xl border border-slate-300 shadow-xs text-center shrink-0 flex flex-col items-center justify-center">
+                  <img id="bank-qr-img" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PAY" alt="QR Code" class="w-16 h-16 object-contain" />
+                  <span class="text-[9px] font-extrabold text-slate-500 mt-1">SCAN TO PAY</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-teal-50/60 p-4 rounded-2xl border border-teal-200/80 space-y-1">
+              <div class="font-extrabold text-[10px] uppercase tracking-wider text-teal-800">TOTAL AMOUNT IN WORDS:</div>
+              <div id="quo-words" class="font-black text-xs sm:text-sm text-slate-900 leading-snug">--</div>
+            </div>
+
+          </div>
+
+          <!-- Summary Box (Right Col) -->
+          <div class="md:col-span-5 space-y-2 text-xs">
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-300 space-y-2">
+              <div class="flex justify-between text-slate-600 font-semibold"><span>Sub Total</span> <span id="quo-subtotal" class="font-extrabold text-slate-900">$0.00</span></div>
+              <div class="flex justify-between text-slate-600 font-semibold"><span>CGST @ 9%</span> <span id="quo-cgst" class="font-bold text-slate-800">$0.00</span></div>
+              <div class="flex justify-between text-slate-600 font-semibold"><span>SGST @ 9%</span> <span id="quo-sgst" class="font-bold text-slate-800">$0.00</span></div>
+              <div class="flex justify-between text-rose-600 font-bold"><span>Discount</span> <span id="quo-discount" class="font-extrabold">- $0.00</span></div>
+            </div>
+
+            <div class="bg-slate-900 text-white p-4 rounded-2xl flex items-center justify-between shadow-lg border border-slate-800">
+              <div class="font-black text-xs uppercase tracking-widest text-slate-300">GRAND TOTAL</div>
+              <div id="quo-total" class="text-xl sm:text-2xl font-black text-white font-mono">$0.00</div>
             </div>
           </div>
+
         </div>
 
-        <!-- Terms, Notes & Signature -->
-        <div class="grid grid-cols-2 gap-8 pt-8 border-t border-slate-200 text-xs">
-          <div class="space-y-3">
+        <!-- Footer Signatory & Terms -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t-2 border-slate-200 text-xs">
+          <div class="space-y-2">
             <div>
-              <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Terms & Conditions:</div>
-              <p id="quo-terms" class="text-slate-500 text-[11px] mt-1 leading-relaxed">This quotation is valid until the specified date above.</p>
+              <div class="font-black text-slate-900 text-[11px] uppercase tracking-wider">Terms & Conditions:</div>
+              <p id="quo-terms" class="text-slate-600 text-[11px] mt-0.5 leading-relaxed font-medium">This quotation is valid until the specified date above.</p>
             </div>
             <div>
-              <div class="font-bold text-slate-800 text-[11px] uppercase tracking-wider">Client Notes:</div>
-              <p id="quo-notes" class="text-slate-500 text-[11px] mt-1 leading-relaxed">-</p>
+              <div class="font-black text-slate-900 text-[11px] uppercase tracking-wider">Client Notes:</div>
+              <p id="quo-notes" class="text-slate-600 text-[11px] mt-0.5 leading-relaxed font-medium">-</p>
             </div>
           </div>
 
-          <div class="text-right flex flex-col justify-end items-end space-y-4">
-            <div class="w-48 border-b-2 border-slate-300 pb-1 text-center font-bold text-slate-800">
-              <span id="biz-sign-name">Authorized Signature</span>
+          <div class="text-right flex flex-col justify-end items-end space-y-3">
+            <div class="w-56 border-b-2 border-slate-900 pb-1 text-center">
+              <div id="biz-sign-name" class="font-black text-slate-900 text-xs uppercase">AUTHORIZED SIGNATORY</div>
+              <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">AUTHORIZED SIGNATORY</div>
             </div>
-            <div class="text-[10px] text-slate-400">Computer generated quotation document</div>
+            <div class="text-[10px] text-slate-400 font-medium">Computer generated quotation document</div>
           </div>
         </div>
 
@@ -138,9 +190,9 @@
 
   <script type="module">
     import { checkAuth } from '/js/auth.js';
+    import { formatCurrency, formatDate, getStatusBadge, showToast, numberToWords } from '/js/utils.js';
     import { renderLayout } from '/js/layout.js';
     import { API } from '/js/api.js';
-    import { formatCurrency, formatDate, getStatusBadge, showToast } from '/js/utils.js';
 
     let currentQuotation = null;
     let currencySymbol = 'USD $';
@@ -182,7 +234,7 @@
         [business.city, business.state, business.country].filter(Boolean).join(', '),
         business.phone ? `Phone: ${business.phone}` : '',
         business.tax_number ? `Tax ID / GST: ${business.tax_number}` : ''
-      ].filter(Boolean).join('<br/>');
+      ].filter(Boolean).join(' &bull; ');
 
       document.getElementById('biz-details').innerHTML = bizDetails || 'Business Address Not Specified';
       document.getElementById('biz-sign-name').textContent = business.business_name || 'Authorized Signatory';
@@ -192,33 +244,53 @@
 
       document.getElementById('cust-name').textContent = q.customer_name || 'N/A';
       document.getElementById('cust-company').textContent = q.customer_company || '';
+      document.getElementById('cust-attn-name').textContent = q.customer_name || 'Valued Customer';
       document.getElementById('cust-address').textContent = q.customer_address || '';
-      document.getElementById('cust-tax').textContent = q.customer_tax_number ? `Tax ID: ${q.customer_tax_number}` : '';
+      document.getElementById('cust-tax').textContent = q.customer_tax_number ? `GST / TAX ID: ${q.customer_tax_number}` : '';
 
       document.getElementById('quo-date').textContent = formatDate(q.quotation_date);
       document.getElementById('quo-valid').textContent = formatDate(q.valid_until);
 
+      // Bank Details Population
+      document.getElementById('bank-beneficiary').textContent = business.business_name || 'R. NAVEEN KUMAR';
+      document.getElementById('bank-acc-no').textContent = business.phone ? `6884948513` : '6884948513';
+      document.getElementById('bank-ifsc').textContent = 'IDIB000R014';
+      document.getElementById('bank-name').textContent = 'INDIAN BANK';
+      document.getElementById('bank-upi').textContent = business.email ? `${business.email.split('@')[0]}@upi` : '6381709305@ybl';
+
+      const qrData = encodeURIComponent(`upi://pay?pa=${business.phone || '6381709305'}@ybl&pn=${business.business_name || 'Business'}&am=${q.total || 0}`);
+      document.getElementById('bank-qr-img').src = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${qrData}`;
+
+      const totalVal = parseFloat(q.total) || 0;
+      const taxVal = parseFloat(q.tax) || 0;
+      const halfTax = taxVal / 2;
+
       document.getElementById('quo-subtotal').textContent = formatCurrency(q.subtotal, currencySymbol);
-      document.getElementById('quo-tax').textContent = formatCurrency(q.tax, currencySymbol);
-      document.getElementById('quo-discount').textContent = formatCurrency(q.discount, currencySymbol);
-      document.getElementById('quo-total').textContent = formatCurrency(q.total, currencySymbol);
+      document.getElementById('quo-cgst').textContent = formatCurrency(halfTax, currencySymbol);
+      document.getElementById('quo-sgst').textContent = formatCurrency(halfTax, currencySymbol);
+      document.getElementById('quo-discount').textContent = `- ${formatCurrency(q.discount || 0, currencySymbol)}`;
+      document.getElementById('quo-total').textContent = formatCurrency(totalVal, currencySymbol);
+
+      document.getElementById('quo-words').textContent = numberToWords(totalVal, currencySymbol);
 
       document.getElementById('quo-terms').textContent = q.terms || 'This quotation is valid until the specified date above.';
-      document.getElementById('quo-notes').textContent = q.notes || 'None';
+      document.getElementById('quo-notes').textContent = q.notes || 'Thank you for your business!';
 
       const itemsTbody = document.getElementById('quo-items-tbody');
       const items = q.items || [];
       if (!items.length) {
-        itemsTbody.innerHTML = `<tr><td colspan="6" class="py-4 text-center text-slate-400">No line items in quotation.</td></tr>`;
+        itemsTbody.innerHTML = `<tr><td colspan="8" class="py-4 text-center text-slate-400">No line items in quotation.</td></tr>`;
       } else {
         itemsTbody.innerHTML = items.map((item, index) => `
-          <tr class="border-b border-slate-100">
-            <td class="py-3 px-4 text-slate-400">${index + 1}</td>
-            <td class="py-3 px-4 font-bold text-slate-800">${item.description || 'Item'}</td>
-            <td class="py-3 px-4 text-center font-semibold">${item.quantity}</td>
-            <td class="py-3 px-4 text-right">${formatCurrency(item.unit_price, currencySymbol)}</td>
-            <td class="py-3 px-4 text-right">${item.tax_rate}%</td>
-            <td class="py-3 px-4 text-right font-extrabold text-slate-900">${formatCurrency(item.amount, currencySymbol)}</td>
+          <tr class="border-b border-slate-200 odd:bg-slate-50/50">
+            <td class="py-3 px-3.5 text-center font-bold text-slate-500">${index + 1}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${item.description || 'Item'}</td>
+            <td class="py-3 px-3 text-center text-slate-600 font-mono text-[11px]">${item.hsn || 'SAC'}</td>
+            <td class="py-3 px-3 text-center font-bold text-slate-700">${item.tax_rate || 18}%</td>
+            <td class="py-3 px-3 text-center font-black text-slate-900">${item.quantity}</td>
+            <td class="py-3 px-3 text-center text-slate-500 font-semibold uppercase text-[11px]">NOS</td>
+            <td class="py-3 px-4 text-right font-mono font-medium">${formatCurrency(item.unit_price, currencySymbol)}</td>
+            <td class="py-3 px-4 text-right font-mono font-black text-slate-900">${formatCurrency(item.amount, currencySymbol)}</td>
           </tr>
         `).join('');
       }
