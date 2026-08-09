@@ -83,9 +83,10 @@
         }
       } catch (err) {
         console.error('OAuth Exchange failure:', err);
-        showToast(err.message || 'Login failed', 'error');
+        const errorMsg = err.message || 'Login failed';
+        showToast(errorMsg, 'error');
         setTimeout(() => {
-          window.location.href = `/login.html?error=${encodeURIComponent(err.message)}`;
+          window.location.href = `/login.html?error=${encodeURIComponent(errorMsg)}`;
         }, 1200);
       }
     });
