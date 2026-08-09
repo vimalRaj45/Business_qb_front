@@ -54,6 +54,57 @@
     }
     .nav-cta:hover { background: #1e293b; transform: translateY(-1px); }
 
+    /* Hamburger button */
+    .hamburger {
+      display: none;
+      flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 6px;
+      border-radius: 8px; transition: background 0.15s;
+    }
+    .hamburger:hover { background: #f1f5f9; }
+    .hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: #0f172a; border-radius: 99px;
+      transition: all 0.25s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Mobile menu drawer */
+    .mobile-menu {
+      position: fixed; top: 62px; left: 0; right: 0; z-index: 99;
+      background: white;
+      border-bottom: 1px solid #e2e8f0;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding: 1rem 1.25rem 1.25rem;
+      display: flex; flex-direction: column; gap: 0.25rem;
+      transform: translateY(-10px); opacity: 0; pointer-events: none;
+      transition: all 0.22s ease;
+    }
+    .mobile-menu.open { transform: translateY(0); opacity: 1; pointer-events: all; }
+    .mobile-menu a {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0.75rem 0.875rem;
+      font-size: 14px; font-weight: 700; color: #334155;
+      border-radius: 10px; text-decoration: none;
+      transition: all 0.15s;
+    }
+    .mobile-menu a:hover { background: #f8fafc; color: #0d9488; }
+    .mobile-menu a i { font-size: 15px; color: #0d9488; }
+    .mobile-menu .mob-cta {
+      margin-top: 0.5rem;
+      background: #0f172a; color: white;
+      justify-content: center;
+      border-radius: 11px; padding: 0.875rem;
+    }
+    .mobile-menu .mob-cta:hover { background: #1e293b; color: white; }
+    .mob-backdrop {
+      display: none; position: fixed; inset: 0; z-index: 98;
+      background: rgba(0,0,0,0.15);
+    }
+    .mob-backdrop.open { display: block; }
+
     /* ===== HERO ===== */
     .hero {
       padding: 4.5rem 1.5rem 3.5rem;
@@ -274,7 +325,9 @@
     }
     @media (max-width: 640px) {
       nav { padding: 0 1rem; }
-      .nav-link { display: none; }
+      .nav-right .nav-link { display: none; }
+      .nav-right .nav-cta { display: none; }
+      .hamburger { display: flex; }
       .hero { padding: 3rem 1rem 2.5rem; }
       .preview-body { padding: 0.875rem; }
       .stats-row { grid-template-columns: 1fr 1fr; }
@@ -295,17 +348,34 @@
 
   <!-- NAVBAR -->
   <nav>
-    <div class="nav-brand">
+    <a href="/index.html" class="nav-brand">
       <div class="nav-ic"><i class="bi bi-receipt-cutoff"></i></div>
       <span class="nav-name">BizSheet</span>
-    </div>
+    </a>
     <div class="nav-right">
       <a href="#features" class="nav-link">Features</a>
       <a href="#how" class="nav-link">How it Works</a>
       <a href="/why-us.html" class="nav-link">Why Us</a>
       <a href="/login.html" class="nav-cta"><i class="bi bi-google"></i> Sign in Free</a>
+      <!-- Hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </nav>
+
+  <!-- Mobile backdrop -->
+  <div class="mob-backdrop" id="mob-backdrop" onclick="closeMenu()"></div>
+
+  <!-- Mobile menu drawer -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#features" onclick="closeMenu()"><i class="bi bi-lightning-charge-fill"></i> Features</a>
+    <a href="#how" onclick="closeMenu()"><i class="bi bi-arrow-right-circle-fill"></i> How it Works</a>
+    <a href="/why-us.html"><i class="bi bi-trophy-fill"></i> Why Us</a>
+    <a href="/privacy.html"><i class="bi bi-shield-check-fill"></i> Privacy Policy</a>
+    <a href="/terms.html"><i class="bi bi-file-earmark-text-fill"></i> Terms of Service</a>
+    <a href="/login.html" class="mob-cta"><i class="bi bi-google"></i> Sign in Free with Google</a>
+  </div>
 
   <!-- HERO -->
   <section class="hero">
@@ -471,6 +541,23 @@
     </div>
     <div class="foot-copy">© 2026 BizSheet. All rights reserved.</div>
   </footer>
+
+  <script>
+    function closeMenu() {
+      document.getElementById('hamburger').classList.remove('open');
+      document.getElementById('mobile-menu').classList.remove('open');
+      document.getElementById('mob-backdrop').classList.remove('open');
+    }
+    document.getElementById('hamburger').addEventListener('click', function() {
+      const isOpen = this.classList.toggle('open');
+      document.getElementById('mobile-menu').classList.toggle('open', isOpen);
+      document.getElementById('mob-backdrop').classList.toggle('open', isOpen);
+    });
+    // Close on any nav link click inside mobile menu
+    document.querySelectorAll('.mobile-menu a').forEach(a => {
+      a.addEventListener('click', () => setTimeout(closeMenu, 100));
+    });
+  </script>
 
 </body>
 </html>
