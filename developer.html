@@ -3,10 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Developer Platform - Business Billing Platform</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Developer API — BizSheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
   <link rel="stylesheet" href="/css/app.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+  </style>
 </head>
 <body class="bg-slate-50 min-h-screen flex text-slate-900">
 
@@ -15,61 +27,161 @@
   <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
     <div id="header-container"></div>
 
-    <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
-      
-      <!-- Developer Sub Navigation -->
-      <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
-        <a href="/developer.html" class="px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">Overview</a>
-        <a href="/api-keys.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">API Keys</a>
-        <a href="/api-docs.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">API Documentation</a>
-        <a href="/api-usage.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Usage & Logs</a>
-        <a href="/webhooks.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Webhooks</a>
+    <main style="padding:1.5rem;max-width:1100px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
+
+      <!-- Page Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:0.875rem;">
+          <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#6366f1,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:20px;color:white;box-shadow:0 4px 14px rgba(99,102,241,0.28);">
+            <i class="bi bi-code-slash"></i>
+          </div>
+          <div>
+            <h1 style="font-size:1.25rem;font-weight:900;color:#0f172a;letter-spacing:-0.025em;">Developer API</h1>
+            <p style="font-size:12px;color:#94a3b8;font-weight:500;margin-top:1px;">REST API v1 · Build integrations with your billing data</p>
+          </div>
+        </div>
+        <button onclick="window.history.back()" style="display:inline-flex;align-items:center;gap:6px;padding:0.45rem 0.875rem;background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;font-size:12.5px;font-weight:700;color:#475569;cursor:pointer;transition:all 0.15s;font-family:inherit;">
+          <i class="bi bi-arrow-left"></i> Go Back
+        </button>
       </div>
 
-      <!-- Developer Overview Banner -->
-      <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-teal-950 p-8 rounded-3xl text-white space-y-4 shadow-xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 bg-teal-500/20 text-teal-300 text-xs font-bold rounded-full border border-teal-500/30">
+      <!-- Sub Navigation -->
+      <div style="display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap;padding-bottom:0.875rem;border-bottom:1px solid #e2e8f0;">
+        <a href="/developer.html" style="padding:0.4rem 0.875rem;background:#0f172a;color:white;border-radius:8px;font-size:12px;font-weight:700;text-decoration:none;">Overview</a>
+        <a href="/api-keys.html" style="padding:0.4rem 0.875rem;background:white;color:#475569;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">API Keys</a>
+        <a href="/api-docs.html" style="padding:0.4rem 0.875rem;background:white;color:#475569;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">Documentation</a>
+        <a href="/api-usage.html" style="padding:0.4rem 0.875rem;background:white;color:#475569;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">Usage & Logs</a>
+        <a href="/webhooks.html" style="padding:0.4rem 0.875rem;background:white;color:#475569;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;text-decoration:none;">Webhooks</a>
+      </div>
+
+      <!-- Hero Banner -->
+      <div style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#1e1b4b 100%);border-radius:18px;padding:2rem 2.25rem;color:white;box-shadow:0 8px 30px rgba(15,23,42,0.18);">
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 11px;background:rgba(99,102,241,0.2);border:1px solid rgba(99,102,241,0.3);border-radius:99px;font-size:11px;font-weight:700;color:#a5b4fc;margin-bottom:1rem;">
           <i class="bi bi-code-slash"></i> REST API v1
         </div>
-        <h2 class="text-3xl font-extrabold tracking-tight">Connect your Business Platform anywhere</h2>
-        <p class="text-slate-300 text-sm max-w-2xl leading-relaxed">
-          Build custom website integrations, mobile applications, CRMs, or e-commerce checkouts. 
-          All API calls directly read and write records to your connected Google Spreadsheet.
+        <h2 style="font-size:1.6rem;font-weight:900;letter-spacing:-0.03em;margin-bottom:0.75rem;line-height:1.15;">Connect your Business Platform<br>anywhere</h2>
+        <p style="font-size:13.5px;color:rgba(255,255,255,0.55);line-height:1.7;max-width:540px;margin-bottom:1.5rem;">
+          Build custom website integrations, mobile apps, CRMs, or e-commerce checkouts. All API calls directly read and write records to your connected Google Spreadsheet.
         </p>
-
-        <div class="flex flex-wrap gap-3 pt-2">
-          <a href="/api-keys.html" class="px-4 py-2.5 bg-teal-500 hover:bg-teal-400 text-slate-950 font-bold rounded-xl text-xs transition shadow-md">
-            Generate Live API Key
+        <div style="display:flex;flex-wrap:wrap;gap:0.75rem;">
+          <a href="/api-keys.html" style="padding:0.6rem 1.25rem;background:#6366f1;color:white;border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all 0.15s;box-shadow:0 4px 14px rgba(99,102,241,0.35);">
+            <i class="bi bi-key-fill"></i> Generate API Key
           </a>
-          <a href="/api-docs.html" class="px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs border border-slate-700 transition">
-            Explore REST Documentation
+          <a href="/api-docs.html" style="padding:0.6rem 1.25rem;background:rgba(255,255,255,0.08);color:white;border:1px solid rgba(255,255,255,0.15);border-radius:10px;font-size:13px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+            <i class="bi bi-book-fill"></i> Explore REST Docs
           </a>
         </div>
       </div>
 
-      <!-- Developer Key Features Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="card-premium p-5 space-y-2">
-          <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-bold"><i class="bi bi-shield-lock-fill"></i></div>
-          <h4 class="font-bold text-slate-900 text-sm">Tenant Isolation & Hashing</h4>
-          <p class="text-xs text-slate-500">API keys are hashed via SHA-256. Keys can only access records from your connected Google Sheet workspace.</p>
+      <!-- Features Grid -->
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+
+        <div style="background:white;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.2s;" onmouseover="this.style.borderColor='#c7d2fe';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.transform='translateY(0)'">
+          <div style="width:42px;height:42px;border-radius:11px;background:#fdf4ff;display:flex;align-items:center;justify-content:center;font-size:18px;color:#9333ea;margin-bottom:0.875rem;">
+            <i class="bi bi-shield-lock-fill"></i>
+          </div>
+          <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:0.4rem;">Tenant Isolation & Hashing</div>
+          <div style="font-size:12.5px;color:#64748b;line-height:1.65;">API keys are hashed via SHA-256. Keys can only access records from your connected Google Sheet workspace.</div>
         </div>
 
-        <div class="card-premium p-5 space-y-2">
-          <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold"><i class="bi bi-speedometer2"></i></div>
-          <h4 class="font-bold text-slate-900 text-sm">Configurable Rate Limits</h4>
-          <p class="text-xs text-slate-500">Standard rate limits enforced at 100 requests per minute per API Key with standard HTTP 429 status codes.</p>
+        <div style="background:white;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.2s;" onmouseover="this.style.borderColor='#99f6e4';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.transform='translateY(0)'">
+          <div style="width:42px;height:42px;border-radius:11px;background:#ecfdf5;display:flex;align-items:center;justify-content:center;font-size:18px;color:#059669;margin-bottom:0.875rem;">
+            <i class="bi bi-speedometer2"></i>
+          </div>
+          <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:0.4rem;">Rate Limiting</div>
+          <div style="font-size:12.5px;color:#64748b;line-height:1.65;">Standard rate limits at 100 requests/minute per API Key, with standard HTTP 429 status codes on overflow.</div>
         </div>
 
-        <div class="card-premium p-5 space-y-2">
-          <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl font-bold"><i class="bi bi-broadcast"></i></div>
-          <h4 class="font-bold text-slate-900 text-sm">Real-time Webhooks</h4>
-          <p class="text-xs text-slate-500">Receive real-time HTTP POST notifications when invoices are created, payments received, or quotations accepted.</p>
+        <div style="background:white;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.2s;" onmouseover="this.style.borderColor='#99f6e4';this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='#e2e8f0';this.style.transform='translateY(0)'">
+          <div style="width:42px;height:42px;border-radius:11px;background:#f0fdf9;display:flex;align-items:center;justify-content:center;font-size:18px;color:#0d9488;margin-bottom:0.875rem;">
+            <i class="bi bi-broadcast"></i>
+          </div>
+          <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:0.4rem;">Real-time Webhooks</div>
+          <div style="font-size:12.5px;color:#64748b;line-height:1.65;">Receive HTTP POST notifications when invoices are created, payments received, or quotations accepted.</div>
+        </div>
+
+      </div>
+
+      <!-- Quick Start Code -->
+      <div style="background:white;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:0.5rem;display:flex;align-items:center;gap:7px;">
+          <i class="bi bi-terminal-fill" style="color:#0d9488;"></i> Quick Start
+        </div>
+        <p style="font-size:12.5px;color:#64748b;margin-bottom:1rem;">Make your first API call with your API key from the header:</p>
+        <div style="background:#0f172a;border-radius:12px;padding:1.25rem 1.5rem;font-family:'Courier New',monospace;font-size:12.5px;color:#e2e8f0;overflow-x:auto;">
+          <div style="color:#94a3b8;margin-bottom:6px;"># Get all invoices</div>
+          <div><span style="color:#5eead4;">curl</span> -X GET <span style="color:#fcd34d;">"https://your-backend.com/api/v1/invoices"</span> \</div>
+          <div style="margin-left:1.5rem;">-H <span style="color:#fcd34d;">"x-api-key: YOUR_API_KEY"</span></div>
+          <div style="margin-top:10px;color:#94a3b8;"># Create a new invoice</div>
+          <div><span style="color:#5eead4;">curl</span> -X POST <span style="color:#fcd34d;">"https://your-backend.com/api/v1/invoices"</span> \</div>
+          <div style="margin-left:1.5rem;">-H <span style="color:#fcd34d;">"x-api-key: YOUR_API_KEY"</span> \</div>
+          <div style="margin-left:1.5rem;">-H <span style="color:#fcd34d;">"Content-Type: application/json"</span> \</div>
+          <div style="margin-left:1.5rem;">-d <span style="color:#fcd34d;">'{"customer_name":"Acme Corp","total":18500}'</span></div>
+        </div>
+      </div>
+
+      <!-- Supported Endpoints -->
+      <div style="background:white;border:1px solid #e2e8f0;border-radius:16px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+        <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:1rem;display:flex;align-items:center;gap:7px;">
+          <i class="bi bi-list-ul" style="color:#6366f1;"></i> Supported Endpoints
+        </div>
+        <div style="display:flex;flex-direction:column;gap:0;">
+
+          <!-- endpoint rows -->
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#ecfdf5;color:#047857;border-radius:6px;text-align:center;">GET</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/invoices</span>
+            <span style="font-size:11.5px;color:#64748b;">List all invoices</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#eff6ff;color:#1d4ed8;border-radius:6px;text-align:center;">POST</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/invoices</span>
+            <span style="font-size:11.5px;color:#64748b;">Create invoice</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#ecfdf5;color:#047857;border-radius:6px;text-align:center;">GET</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/quotations</span>
+            <span style="font-size:11.5px;color:#64748b;">List all quotations</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#eff6ff;color:#1d4ed8;border-radius:6px;text-align:center;">POST</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/quotations</span>
+            <span style="font-size:11.5px;color:#64748b;">Create quotation</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#ecfdf5;color:#047857;border-radius:6px;text-align:center;">GET</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/customers</span>
+            <span style="font-size:11.5px;color:#64748b;">List all customers</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;border-bottom:1px solid #f8fafc;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#eff6ff;color:#1d4ed8;border-radius:6px;text-align:center;">POST</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/customers</span>
+            <span style="font-size:11.5px;color:#64748b;">Create customer</span>
+          </div>
+          <div style="display:grid;grid-template-columns:80px 1fr auto;align-items:center;gap:0.875rem;padding:0.75rem 0;">
+            <span style="font-size:11px;font-weight:700;padding:3px 8px;background:#ecfdf5;color:#047857;border-radius:6px;text-align:center;">GET</span>
+            <span style="font-size:12.5px;font-family:'Courier New',monospace;color:#0f172a;">/api/v1/products</span>
+            <span style="font-size:11.5px;color:#64748b;">List all products</span>
+          </div>
+
+        </div>
+        <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid #f1f5f9;display:flex;gap:0.75rem;">
+          <a href="/api-docs.html" style="font-size:12.5px;font-weight:700;color:#6366f1;text-decoration:none;display:inline-flex;align-items:center;gap:5px;">
+            <i class="bi bi-book-fill"></i> Full API Documentation →
+          </a>
         </div>
       </div>
 
     </main>
   </div>
+
+  <style>
+    @media (max-width: 640px) {
+      main { padding: 1rem !important; }
+      div[style*="grid-template-columns:repeat(3,1fr)"] { grid-template-columns: 1fr !important; }
+      div[style*="grid-template-columns:80px 1fr auto"] > span:last-child { display: none; }
+    }
+  </style>
 
   <script type="module">
     import { checkAuth } from '/js/auth.js';
