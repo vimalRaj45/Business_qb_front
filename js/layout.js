@@ -76,6 +76,9 @@ export function renderLayout(business = {}, user = {}) {
         </div>
 
         <div class="pt-4 mt-2 border-t border-slate-100 space-y-2 shrink-0">
+          <button id="sidebar-pwa-btn" class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition border border-teal-200/60 shadow-2xs">
+            <i class="bi bi-download text-base"></i> Install App
+          </button>
           <a href="/settings.html" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition overflow-hidden">
             <img src="${avatarUrl}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${fallbackAvatar}';" class="w-8 h-8 rounded-full border border-slate-200 shrink-0 object-cover" alt="User Avatar" />
             <div class="overflow-hidden">
@@ -94,6 +97,11 @@ export function renderLayout(business = {}, user = {}) {
       e.preventDefault();
       logout();
     });
+
+    document.getElementById('sidebar-pwa-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      triggerDirectPwaInstall();
+    });
   }
 
   if (headerContainer) {
@@ -110,10 +118,6 @@ export function renderLayout(business = {}, user = {}) {
         </div>
 
         <div class="flex items-center gap-2.5">
-          <button id="header-pwa-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 text-teal-800 hover:bg-teal-100 border border-teal-200 rounded-xl text-xs font-bold transition shadow-2xs">
-            <i class="bi bi-download text-teal-600"></i> <span class="hidden sm:inline">Install App</span>
-          </button>
-
           <a href="${business.spreadsheet_id && business.spreadsheet_id !== 'local_demo_spreadsheet_id' ? `https://docs.google.com/spreadsheets/d/${business.spreadsheet_id}` : '/settings.html'}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-2xs">
             <i class="bi bi-file-earmark-spreadsheet-fill text-emerald-600"></i> <span class="hidden sm:inline">Open Sheet</span>
           </a>
@@ -132,11 +136,6 @@ export function renderLayout(business = {}, user = {}) {
     document.getElementById('header-logout-btn')?.addEventListener('click', (e) => {
       e.preventDefault();
       logout();
-    });
-
-    document.getElementById('header-pwa-btn')?.addEventListener('click', (e) => {
-      e.preventDefault();
-      showPwaInstallModal(true);
     });
   }
 
