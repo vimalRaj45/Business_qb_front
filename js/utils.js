@@ -92,8 +92,10 @@ export function getStatusBadge(status = '') {
 export function showModal(modalId) {
   const el = typeof modalId === 'string' ? document.getElementById(modalId) : modalId;
   if (el) {
+    el.style.zIndex = '999999';
     el.classList.remove('hidden');
     el.classList.add('flex');
+    document.body.style.overflow = 'hidden';
   }
 }
 
@@ -102,6 +104,7 @@ export function hideModal(modalId) {
   if (el) {
     el.classList.add('hidden');
     el.classList.remove('flex');
+    document.body.style.overflow = '';
   }
 }
 

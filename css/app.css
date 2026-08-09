@@ -206,6 +206,33 @@ a, button {
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
+/* ==========================================================================
+   GLOBAL HIGH Z-INDEX MODALS & MOBILE OPTIMIZATION
+   ========================================================================== */
+
+/* Force all modals to sit ON TOP of mobile bottom nav (z-50) and top header (z-20) */
+div[id*="modal"],
+div[id$="-modal"],
+#tailwind-confirm-modal-root,
+#pwa-install-modal,
+.modal-backdrop {
+  z-index: 999999 !important;
+}
+
+/* Ensure inner modal cards are scrollable and don't clip on mobile screens */
+@media (max-width: 768px) {
+  div[id*="modal"] > div,
+  div[id$="-modal"] > div,
+  #tailwind-confirm-modal-root > div,
+  #pwa-install-modal > div {
+    max-height: 85vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+  }
+}
+
 .mobile-nav-item {
   display: flex;
   flex-direction: column;
