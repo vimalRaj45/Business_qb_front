@@ -119,7 +119,7 @@
     import { checkAuth } from '/js/auth.js';
     import { renderLayout } from '/js/layout.js';
     import { API } from '/js/api.js';
-    import { formatDate, showToast, showModal, hideModal } from '/js/utils.js';
+    import { formatDate, showToast, showModal, hideModal, confirmModal } from '/js/utils.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       const auth = await checkAuth();
@@ -188,7 +188,13 @@
     window.closeWebhookModal = () => hideModal('webhook-modal');
 
     window.deleteWebhook = async function(id) {
-      if (!confirm('Delete this webhook endpoint?')) return;
+      const ok = await confirmModal({
+        title: 'Delete Webhook Endpoint?',
+        message: 'This webhook endpoint will stop receiving automated HTTP events immediately.',
+        confirmText: 'Delete Endpoint',
+        type: 'danger'
+      });
+      if (!ok) return;
       try {
         await API.delete(`/api/developer/webhooks/${id}`);
         showToast('Webhook endpoint deleted', 'success');

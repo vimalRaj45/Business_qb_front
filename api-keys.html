@@ -108,7 +108,7 @@
     import { checkAuth } from '/js/auth.js';
     import { renderLayout } from '/js/layout.js';
     import { API } from '/js/api.js';
-    import { formatDate, showToast, showModal, hideModal } from '/js/utils.js';
+    import { formatDate, showToast, showModal, hideModal, confirmModal } from '/js/utils.js';
 
     document.addEventListener('DOMContentLoaded', async () => {
       const auth = await checkAuth();
@@ -134,10 +134,10 @@
         tbody.innerHTML = keys.map(k => `
           <tr class="border-b border-slate-100 hover:bg-slate-50/60">
             <td class="py-3.5 px-4 font-bold text-slate-900">${k.name}</td>
-            <td class="py-3.5 px-4 font-mono text-slate-500 font-semibold">${k.key_prefix}</td>
-            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md font-semibold text-[10px]">${k.permissions}</span></td>
-            <td class="py-3.5 px-4 text-slate-600">${formatDate(k.created_at)}</td>
-            <td class="py-3.5 px-4 text-slate-600">${k.last_used_at ? formatDate(k.last_used_at) : 'Never'}</td>
+            <td class="py-3.5 px-4 font-mono text-slate-600 text-xs">${k.key_prefix}</td>
+            <td class="py-3.5 px-4 text-slate-500 text-xs">${formatDate(k.created_at)}</td>
+            <td class="py-3.5 px-4 text-slate-500 text-xs">${k.last_used_at ? formatDate(k.last_used_at) : 'Never'}</td>
+            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md font-bold text-[10px]">${k.status}</span></td>
             <td class="py-3.5 px-4 text-right">
               <button onclick="window.revokeKey('${k.key_id}')" class="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-[11px] font-semibold">Revoke</button>
             </td>
@@ -159,7 +159,13 @@
     };
 
     window.revokeKey = async function(id) {
-      if (!confirm('Revoke this API key? External applications using it will immediately lose access.')) return;
+      const ok = await confirmModal({
+        title: 'Revoke API Key?',
+        message: 'External applications using this key will immediately lose access.',
+        confirmText: 'Revoke Key',
+        type: 'danger'
+      });
+      if (!ok) return;
       try {
         await API.delete(`/api/developer/keys/${id}`);
         showToast('API key revoked', 'success');
