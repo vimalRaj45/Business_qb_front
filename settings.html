@@ -15,8 +15,31 @@
   <div class="flex-1 md:pl-64 flex flex-col min-h-screen">
     <div id="header-container"></div>
 
-    <main class="p-4 md:p-6 space-y-6 max-w-5xl w-full mx-auto pb-24 md:pb-6">
+    <main class="p-4 md:p-6 space-y-6 max-w-5xl w-full mx-auto pb-28 md:pb-8">
       
+      <!-- Workspaces & Company Switcher Card -->
+      <div id="workspaces-card" class="card-premium p-6 space-y-4 overflow-hidden">
+        <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center text-xl shrink-0">
+              <i class="bi bi-building-gear"></i>
+            </div>
+            <div>
+              <h3 class="font-bold text-slate-900 text-sm">Workspaces & Company Accounts</h3>
+              <p class="text-xs text-slate-500">Switch between your owned company and joined team workspaces.</p>
+            </div>
+          </div>
+
+          <button id="create-owned-biz-btn" class="px-4 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-2 shadow-xs transition active:scale-95 shrink-0">
+            <i class="bi bi-plus-circle-fill"></i> Start / Create My Own Business
+          </button>
+        </div>
+
+        <div id="workspaces-list-container" class="space-y-2">
+          <!-- Workspaces list populated via JS -->
+        </div>
+      </div>
+
       <!-- Google Storage & Privacy Card -->
       <div class="card-premium p-6 space-y-4 overflow-hidden">
         <div class="flex items-center gap-3 border-b border-slate-100 pb-4">
@@ -90,14 +113,9 @@
           </div>
         </div>
 
-        <p class="text-xs text-slate-600 leading-relaxed">
-          Warning: Clicking <strong>"Delete Account & Wipe Google Sheet"</strong> will permanently delete your spreadsheet file (`Business Billing Data`) from your Google Drive account, erase all local cache, and end your session. This action cannot be undone.
-        </p>
-
-        <div class="pt-2">
-          <button id="delete-account-btn" class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold rounded-xl text-xs transition shadow-md flex items-center gap-2">
-            <i class="bi bi-trash3-fill"></i>
-            <span>Delete Account & Wipe Google Sheet</span>
+        <div class="flex justify-end">
+          <button id="delete-account-btn" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition shadow-xs">
+            Delete Account Data
           </button>
         </div>
       </div>

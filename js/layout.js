@@ -32,9 +32,9 @@ export function renderLayout(business = {}, user = {}) {
 
   if (sidebarContainer) {
     sidebarContainer.innerHTML = `
-      <div class="h-full flex flex-col justify-between p-4 bg-white border-r border-slate-200">
-        <div>
-          <div class="flex items-center gap-3 px-2 py-3 mb-6 border-b border-slate-100">
+      <div class="h-full flex flex-col justify-between p-4 bg-white border-r border-slate-200 overflow-y-auto">
+        <div class="flex-1 flex flex-col min-h-0">
+          <div class="flex items-center gap-3 px-2 py-3 mb-4 border-b border-slate-100 shrink-0">
             <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-white font-black text-xl shadow-md shrink-0">
               ${(business.business_name || 'B').charAt(0).toUpperCase()}
             </div>
@@ -46,7 +46,7 @@ export function renderLayout(business = {}, user = {}) {
             </div>
           </div>
 
-          <nav class="space-y-1">
+          <nav class="flex-1 overflow-y-auto min-h-0 space-y-1 pr-1">
             ${navItems.map(item => {
               const isActive = currentPath.endsWith(item.href);
               return `
@@ -59,7 +59,7 @@ export function renderLayout(business = {}, user = {}) {
           </nav>
         </div>
 
-        <div class="pt-4 border-t border-slate-100 space-y-2">
+        <div class="pt-4 mt-2 border-t border-slate-100 space-y-2 shrink-0">
           <a href="/settings.html" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition overflow-hidden">
             <img src="${avatarUrl}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${fallbackAvatar}';" class="w-8 h-8 rounded-full border border-slate-200 shrink-0 object-cover" alt="User Avatar" />
             <div class="overflow-hidden">
@@ -113,8 +113,6 @@ export function renderLayout(business = {}, user = {}) {
       e.preventDefault();
       logout();
     });
-
-    fetchAndRenderWorkspaceSwitcher(business);
   }
 
   renderMobileDrawer(navItems, currentPath, business, user, fallbackAvatar, avatarUrl);
@@ -123,48 +121,6 @@ export function renderLayout(business = {}, user = {}) {
 
   if (window.AOS) {
     window.AOS.init({ duration: 600, once: true });
-  }
-}
-
-async function fetchAndRenderWorkspaceSwitcher(currentBusiness) {
-  try {
-    const res = await API.get('/api/auth/me');
-    if (!res || !res.workspaces || res.workspaces.length <= 1) return;
-
-    const headerRight = document.querySelector('header .flex.items-center.gap-3');
-    if (!headerRight || document.getElementById('workspace-switcher-select')) return;
-
-    const switcherContainer = document.createElement('div');
-    switcherContainer.className = 'relative flex items-center';
-    
-    const optionsHtml = res.workspaces.map(w => {
-      const isSelected = w.business_id === currentBusiness.business_id ? 'selected' : '';
-      const icon = w.is_owner ? '🏢' : '👥';
-      const roleText = w.is_owner ? 'Owner' : 'Staff';
-      return `<option value="${w.business_id}" ${isSelected}>${icon} ${w.business_name} (${roleText})</option>`;
-    }).join('');
-
-    switcherContainer.innerHTML = `
-      <select id="workspace-switcher-select" class="px-2.5 py-1.5 bg-slate-100 border border-slate-300 hover:border-teal-500 rounded-xl text-xs font-bold text-slate-800 focus:outline-none cursor-pointer transition">
-        ${optionsHtml}
-      </select>
-    `;
-
-    headerRight.insertBefore(switcherContainer, headerRight.firstChild);
-
-    document.getElementById('workspace-switcher-select').addEventListener('change', async (e) => {
-      const targetBizId = e.target.value;
-      if (!targetBizId) return;
-
-      try {
-        await API.post('/api/auth/switch-workspace', { business_id: targetBizId });
-        window.location.reload();
-      } catch (err) {
-        console.error('Workspace switch error:', err);
-      }
-    });
-  } catch (err) {
-    // ignore
   }
 }
 
@@ -215,8 +171,8 @@ function renderMobileDrawer(navItems, currentPath, business, user, fallbackAvata
 
   drawer.innerHTML = `
     <div class="h-full flex flex-col justify-between p-4 overflow-y-auto">
-      <div>
-        <div class="flex items-center justify-between px-2 py-3 mb-4 border-b border-slate-100">
+      <div class="flex-1 flex flex-col min-h-0">
+        <div class="flex items-center justify-between px-2 py-3 mb-4 border-b border-slate-100 shrink-0">
           <div class="flex items-center gap-2.5 overflow-hidden">
             <div class="w-9 h-9 rounded-xl bg-teal-600 text-white font-black text-lg flex items-center justify-center shrink-0">
               ${(business.business_name || 'B').charAt(0).toUpperCase()}
@@ -231,7 +187,7 @@ function renderMobileDrawer(navItems, currentPath, business, user, fallbackAvata
           </button>
         </div>
 
-        <nav class="space-y-1">
+        <nav class="flex-1 overflow-y-auto min-h-0 space-y-1 pr-1">
           ${navItems.map(item => {
             const isActive = currentPath.endsWith(item.href);
             return `
@@ -244,7 +200,7 @@ function renderMobileDrawer(navItems, currentPath, business, user, fallbackAvata
         </nav>
       </div>
 
-      <div class="pt-4 border-t border-slate-100 space-y-2">
+      <div class="pt-4 mt-2 border-t border-slate-100 space-y-2 shrink-0">
         <a href="/settings.html" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 rounded-xl transition overflow-hidden">
           <img src="${avatarUrl}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${fallbackAvatar}';" class="w-8 h-8 rounded-full border border-slate-200 shrink-0 object-cover" alt="User Avatar" />
           <div class="overflow-hidden">
