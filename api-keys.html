@@ -18,22 +18,22 @@
     <main class="p-6 space-y-6 max-w-7xl w-full mx-auto">
       
       <!-- Sub Nav -->
-      <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
-        <a href="/developer.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Overview</a>
-        <a href="/api-keys.html" class="px-3 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold">API Keys</a>
-        <a href="/api-docs.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">API Documentation</a>
-        <a href="/api-usage.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Usage & Logs</a>
-        <a href="/webhooks.html" class="px-3 py-2 bg-white text-slate-700 hover:bg-slate-100 rounded-xl text-xs font-semibold border border-slate-200">Webhooks</a>
+      <div class="flex items-center gap-1.5 border-b border-slate-200 pb-3 overflow-x-auto whitespace-nowrap">
+        <a href="/developer.html" class="px-3 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium border border-slate-200 shrink-0">Overview</a>
+        <a href="/api-keys.html" class="px-3 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-bold shrink-0">API Keys</a>
+        <a href="/api-docs.html" class="px-3 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium border border-slate-200 shrink-0">Documentation</a>
+        <a href="/api-usage.html" class="px-3 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium border border-slate-200 shrink-0">Usage & Logs</a>
+        <a href="/webhooks.html" class="px-3 py-1.5 bg-white text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-medium border border-slate-200 shrink-0">Webhooks</a>
       </div>
 
       <!-- Top Action Bar -->
-      <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
         <div>
           <h3 class="font-bold text-slate-900 text-sm">Developer API Keys</h3>
           <p class="text-xs text-slate-500">API keys grant access to your business records. Keep them secure.</p>
         </div>
-        <button onclick="window.openKeyModal()" class="px-4 py-2.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs flex items-center gap-2 shadow-xs transition">
-          <i class="bi bi-key-fill"></i> Generate New API Key
+        <button onclick="window.openKeyModal()" class="px-3.5 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg text-xs flex items-center gap-1.5 shadow-xs transition shrink-0 whitespace-nowrap">
+          <i class="bi bi-key-fill"></i> Generate API Key
         </button>
       </div>
 
@@ -43,10 +43,11 @@
           <i class="bi bi-shield-check text-lg"></i> API Key Generated Successfully!
         </div>
         <p class="text-xs text-emerald-300">Copy this API key now. For security reasons, it will not be shown again.</p>
-        <div class="flex items-center gap-2 pt-2">
-          <input type="text" id="raw-api-key-input" readonly class="w-full bg-slate-900 text-emerald-400 font-mono text-xs px-3 py-2 rounded-xl border border-emerald-800" />
-          <button onclick="window.copyApiKey()" class="px-4 py-2 bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1 shadow-md hover:bg-emerald-400">
-            <i class="bi bi-clipboard-check"></i> Copy
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="text" id="raw-api-key-input" readonly class="flex-1 bg-emerald-900 border border-emerald-700 text-emerald-100 font-mono text-xs px-3 py-2 rounded-xl" />
+          <button onclick="window.copyApiKey()" class="px-4 py-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-xl text-xs flex items-center gap-1.5 shrink-0">
+            <i class="bi bi-clipboard"></i> Copy Key
           </button>
         </div>
       </div>
@@ -54,15 +55,15 @@
       <!-- API Keys Table Card -->
       <div class="card-premium overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs">
+          <table class="w-full text-left text-xs whitespace-nowrap">
             <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 uppercase font-semibold">
               <tr>
-                <th class="py-3.5 px-4">Key Name</th>
-                <th class="py-3.5 px-4">Key Prefix</th>
-                <th class="py-3.5 px-4">Permissions</th>
-                <th class="py-3.5 px-4">Created Date</th>
-                <th class="py-3.5 px-4">Last Used</th>
-                <th class="py-3.5 px-4 text-right">Actions</th>
+                <th class="py-3 px-4">Key Name</th>
+                <th class="py-3 px-4">Key Prefix</th>
+                <th class="py-3 px-4">Created Date</th>
+                <th class="py-3 px-4">Last Used</th>
+                <th class="py-3 px-4">Status</th>
+                <th class="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="keys-tbody">
@@ -97,8 +98,8 @@
         </div>
 
         <div class="pt-3 flex justify-end gap-2 border-t border-slate-100">
-          <button type="button" onclick="window.closeKeyModal()" class="px-4 py-2 bg-slate-100 text-slate-700 font-semibold rounded-xl text-xs">Cancel</button>
-          <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-xl text-xs">Generate Key</button>
+          <button type="button" onclick="window.closeKeyModal()" class="px-3.5 py-1.5 bg-slate-100 text-slate-700 font-semibold rounded-lg text-xs">Cancel</button>
+          <button type="submit" class="px-4 py-1.5 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg text-xs">Generate Key</button>
         </div>
       </form>
     </div>
@@ -127,18 +128,18 @@
         const tbody = document.getElementById('keys-tbody');
 
         if (!keys.length) {
-          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No active API keys. Click "Generate New API Key" above.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-slate-400">No active API keys. Click "Generate API Key" above.</td></tr>`;
           return;
         }
 
         tbody.innerHTML = keys.map(k => `
           <tr class="border-b border-slate-100 hover:bg-slate-50/60">
-            <td class="py-3.5 px-4 font-bold text-slate-900">${k.name}</td>
-            <td class="py-3.5 px-4 font-mono text-slate-600 text-xs">${k.key_prefix}</td>
-            <td class="py-3.5 px-4 text-slate-500 text-xs">${formatDate(k.created_at)}</td>
-            <td class="py-3.5 px-4 text-slate-500 text-xs">${k.last_used_at ? formatDate(k.last_used_at) : 'Never'}</td>
-            <td class="py-3.5 px-4"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md font-bold text-[10px]">${k.status}</span></td>
-            <td class="py-3.5 px-4 text-right">
+            <td class="py-3 px-4 font-bold text-slate-900">${k.name}</td>
+            <td class="py-3 px-4 font-mono text-slate-600 text-xs">${k.key_prefix}</td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${formatDate(k.created_at)}</td>
+            <td class="py-3 px-4 text-slate-500 text-xs">${k.last_used_at ? formatDate(k.last_used_at) : 'Never'}</td>
+            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-md font-bold text-[10px]">${k.status || 'Active'}</span></td>
+            <td class="py-3 px-4 text-right">
               <button onclick="window.revokeKey('${k.key_id}')" class="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-lg text-[11px] font-semibold">Revoke</button>
             </td>
           </tr>
