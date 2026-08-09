@@ -13,6 +13,8 @@ export async function checkAuth() {
     const currentPath = window.location.pathname;
     const isCompleted = res.business?.onboarding_completed === true || 
                         res.business?.onboarding_completed === 'true' ||
+                        res.business?.onboarding_completed === 'TRUE' ||
+                        res.business?.created_at === 'TRUE' ||
                         (Boolean(res.business?.business_name) && 
                          res.business.business_name.trim() !== '' && 
                          !res.business.business_name.endsWith("'s Business"));

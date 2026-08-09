@@ -184,7 +184,6 @@
         sendOtpBtn.innerHTML = `<i class="bi bi-check-lg"></i> Resend OTP`;
         sendOtpBtn.disabled = false;
       } catch (err) {
-        showToast('Failed to send OTP: ' + err.message, 'error');
         sendOtpBtn.disabled = false;
         sendOtpBtn.innerHTML = `<i class="bi bi-send"></i> Send OTP Code`;
       }
@@ -214,7 +213,6 @@
         
         submitBtn.disabled = false;
       } catch (err) {
-        showToast(err.message, 'error');
         verifyOtpBtn.disabled = false;
         verifyOtpBtn.innerHTML = `<i class="bi bi-shield-check"></i> Verify OTP`;
       }
@@ -242,7 +240,6 @@
           window.location.href = '/dashboard.html';
         }, 600);
       } catch (err) {
-        showToast('Setup error: ' + err.message, 'error');
         submitBtn.disabled = false;
         submitBtn.innerHTML = `<span>Complete Setup & Launch Dashboard</span> <i class="bi bi-arrow-right-short text-lg"></i>`;
       }
