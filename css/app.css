@@ -316,13 +316,44 @@ a, button {
     white-space: nowrap !important;
   }
 
-  /* Modal Dialog Responsiveness */
-  .modal-container > div {
-    width: 95vw !important;
-    max-height: 90vh !important;
+  /* Universal Modal Overlay Z-Index & Mobile Viewport Padding */
+  div[id*="modal"],
+  .modal-container {
+    z-index: 100000 !important;
+    padding-top: 1rem !important;
+    padding-bottom: 5.5rem !important;
+    padding-left: 0.75rem !important;
+    padding-right: 0.75rem !important;
+    align-items: flex-start !important;
     overflow-y: auto !important;
-    padding: 1.25rem !important;
-    margin: 0.5rem !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Inner Modal Dialog Box Responsiveness */
+  div[id*="modal"] > div,
+  .modal-container > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: calc(100vh - 7rem) !important;
+    overflow-y: auto !important;
+    margin-top: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+    padding: 1rem 1rem 1.25rem 1rem !important;
+    border-radius: 1.25rem !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.4) !important;
+  }
+
+  /* Ensure Modal Footer (Submit & Cancel Buttons) Stays Sticky & Pinned Above Nav Bar */
+  div[id*="modal"] form > div:last-child,
+  .modal-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    background: #ffffff !important;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 0.5rem !important;
+    border-top: 1px solid #f1f5f9 !important;
+    z-index: 30 !important;
   }
 }
 
