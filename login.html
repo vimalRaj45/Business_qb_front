@@ -276,6 +276,9 @@
     }, 600);
 
     document.addEventListener('DOMContentLoaded', () => {
+      // Pre-warm backend server on Render free tier
+      API.get('/api/health').catch(() => {});
+
       const p = new URLSearchParams(window.location.search);
       if (p.get('invite_biz')) {
         sessionStorage.setItem('invite_biz', p.get('invite_biz'));
@@ -291,20 +294,36 @@
       const btn = document.getElementById('google-login-btn');
       const lbl = document.getElementById('btn-label');
       btn.classList.add('loading');
-      lbl.textContent = 'Redirecting to Google...';
+      lbl.textContent = 'Connecting to Google...';
       btn.querySelector('svg').style.animation = 'spin 0.9s linear infinite';
+      document.getElementById('error-alert').style.display = 'none';
 
-      try {
-        const cb = window.location.origin + '/auth-callback.html';
-        const res = await API.get(`/api/auth/google/url?redirect_uri=${encodeURIComponent(cb)}`);
-        if (res.url) window.location.href = res.url;
-      } catch (err) {
-        btn.classList.remove('loading');
-        lbl.textContent = 'Continue with Google';
-        btn.querySelector('svg').style.animation = '';
-        document.getElementById('error-message').textContent = 'Could not reach sign-in server. Please try again.';
-        document.getElementById('error-alert').style.display = 'flex';
+      const cb = window.location.origin + '/auth-callback.html';
+
+      // Resilient retry loop for server cold-start / wake up
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          if (attempt > 1) {
+            lbl.textContent = `Waking up server (Attempt ${attempt}/3)...`;
+          }
+          const res = await API.get(`/api/auth/google/url?redirect_uri=${encodeURIComponent(cb)}`);
+          if (res && res.url) {
+            lbl.textContent = 'Redirecting...';
+            window.location.href = res.url;
+            return;
+          }
+        } catch (err) {
+          if (attempt < 3) {
+            await new Promise(r => setTimeout(r, 2000));
+          }
+        }
       }
+
+      btn.classList.remove('loading');
+      lbl.textContent = 'Continue with Google';
+      btn.querySelector('svg').style.animation = '';
+      document.getElementById('error-message').textContent = 'Server is taking longer than expected. Please try clicking sign-in again.';
+      document.getElementById('error-alert').style.display = 'flex';
     });
   </script>
 </body>
