@@ -173,7 +173,7 @@ export function exportToJSON(dataArray = [], filename = 'export.json') {
   showToast(`Exported ${dataArray.length} records to JSON!`, 'success');
 }
 
-export function exportTableToPDF(elementOrId, filename = 'document.pdf') {
+export function exportTableToPDF(elementOrId, filename = 'document.pdf', orientation = 'portrait') {
   const element = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
   if (!element) {
     showToast('Table element not found for PDF export', 'error');
@@ -191,14 +191,15 @@ export function exportTableToPDF(elementOrId, filename = 'document.pdf') {
 
   function doExport() {
     const opt = {
-      margin:       [0.3, 0.3, 0.3, 0.3],
+      margin:       [0.25, 0.25, 0.25, 0.25],
       filename:     filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
       image:        { type: 'jpeg', quality: 0.98 },
-      html2canvas:  { scale: 2, useCORS: true, logging: false },
-      jsPDF:        { unit: 'in', format: 'letter', orientation: 'landscape' }
+      html2canvas:  { scale: 2, useCORS: true, logging: false, scrollY: 0 },
+      jsPDF:        { unit: 'in', format: 'letter', orientation: orientation },
+      pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
     };
 
-    showToast('Generating PDF document...', 'info');
+    showToast('Generating high-resolution PDF document...', 'info');
     window.html2pdf().set(opt).from(element).save().then(() => {
       showToast('PDF downloaded successfully!', 'success');
     }).catch(err => {

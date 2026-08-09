@@ -305,9 +305,15 @@ a, button {
     font-size: 16px !important;
   }
 
-  /* Action Bar & Button Wrappers */
+  /* Action Bar & Button Wrappers across all pages */
   .flex-wrap {
     width: 100% !important;
+  }
+
+  /* Universal button whitespace and font auto-scaling on mobile */
+  button,
+  a[class*="px-"] {
+    white-space: nowrap !important;
   }
 
   /* Modal Dialog Responsiveness */
@@ -321,11 +327,30 @@ a, button {
 }
 
 
-/* Printable Views */
+/* Printable & PDF Export Page Break Guards */
+.printable-document {
+  page-break-inside: avoid !important;
+  break-inside: avoid !important;
+  box-sizing: border-box !important;
+}
+
+.printable-document tr,
+.printable-document div,
+.printable-document table {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
 @media print {
+  @page {
+    margin: 0.3in;
+    size: portrait;
+  }
   body {
     background-color: #ffffff !important;
     color: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
   .no-print {
     display: none !important;
@@ -335,6 +360,9 @@ a, button {
     box-shadow: none !important;
     padding: 0 !important;
     width: 100% !important;
+    max-width: 100% !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
   }
 }
 
