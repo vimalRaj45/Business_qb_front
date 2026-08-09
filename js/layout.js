@@ -1,11 +1,28 @@
 import { logout } from './auth.js';
 import { API } from './api.js';
+import { showToast } from './utils.js';
 
 let chatHistory = [];
 
 export function renderLayout(business = {}, user = {}) {
+  // Auto-inject Manifest and Favicon if missing
+  if (!document.querySelector('link[rel="manifest"]')) {
+    const m = document.createElement('link'); m.rel = 'manifest'; m.href = '/manifest.json';
+    document.head.appendChild(m);
+  }
+  if (!document.querySelector('link[rel="icon"]')) {
+    const i = document.createElement('link'); i.rel = 'icon'; i.type = 'image/svg+xml'; i.href = '/favicon.svg';
+    document.head.appendChild(i);
+  }
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
+
   // Render & Auto-Dismiss Light Professional Glass Splash Screen
   renderSplashScreen();
+
+  // Check PWA install prompt status after login
+  checkAndShowPwaModal();
 
   // Render Sidebar & Headers
   const sidebarContainer = document.getElementById('sidebar-container');
@@ -92,7 +109,11 @@ export function renderLayout(business = {}, user = {}) {
           </h2>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2.5">
+          <button id="header-pwa-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-50 text-teal-800 hover:bg-teal-100 border border-teal-200 rounded-xl text-xs font-bold transition shadow-2xs">
+            <i class="bi bi-download text-teal-600"></i> <span class="hidden sm:inline">Install App</span>
+          </button>
+
           <a href="${business.spreadsheet_id && business.spreadsheet_id !== 'local_demo_spreadsheet_id' ? `https://docs.google.com/spreadsheets/d/${business.spreadsheet_id}` : '/settings.html'}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-2xs">
             <i class="bi bi-file-earmark-spreadsheet-fill text-emerald-600"></i> <span class="hidden sm:inline">Open Sheet</span>
           </a>
@@ -111,6 +132,11 @@ export function renderLayout(business = {}, user = {}) {
     document.getElementById('header-logout-btn')?.addEventListener('click', (e) => {
       e.preventDefault();
       logout();
+    });
+
+    document.getElementById('header-pwa-btn')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      showPwaInstallModal(true);
     });
   }
 
@@ -404,4 +430,72 @@ function injectChatbotWidget() {
   function escapeHtml(str) {
     return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
+}
+
+// Global PWA Install Prompt State
+let deferredPwaPrompt = null;
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPwaPrompt = e;
+    checkAndShowPwaModal();
+  });
+}
+
+function checkAndShowPwaModal() {
+  if (sessionStorage.getItem('pwa_prompt_dismissed')) return;
+  setTimeout(() => {
+    showPwaInstallModal(false);
+  }, 1000);
+}
+
+function showPwaInstallModal(force = false) {
+  if (!force && sessionStorage.getItem('pwa_prompt_dismissed')) return;
+  if (document.getElementById('pwa-install-modal')) return;
+
+  const modal = document.createElement('div');
+  modal.id = 'pwa-install-modal';
+  modal.className = 'fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm transition-all duration-300';
+  modal.innerHTML = `
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-sm w-full p-6 space-y-4 text-center transform transition-all scale-100">
+      <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center text-white text-3xl mx-auto shadow-lg shadow-teal-600/30">
+        <i class="bi bi-receipt-cutoff"></i>
+      </div>
+      <div>
+        <h3 class="font-extrabold text-slate-900 text-lg">Install BizSheet App</h3>
+        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+          Install BizSheet on your mobile or desktop for 1-click access, faster loading, and a native app experience.
+        </p>
+      </div>
+      <div class="flex flex-col gap-2 pt-2">
+        <button id="pwa-modal-install-btn" class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-extrabold rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
+          <i class="bi bi-download text-sm"></i> Download & Install App
+        </button>
+        <button id="pwa-modal-dismiss-btn" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs transition">
+          Maybe Later
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document.getElementById('pwa-modal-install-btn')?.addEventListener('click', async () => {
+    if (deferredPwaPrompt) {
+      deferredPwaPrompt.prompt();
+      try {
+        await deferredPwaPrompt.userChoice;
+      } catch (err) {}
+      deferredPwaPrompt = null;
+    } else {
+      // Fallback: download app / show instructions
+      showToast('To install: tap your browser menu (⋮) and select "Add to Home screen" or "Install App".', 'info', 'Install Instructions');
+    }
+    modal.remove();
+    sessionStorage.setItem('pwa_prompt_dismissed', 'true');
+  });
+
+  document.getElementById('pwa-modal-dismiss-btn')?.addEventListener('click', () => {
+    modal.remove();
+    sessionStorage.setItem('pwa_prompt_dismissed', 'true');
+  });
 }
