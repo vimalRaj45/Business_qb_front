@@ -444,13 +444,31 @@ if (typeof window !== 'undefined') {
 
 function checkAndShowPwaModal() {
   if (sessionStorage.getItem('pwa_prompt_dismissed')) return;
-  setTimeout(() => {
-    showPwaInstallModal(false);
-  }, 1000);
+  if (deferredPwaPrompt) {
+    setTimeout(() => {
+      showPwaInstallModal(false);
+    }, 800);
+  }
+}
+
+function triggerDirectPwaInstall() {
+  if (deferredPwaPrompt) {
+    deferredPwaPrompt.prompt();
+    deferredPwaPrompt.userChoice.catch(() => {}).finally(() => {
+      deferredPwaPrompt = null;
+    });
+  }
 }
 
 function showPwaInstallModal(force = false) {
   if (!force && sessionStorage.getItem('pwa_prompt_dismissed')) return;
+  
+  // If forced or direct prompt available, attempt immediate native prompt
+  if (deferredPwaPrompt && force) {
+    triggerDirectPwaInstall();
+    return;
+  }
+
   if (document.getElementById('pwa-install-modal')) return;
 
   const modal = document.createElement('div');
@@ -464,32 +482,23 @@ function showPwaInstallModal(force = false) {
       <div>
         <h3 class="font-extrabold text-slate-900 text-lg">Install BizSheet App</h3>
         <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-          Install BizSheet on your mobile or desktop for 1-click access, faster loading, and a native app experience.
+          Install BizSheet to launch directly from your home screen with 1-click access.
         </p>
       </div>
       <div class="flex flex-col gap-2 pt-2">
         <button id="pwa-modal-install-btn" class="w-full py-3 bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-extrabold rounded-2xl text-xs shadow-md transition flex items-center justify-center gap-2">
-          <i class="bi bi-download text-sm"></i> Download & Install App
+          <i class="bi bi-download text-sm"></i> Install Now
         </button>
         <button id="pwa-modal-dismiss-btn" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs transition">
-          Maybe Later
+          Not Now
         </button>
       </div>
     </div>
   `;
   document.body.appendChild(modal);
 
-  document.getElementById('pwa-modal-install-btn')?.addEventListener('click', async () => {
-    if (deferredPwaPrompt) {
-      deferredPwaPrompt.prompt();
-      try {
-        await deferredPwaPrompt.userChoice;
-      } catch (err) {}
-      deferredPwaPrompt = null;
-    } else {
-      // Fallback: download app / show instructions
-      showToast('To install: tap your browser menu (⋮) and select "Add to Home screen" or "Install App".', 'info', 'Install Instructions');
-    }
+  document.getElementById('pwa-modal-install-btn')?.addEventListener('click', () => {
+    triggerDirectPwaInstall();
     modal.remove();
     sessionStorage.setItem('pwa_prompt_dismissed', 'true');
   });
