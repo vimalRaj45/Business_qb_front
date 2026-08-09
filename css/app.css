@@ -366,3 +366,37 @@ a, button {
   border-left: 4px solid #3b82f6;
 }
 
+/* ==========================================================================
+   AI CHATBOT MOBILE RESPONSIVE OPTIMIZATIONS
+   ========================================================================== */
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (max-width: 639px) {
+  #chatbot-drawer {
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+    bottom: 4.5rem !important;
+    width: calc(100vw - 1.5rem) !important;
+    max-height: calc(100vh - 6rem) !important;
+    border-radius: 1.5rem !important;
+    box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35) !important;
+  }
+
+  #chatbot-messages {
+    max-height: 48vh !important;
+    padding: 0.75rem !important;
+  }
+
+  #chatbot-toggle-btn {
+    bottom: 4.5rem !important;
+    right: 1rem !important;
+  }
+}
+

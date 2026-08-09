@@ -276,45 +276,47 @@ function injectChatbotWidget() {
   root.className = 'no-print';
 
   root.innerHTML = `
-    <button id="chatbot-toggle-btn" class="fixed bottom-20 md:bottom-6 right-5 z-50 w-14 h-14 bg-slate-900 hover:bg-black text-white rounded-full shadow-2xl border border-slate-700/80 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all duration-300 group">
-      <i class="bi bi-stars text-2xl text-white group-hover:rotate-12 transition-all duration-300"></i>
+    <button id="chatbot-toggle-btn" aria-label="Toggle AI Assistant" class="fixed bottom-20 sm:bottom-6 right-4 sm:right-6 z-[99998] w-13 h-13 sm:w-14 sm:h-14 bg-slate-900 hover:bg-black text-white rounded-full shadow-2xl border border-slate-700/80 flex items-center justify-center text-2xl hover:scale-110 active:scale-95 transition-all duration-300 group">
+      <i class="bi bi-stars text-xl sm:text-2xl text-white group-hover:rotate-12 transition-all duration-300"></i>
       <span class="absolute -top-0.5 -right-0.5 flex h-4 w-4">
         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-slate-400 opacity-75"></span>
         <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-slate-900"></span>
       </span>
     </button>
 
-    <div id="chatbot-drawer" class="fixed bottom-36 md:bottom-24 right-5 z-50 w-96 max-w-[calc(100vw-2.5rem)] bg-white rounded-3xl shadow-2xl border border-slate-200 hidden flex-col overflow-hidden transition-all transform duration-300">
+    <div id="chatbot-drawer" class="fixed inset-x-3 bottom-20 sm:bottom-24 sm:right-6 sm:left-auto sm:w-96 max-w-full max-h-[calc(100vh-6.5rem)] sm:max-h-[600px] z-[99999] bg-white rounded-3xl shadow-2xl border border-slate-200 hidden flex-col overflow-hidden transition-all transform duration-300">
       
-      <div class="bg-slate-900 text-white p-4 flex items-center justify-between border-b border-slate-800">
+      <div class="bg-slate-900 text-white p-3.5 sm:p-4 flex items-center justify-between border-b border-slate-800 shrink-0">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-xl text-white shadow-inner">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-lg sm:text-xl text-white shadow-inner shrink-0">
             <i class="bi bi-stars"></i>
           </div>
           <div>
-            <h3 class="font-bold text-sm leading-tight flex items-center gap-1.5">
+            <h3 class="font-bold text-xs sm:text-sm leading-tight flex items-center gap-1.5">
               BizSheet AI <span class="text-[10px] bg-white/15 text-slate-200 px-1.5 py-0.5 rounded font-mono">Mistral AI</span>
             </h3>
             <p class="text-[10px] text-slate-400">Your Intelligent Financial Advisor</p>
           </div>
         </div>
-        <button id="chatbot-close-btn" class="text-slate-400 hover:text-white text-lg"><i class="bi bi-x-lg"></i></button>
-      </div>
-
-      <div class="p-3 bg-slate-50 border-b border-slate-100 flex flex-wrap gap-1.5 text-[11px]">
-        <button class="prompt-chip bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-100 px-2.5 py-1 rounded-full text-slate-800 font-semibold transition">
-          📊 What is my net profit?
-        </button>
-        <button class="prompt-chip bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-100 px-2.5 py-1 rounded-full text-slate-800 font-semibold transition">
-          ⚠️ Which invoices are unpaid?
-        </button>
-        <button class="prompt-chip bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-100 px-2.5 py-1 rounded-full text-slate-800 font-semibold transition">
-          💡 How to convert quotation?
+        <button id="chatbot-close-btn" class="w-8 h-8 rounded-xl hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition shrink-0">
+          <i class="bi bi-x-lg text-sm"></i>
         </button>
       </div>
 
-      <div id="chatbot-messages" class="p-4 space-y-3 h-80 overflow-y-auto text-xs bg-slate-50/50">
-        <div class="flex items-start gap-2 max-w-[85%]">
+      <div class="p-2.5 bg-slate-50 border-b border-slate-100 flex items-center gap-1.5 text-[11px] overflow-x-auto no-scrollbar whitespace-nowrap shrink-0">
+        <button class="prompt-chip bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-100 px-3 py-1 rounded-full text-slate-800 font-semibold transition shrink-0">
+          📊 Net profit summary
+        </button>
+        <button class="prompt-chip bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-100 px-3 py-1 rounded-full text-slate-800 font-semibold transition shrink-0">
+          ⚠️ Unpaid invoices
+        </button>
+        <button class="prompt-chip bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-100 px-3 py-1 rounded-full text-slate-800 font-semibold transition shrink-0">
+          💡 Convert quotation
+        </button>
+      </div>
+
+      <div id="chatbot-messages" class="p-3.5 sm:p-4 space-y-3 flex-1 min-h-[160px] max-h-[48vh] sm:max-h-[350px] overflow-y-auto text-xs bg-slate-50/50">
+        <div class="flex items-start gap-2 max-w-[90%] sm:max-w-[85%]">
           <div class="w-7 h-7 rounded-xl bg-slate-900 text-white flex items-center justify-center text-xs font-bold shrink-0 shadow-xs">
             <i class="bi bi-stars"></i>
           </div>
@@ -325,9 +327,9 @@ function injectChatbotWidget() {
         </div>
       </div>
 
-      <form id="chatbot-form" class="p-3 bg-white border-t border-slate-100 flex items-center gap-2">
-        <input type="text" id="chatbot-input" required placeholder="Ask Mistral AI about your business..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-slate-900" />
-        <button type="submit" id="chatbot-send-btn" class="w-9 h-9 bg-slate-900 hover:bg-black text-white rounded-xl flex items-center justify-center text-sm transition shrink-0 shadow-xs">
+      <form id="chatbot-form" class="p-2.5 sm:p-3 bg-white border-t border-slate-100 flex items-center gap-2 shrink-0">
+        <input type="text" id="chatbot-input" required placeholder="Ask Mistral AI..." class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-slate-900 font-medium" />
+        <button type="submit" id="chatbot-send-btn" class="w-9 h-9 bg-slate-900 hover:bg-black text-white rounded-xl flex items-center justify-center text-sm transition shrink-0 shadow-xs active:scale-95">
           <i class="bi bi-send-fill"></i>
         </button>
       </form>
