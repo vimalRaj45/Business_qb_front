@@ -348,7 +348,7 @@
         } else {
           convertBtn.addEventListener('click', async () => {
             try {
-              const res = await API.post(`/api/quotations/${q.quotation_id}/convert`);
+              const res = await API.post(`/api/quotations/${q.quotation_id}/convert`, {});
               showToast('Quotation converted to Invoice!', 'success');
               setTimeout(() => {
                 window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`;

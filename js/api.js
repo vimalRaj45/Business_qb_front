@@ -18,12 +18,13 @@ export const API = {
     const config = {
       method: options.method || 'GET',
       headers: { ...defaultHeaders, ...options.headers },
-      credentials: 'include', // Cross-domain cookie support for Render + Cloudflare Pages
+      credentials: 'include',
       ...options
     };
 
-    if (options.body && typeof options.body === 'object') {
-      config.body = JSON.stringify(options.body);
+    if (config.method === 'POST' || config.method === 'PUT') {
+      const payload = options.body !== undefined ? options.body : {};
+      config.body = typeof payload === 'string' ? payload : JSON.stringify(payload);
     }
 
     try {
@@ -47,12 +48,12 @@ export const API = {
     return this.request(endpoint, { ...options, method: 'GET' });
   },
 
-  post(endpoint, body, options) {
-    return this.request(endpoint, { ...options, method: 'POST', body });
+  post(endpoint, body = {}, options) {
+    return this.request(endpoint, { ...options, method: 'POST', body: body || {} });
   },
 
-  put(endpoint, body, options) {
-    return this.request(endpoint, { ...options, method: 'PUT', body });
+  put(endpoint, body = {}, options) {
+    return this.request(endpoint, { ...options, method: 'PUT', body: body || {} });
   },
 
   delete(endpoint, options) {

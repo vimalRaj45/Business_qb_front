@@ -93,7 +93,7 @@ window.convertToInvoice = async function(quotationId) {
   if (!confirmed) return;
 
   try {
-    const res = await API.post(`/api/quotations/${quotationId}/convert`);
+    const res = await API.post(`/api/quotations/${quotationId}/convert`, {});
     showToast('Quotation converted to Invoice!', 'success');
     setTimeout(() => {
       window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`;
