@@ -23,7 +23,6 @@ export function renderLayout(business = {}, user = {}) {
     { label: 'Transactions', href: '/transactions.html', icon: 'bi-journal-text' },
     { label: 'Reports', href: '/reports.html', icon: 'bi-bar-chart-line-fill' },
     { label: 'Developer API', href: '/developer.html', icon: 'bi-code-slash' },
-    { label: 'Team & Audit Logs', href: '/team.html', icon: 'bi-shield-lock-fill' },
     { label: 'Settings', href: '/settings.html', icon: 'bi-gear-fill' },
   ];
 
@@ -262,9 +261,9 @@ function renderMobileBottomNav(currentPath) {
       <i class="bi bi-credit-card-fill"></i>
       <span>Payments</span>
     </a>
-    <a href="/team.html" class="mobile-nav-item ${currentPath.endsWith('/team.html') ? 'active' : ''}">
-      <i class="bi bi-shield-lock-fill"></i>
-      <span>Team</span>
+    <a href="/reports.html" class="mobile-nav-item ${currentPath.endsWith('/reports.html') ? 'active' : ''}">
+      <i class="bi bi-bar-chart-line-fill"></i>
+      <span>Reports</span>
     </a>
   `;
   document.body.appendChild(nav);
