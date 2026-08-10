@@ -1,6 +1,6 @@
 {
-  "name": "BizSheet — Business Billing Platform",
-  "short_name": "BizSheet",
+  "name": "Bizsheet — Business Billing Platform",
+  "short_name": "Bizsheet",
   "description": "Smart Google Drive-powered Billing, Invoicing, Quotations & Accounting Platform.",
   "start_url": "/dashboard.html",
   "display": "standalone",

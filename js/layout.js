@@ -160,7 +160,7 @@ function renderSplashScreen() {
         <i class="bi bi-receipt"></i>
       </div>
       <div class="space-y-1">
-        <h2 class="text-2xl font-black text-slate-900 tracking-tight">BizSheet Platform</h2>
+        <h2 class="text-2xl font-black text-slate-900 tracking-tight">Bizsheet Platform</h2>
         <p class="text-xs font-bold text-teal-700">Synchronizing Google Drive Ledger...</p>
       </div>
       <div class="splash-progress-track">
@@ -479,9 +479,9 @@ function showPwaInstallModal(force = false) {
         <i class="bi bi-receipt-cutoff"></i>
       </div>
       <div>
-        <h3 class="font-extrabold text-slate-900 text-lg">Install BizSheet App</h3>
+        <h3 class="font-extrabold text-slate-900 text-lg">Install Bizsheet App</h3>
         <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-          Install BizSheet to launch directly from your home screen with 1-click access.
+          Install Bizsheet to launch directly from your home screen with 1-click access.
         </p>
       </div>
       <div class="flex flex-col gap-2 pt-2">
