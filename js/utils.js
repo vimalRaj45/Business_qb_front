@@ -286,33 +286,57 @@ showToast.info = (msg, title) => showToast(msg, 'info', title);
 window.toast = showToast;
 
 /**
- * Uiverse.io System-wide Action Loading Overlay
+ * Uiverse.io System-wide Action Loading Overlay with Render Cold-Start Detection
  */
-export function showActionLoading(message = 'Processing Action...') {
+let coldStartSubtitleTimeout = null;
+
+export function showActionLoading(message = 'Processing Action...', subtitle = '') {
+  if (coldStartSubtitleTimeout) {
+    clearTimeout(coldStartSubtitleTimeout);
+    coldStartSubtitleTimeout = null;
+  }
+
   let overlay = document.getElementById('action-loading-overlay');
+  const defaultSub = subtitle || 'Connecting to cloud service...';
+
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'action-loading-overlay';
     overlay.className = 'fixed inset-0 z-[9999999] flex flex-col items-center justify-center bg-slate-900/70 backdrop-blur-md transition-all duration-300';
     overlay.innerHTML = `
-      <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-slate-200/80 flex flex-col items-center gap-5 max-w-xs w-full text-center animate-in fade-in zoom-in duration-200">
+      <div class="bg-white/95 backdrop-blur-md rounded-3xl p-8 shadow-2xl border border-slate-200/80 flex flex-col items-center gap-5 max-w-sm w-full text-center animate-in fade-in zoom-in duration-200">
         <div class="uiverse-loader"></div>
-        <div class="space-y-1">
-          <h4 id="action-loading-title" class="font-extrabold text-slate-900 text-sm tracking-tight">${message}</h4>
-          <p class="text-[11px] text-slate-500 font-semibold">Updating Google Drive Ledger...</p>
+        <div class="space-y-1.5">
+          <h4 id="action-loading-title" class="font-extrabold text-slate-900 text-sm tracking-tight">${escapeHtml(message)}</h4>
+          <p id="action-loading-subtitle" class="text-[11px] text-slate-500 font-medium leading-relaxed">${escapeHtml(defaultSub)}</p>
         </div>
       </div>
     `;
     document.body.appendChild(overlay);
   } else {
     const titleEl = document.getElementById('action-loading-title');
+    const subEl = document.getElementById('action-loading-subtitle');
     if (titleEl) titleEl.textContent = message;
+    if (subEl) subEl.textContent = defaultSub;
     overlay.classList.remove('hidden');
     overlay.classList.add('flex');
   }
+
+  // Automatic Render Cold Start Detector: If operation takes longer than 2.5 seconds
+  coldStartSubtitleTimeout = setTimeout(() => {
+    const subEl = document.getElementById('action-loading-subtitle');
+    const overlay = document.getElementById('action-loading-overlay');
+    if (subEl && overlay && !overlay.classList.contains('hidden')) {
+      subEl.innerHTML = `<span class="text-amber-600 font-semibold">Server waking up from cold start...</span><br/><span class="text-[10px] text-slate-400">Render backend connecting (takes ~15-30s on initial load). Please hold on...</span>`;
+    }
+  }, 2500);
 }
 
 export function hideActionLoading() {
+  if (coldStartSubtitleTimeout) {
+    clearTimeout(coldStartSubtitleTimeout);
+    coldStartSubtitleTimeout = null;
+  }
   const overlay = document.getElementById('action-loading-overlay');
   if (overlay) {
     overlay.classList.add('hidden');
