@@ -154,35 +154,68 @@
 
       <div class="sec">
         <h2><i class="bi bi-person-check-fill"></i> 1. Information We Collect</h2>
-        <p>When you authenticate using Google OAuth 2.0, we collect basic profile details provided by Google — including your email address, profile name, avatar image URL, and Google user ID — to establish your authenticated session.</p>
+        <p>When you authenticate using Google OAuth 2.0, we collect basic profile details provided by Google — including your email address, profile name, avatar image URL, and Google user ID — to establish your authenticated session and user identity.</p>
       </div>
 
       <div class="sec-divider"></div>
 
       <div class="sec">
-        <h2><i class="bi bi-google"></i> 2. Google Drive & Google Sheets Permissions</h2>
-        <p>We request access to Google Sheets and Google Drive (<code>drive.file</code> scope) solely to create and manage your business database spreadsheet named <strong>Business Billing Data</strong>. We do not inspect, read, or modify any other files in your Google Drive.</p>
+        <h2><i class="bi bi-google"></i> 2. Google OAuth Scopes & Permissions Requested</h2>
+        <p>Our application requests only the minimum necessary Google permissions required to operate:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; font-size: 13px; color: #475569; line-height: 1.8;">
+          <li><strong>drive.file (<code>https://www.googleapis.com/auth/drive.file</code>):</strong> Used solely to create, read, and update the application's dedicated spreadsheet named <em>"Business Billing Data"</em> in your personal Google Drive. We do not access, read, or modify any other files in your Google Drive.</li>
+          <li><strong>userinfo.email & userinfo.profile:</strong> Used to identify your account and personalize your workspace.</li>
+          <li><strong>gmail.send (<code>https://www.googleapis.com/auth/gmail.send</code>):</strong> Used solely when you explicitly choose to email a quotation or invoice directly to your customer from within the application. We never read, inspect, or manage your mailbox.</li>
+        </ul>
       </div>
 
       <div class="sec-divider"></div>
 
       <div class="sec">
-        <h2><i class="bi bi-database-fill-lock"></i> 3. Data Ownership & Storage</h2>
-        <p>All customers, products, quotations, invoices, payments, and expense ledgers are written directly to your Google Spreadsheet. We do not sell or monetize your business records in any way.</p>
+        <h2><i class="bi bi-shield-lock-fill"></i> 3. Data Protection Mechanisms for Sensitive Data</h2>
+        <p>We implement rigorous technical and organizational safeguards to ensure all sensitive user data and credentials remain secure at all times:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; font-size: 13px; color: #475569; line-height: 1.8;">
+          <li><strong>Encryption in Transit:</strong> All data exchanged between your browser and our servers, as well as between our servers and Google API endpoints, is encrypted using modern Transport Layer Security (TLS 1.2 or TLS 1.3) protocols over HTTPS.</li>
+          <li><strong>Encryption at Rest:</strong> OAuth tokens, authorization credentials, and cached configuration data are encrypted at rest using industry-standard cryptographic algorithms (AES-256). All business records (customers, invoices, products, quotations) are stored directly inside your own Google Drive spreadsheet, safeguarded by Google's multi-layered enterprise infrastructure security.</li>
+          <li><strong>Access Control & Least Privilege:</strong> Access to user data is strictly segregated. Only the authenticated account owner has access to operations triggering reads or writes to their designated spreadsheet. No staff, third-party vendor, or unauthorized service has access to your private spreadsheet data.</li>
+          <li><strong>Secure Token Handling:</strong> OAuth refresh and access tokens are never transmitted to client-side code, never stored in publicly accessible repositories, and are immediately destroyed upon session logout or account deletion.</li>
+        </ul>
       </div>
 
       <div class="sec-divider"></div>
 
       <div class="sec">
-        <h2><i class="bi bi-trash3-fill"></i> 4. Account Deletion & Right to Erase</h2>
-        <p>You can permanently delete your account at any time from the <strong>Settings</strong> page. Deleting your account immediately triggers a Google Drive API deletion of your <strong>Business Billing Data</strong> spreadsheet and erases all local session tokens.</p>
+        <h2><i class="bi bi-robot"></i> 4. Artificial Intelligence (AI) & Machine Learning (ML) Policy</h2>
+        <p>In accordance with Google Workspace API User Data and Developer Policy:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; font-size: 13px; color: #475569; line-height: 1.8;">
+          <li><strong>No Model Training:</strong> Under no circumstances is Google user data (including raw, aggregated, or derived data from Google Drive, Google Sheets, or Gmail) transferred, sold, or used to build, train, improve, or fine-tune generalized or foundational AI or machine learning models.</li>
+          <li><strong>No Third-Party AI Sharing:</strong> We do not transmit Google user data to third-party AI services, model aggregators, or hubs.</li>
+        </ul>
       </div>
 
       <div class="sec-divider"></div>
 
       <div class="sec">
-        <h2><i class="bi bi-envelope-fill"></i> 5. Contact Us</h2>
-        <p>For any privacy questions or concerns regarding Google OAuth permissions, contact the platform developer at <strong style="color:#0d9488;">vsgrpsemail@gmail.com</strong>.</p>
+        <h2><i class="bi bi-patch-check-fill"></i> 5. Google API Limited Use Disclosure</h2>
+        <p>Bizsheet's use and transfer to any other app of information received from Google APIs will adhere to the <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" style="color:#0d9488; font-weight:600;">Google API Services User Data Policy</a>, including the Limited Use requirements.</p>
+      </div>
+
+      <div class="sec-divider"></div>
+
+      <div class="sec">
+        <h2><i class="bi bi-trash3-fill"></i> 6. Data Retention, Account Deletion & Right to Erase</h2>
+        <p>You retain full ownership of your data at all times:</p>
+        <ul style="margin: 0.5rem 0 0.5rem 1.5rem; font-size: 13px; color: #475569; line-height: 1.8;">
+          <li><strong>Instant Account Deletion:</strong> You can permanently delete your account at any time via the <strong>Settings</strong> page. This triggers an automated deletion of your <em>Business Billing Data</em> spreadsheet from Google Drive and immediately purges all authentication tokens and cached records from our servers.</li>
+          <li><strong>Google Permissions Revocation:</strong> You can also revoke Bizsheet's access to your Google account at any moment directly from your <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" style="color:#0d9488; font-weight:600;">Google Account Permissions</a> dashboard.</li>
+        </ul>
+      </div>
+
+      <div class="sec-divider"></div>
+
+      <div class="sec">
+        <h2><i class="bi bi-envelope-fill"></i> 7. Contact Us</h2>
+        <p>If you have any questions or security inquiries regarding this Privacy Policy or our data protection mechanisms, please contact our Data Protection Team at <strong style="color:#0d9488;">vsgrpsemail@gmail.com</strong>.</p>
       </div>
 
     </div>
