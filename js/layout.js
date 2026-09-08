@@ -42,6 +42,11 @@ export function updateHeaderTitle(titleText = 'Dashboard') {
   if (el) el.textContent = titleText;
 }
 
+if (typeof window !== 'undefined') {
+  window.updateActiveNav = updateActiveNav;
+  window.updateHeaderTitle = updateHeaderTitle;
+}
+
 export function renderLayout(business = {}, user = {}) {
   // If already rendered in SPA shell, simply update active nav and return
   if (document.querySelector('#sidebar-container .nav-link')) {

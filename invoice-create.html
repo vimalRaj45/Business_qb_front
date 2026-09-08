@@ -36,7 +36,12 @@
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label class="block text-xs font-semibold text-slate-600 mb-1">Customer *</label>
+              <div class="flex items-center justify-between mb-1">
+                <label class="block text-xs font-semibold text-slate-600">Customer <span class="text-rose-500">*</span></label>
+                <button type="button" id="quick-add-customer-btn" class="text-xs font-bold text-teal-600 hover:text-teal-700 flex items-center gap-1 transition cursor-pointer">
+                  <i class="bi bi-person-plus-fill"></i> + New Customer
+                </button>
+              </div>
               <select id="customer_id" required class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:outline-none focus:border-teal-500">
                 <option value="">Select Customer...</option>
               </select>
@@ -58,9 +63,14 @@
         <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-4">
           <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <h3 class="font-bold text-slate-900 text-sm">Invoice Line Items</h3>
-            <button type="button" id="add-item-btn" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold flex items-center gap-1">
-              <i class="bi bi-plus"></i> Add Line Item
-            </button>
+            <div class="flex items-center gap-2">
+              <button type="button" id="quick-add-product-btn" class="px-3 py-1.5 bg-teal-50 text-teal-700 hover:bg-teal-100 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
+                <i class="bi bi-box-seam-fill"></i> + New Product
+              </button>
+              <button type="button" id="add-item-btn" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-xs font-semibold flex items-center gap-1 transition cursor-pointer">
+                <i class="bi bi-plus"></i> Add Line Item
+              </button>
+            </div>
           </div>
 
           <div class="overflow-x-auto">
@@ -117,6 +127,102 @@
         </div>
 
       </form>
+
+      <!-- Quick Add Customer Modal -->
+      <div id="quick-customer-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold">
+                <i class="bi bi-person-plus-fill"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-900 text-sm">Quick Add Customer</h3>
+            </div>
+            <button type="button" id="close-quick-cust-btn" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <form id="quick-customer-form" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Customer / Client Name <span class="text-rose-500">*</span></label>
+              <input type="text" id="qc-name" required placeholder="e.g. Ramesh Kumar or Acme Corp" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Company Name</label>
+                <input type="text" id="qc-company" placeholder="Acme Ltd" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
+                <input type="tel" id="qc-phone" placeholder="+91 98765 43210" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none" />
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Email Address</label>
+              <input type="email" id="qc-email" placeholder="client@example.com" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none" />
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Address / GST Number</label>
+              <input type="text" id="qc-address" placeholder="City, State, GSTIN" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none" />
+            </div>
+
+            <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+              <button type="button" id="cancel-quick-cust-btn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Cancel</button>
+              <button type="submit" id="save-quick-cust-btn" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs shadow-xs">Save & Select</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Quick Add Product Modal -->
+      <div id="quick-product-modal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl space-y-4 border border-slate-200">
+          <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-teal-50 text-teal-700 flex items-center justify-center font-bold">
+                <i class="bi bi-box-seam-fill"></i>
+              </div>
+              <h3 class="font-extrabold text-slate-900 text-sm">Quick Add Product / Service</h3>
+            </div>
+            <button type="button" id="close-quick-prod-btn" class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center text-xs">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+
+          <form id="quick-product-form" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">Product / Service Name <span class="text-rose-500">*</span></label>
+              <input type="text" id="qp-name" required placeholder="e.g. Web Consulting or Hardware Part" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-teal-500" />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Unit Price <span class="text-rose-500">*</span></label>
+                <input type="number" step="0.01" id="qp-price" required placeholder="0.00" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold focus:outline-none" />
+              </div>
+              <div>
+                <label class="block font-bold text-slate-700 mb-1">Tax Rate (%)</label>
+                <select id="qp-tax" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none">
+                  <option value="0">0% (Nil)</option>
+                  <option value="5">5% GST</option>
+                  <option value="12">12% GST</option>
+                  <option value="18" selected>18% GST</option>
+                  <option value="28">28% GST</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-700 mb-1">SKU / Code (Optional)</label>
+              <input type="text" id="qp-sku" placeholder="PROD-001" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none" />
+            </div>
+
+            <div class="pt-2 flex justify-end gap-2 border-t border-slate-100">
+              <button type="button" id="cancel-quick-prod-btn" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs">Cancel</button>
+              <button type="submit" id="save-quick-prod-btn" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-xl text-xs shadow-xs">Save to Catalog</button>
+            </div>
+          </form>
+        </div>
+      </div>
 
     </main>
   </div>
@@ -188,6 +294,131 @@
       document.getElementById('add-item-btn').addEventListener('click', () => addItemRow());
       document.getElementById('overall-discount').addEventListener('input', calculateTotals);
       document.getElementById('invoice-form').addEventListener('submit', handleSubmit);
+
+      // Setup Quick-Add Customer Modal
+      const custModal = document.getElementById('quick-customer-modal');
+      const openCustBtn = document.getElementById('quick-add-customer-btn');
+      const closeCustBtn = document.getElementById('close-quick-cust-btn');
+      const cancelCustBtn = document.getElementById('cancel-quick-cust-btn');
+      const custForm = document.getElementById('quick-customer-form');
+
+      function openCustomerModal() {
+        custForm?.reset();
+        custModal?.classList.remove('hidden');
+        custModal?.classList.add('flex');
+        document.getElementById('qc-name')?.focus();
+      }
+      function closeCustomerModal() {
+        custModal?.classList.add('hidden');
+        custModal?.classList.remove('flex');
+      }
+
+      openCustBtn?.addEventListener('click', openCustomerModal);
+      closeCustBtn?.addEventListener('click', closeCustomerModal);
+      cancelCustBtn?.addEventListener('click', closeCustomerModal);
+
+      custForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('save-quick-cust-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+        try {
+          const payload = {
+            customer_name: document.getElementById('qc-name').value.trim(),
+            company_name: document.getElementById('qc-company').value.trim(),
+            phone: document.getElementById('qc-phone').value.trim(),
+            email: document.getElementById('qc-email').value.trim(),
+            address: document.getElementById('qc-address').value.trim()
+          };
+          const res = await API.post('/api/customers', payload);
+          showToast(`Customer "${payload.customer_name}" added!`, 'success');
+          const newCust = res.data;
+          const select = document.getElementById('customer_id');
+          const opt = document.createElement('option');
+          opt.value = newCust.customer_id;
+          opt.textContent = `${newCust.customer_name} ${newCust.company_name ? `(${newCust.company_name})` : ''}`;
+          select.appendChild(opt);
+          select.value = newCust.customer_id;
+          closeCustomerModal();
+        } catch (err) {
+          showToast(err.message, 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Save & Select';
+        }
+      });
+
+      // Setup Quick-Add Product Modal
+      const prodModal = document.getElementById('quick-product-modal');
+      const openProdBtn = document.getElementById('quick-add-product-btn');
+      const closeProdBtn = document.getElementById('close-quick-prod-btn');
+      const cancelProdBtn = document.getElementById('cancel-quick-prod-btn');
+      const prodForm = document.getElementById('quick-product-form');
+
+      function openProductModal() {
+        prodForm?.reset();
+        prodModal?.classList.remove('hidden');
+        prodModal?.classList.add('flex');
+        document.getElementById('qp-name')?.focus();
+      }
+      function closeProductModal() {
+        prodModal?.classList.add('hidden');
+        prodModal?.classList.remove('flex');
+      }
+
+      openProdBtn?.addEventListener('click', openProductModal);
+      closeProdBtn?.addEventListener('click', closeProductModal);
+      cancelProdBtn?.addEventListener('click', closeProductModal);
+
+      prodForm?.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const submitBtn = document.getElementById('save-quick-prod-btn');
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Saving...';
+        try {
+          const payload = {
+            name: document.getElementById('qp-name').value.trim(),
+            price: document.getElementById('qp-price').value || '0',
+            tax_rate: document.getElementById('qp-tax').value || '0',
+            sku: document.getElementById('qp-sku').value.trim()
+          };
+          const res = await API.post('/api/products', payload);
+          showToast(`Product "${payload.name}" saved to catalog!`, 'success');
+          const newProd = res.data;
+          catalogProducts.push(newProd);
+
+          // Update all existing row selects
+          document.querySelectorAll('.item-row .item-select').forEach(sel => {
+            const currentVal = sel.value;
+            const opt = document.createElement('option');
+            opt.value = newProd.product_id;
+            opt.dataset.price = newProd.price;
+            opt.dataset.tax = newProd.tax_rate;
+            opt.textContent = `${newProd.name} (${newProd.sku || 'No SKU'})`;
+            sel.appendChild(opt);
+            sel.value = currentVal;
+          });
+
+          // Set on the active/last line item
+          const rows = document.querySelectorAll('.item-row');
+          const lastRow = rows[rows.length - 1];
+          if (lastRow) {
+            const sel = lastRow.querySelector('.item-select');
+            sel.value = newProd.product_id;
+            lastRow.querySelector('.item-desc').value = newProd.name;
+            lastRow.querySelector('.item-price').value = newProd.price || 0;
+            lastRow.querySelector('.item-tax').value = newProd.tax_rate || 0;
+            calculateTotals();
+          }
+
+          closeProductModal();
+        } catch (err) {
+          showToast(err.message, 'error');
+        } finally {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Save to Catalog';
+        }
+      });
     });
 
     function addItemRow() {

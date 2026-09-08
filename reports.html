@@ -25,100 +25,107 @@
     <main class="p-4 md:p-6 space-y-6 max-w-7xl w-full mx-auto pb-24 md:pb-6">
       
       <!-- Top Action Export Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+      <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-300 shadow-xs">
         <div>
-          <h2 class="text-base font-black text-slate-900">Financial Reports & Performance Analytics</h2>
-          <p class="text-xs text-slate-500">Real-time ledger summary synchronized with Google Drive.</p>
+          <h2 class="text-base font-black text-black uppercase tracking-tight">Executive Financial Reports & Audit Analytics</h2>
+          <p class="text-xs text-slate-600">Standardized monochrome financial ledger synchronized with Google Drive.</p>
         </div>
 
         <div class="flex items-center gap-2 w-full sm:w-auto">
-          <button id="export-rep-pdf-btn" class="w-full sm:w-auto px-3.5 sm:px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-extrabold rounded-xl text-[10px] sm:text-xs flex items-center justify-center gap-2 shadow-xs transition whitespace-nowrap">
-            <i class="bi bi-file-earmark-pdf-fill text-rose-400 text-xs sm:text-sm"></i> Download Full Report PDF
+          <button id="export-rep-pdf-btn" class="w-full sm:w-auto px-4 py-2.5 bg-black hover:bg-neutral-800 text-white font-extrabold rounded-xl text-xs flex items-center justify-center gap-2 shadow-sm transition whitespace-nowrap active:scale-95">
+            <i class="bi bi-file-earmark-pdf-fill text-white text-sm"></i> Download Official Audit PDF
           </button>
         </div>
       </div>
 
-      <div id="reports-document-container" class="printable-document space-y-6 bg-white p-6 md:p-8 rounded-3xl border-2 border-slate-900 shadow-2xl relative overflow-hidden text-slate-900">
+      <div id="reports-document-container" class="printable-document space-y-6 bg-white p-6 md:p-8 rounded-2xl border-2 border-black shadow-lg relative overflow-hidden text-black">
         
-        <!-- Top Accent Bar -->
-        <div class="h-2.5 bg-gradient-to-r from-slate-900 via-teal-700 to-amber-500 -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6"></div>
+        <!-- Top Solid Black Accent Bar -->
+        <div class="h-2 bg-black -mx-6 md:-mx-8 -mt-6 md:-mt-8 mb-6"></div>
 
         <!-- Corporate Header Banner -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b-2 border-slate-200 gap-6">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center pb-6 border-b-2 border-black gap-6">
           <div class="flex items-center gap-4">
-            <div class="w-14 h-14 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center text-2xl font-black text-slate-900 shadow-xs shrink-0">
-              <i class="bi bi-graph-up-arrow"></i>
+            <div class="w-14 h-14 rounded-xl bg-white border-2 border-black flex items-center justify-center text-2xl font-black text-black shadow-xs shrink-0">
+              <i class="bi bi-building"></i>
             </div>
-            <div class="border-l-4 border-slate-900 pl-4 space-y-0.5">
-              <h1 id="rep-biz-name" class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">MY BUSINESS</h1>
-              <div class="text-xs font-bold text-teal-700">Financial Ledger & Analytics Report</div>
+            <div class="border-l-4 border-black pl-4 space-y-0.5">
+              <h1 id="rep-biz-name" class="text-xl md:text-2xl font-black text-black uppercase tracking-tight">MY BUSINESS</h1>
+              <div class="text-xs font-bold text-slate-600 uppercase tracking-widest">Financial Ledger & Analytics Report</div>
             </div>
           </div>
 
           <div class="flex flex-col items-end gap-1 text-right">
-            <div class="bg-slate-900 text-white px-6 py-2 rounded-xl font-black text-lg tracking-widest uppercase shadow-md text-center">
-              FINANCIAL REPORT
+            <div class="bg-black text-white px-6 py-2 rounded-lg font-black text-base md:text-lg tracking-widest uppercase shadow-sm text-center">
+              FINANCIAL AUDIT REPORT
             </div>
-            <div class="text-xs text-slate-500 font-medium pt-1">GENERATED ON: <span id="rep-date" class="font-bold text-slate-900">--</span></div>
+            <div class="text-xs text-slate-600 font-semibold pt-1">GENERATED: <span id="rep-date" class="font-bold text-black font-mono">--</span></div>
           </div>
         </div>
 
-        <!-- Report Selection Grid -->
+        <!-- Report Summary Grid -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <!-- P&L Card -->
-          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3">
-            <div class="flex items-center gap-2 text-teal-600 font-bold text-sm">
-              <i class="bi bi-graph-up-arrow text-lg"></i> Profit & Loss Summary
+          <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-xs space-y-3">
+            <div class="flex items-center gap-2 text-black font-extrabold text-xs uppercase tracking-wider border-b border-slate-200 pb-2">
+              <i class="bi bi-graph-up text-sm"></i> Profit & Loss Summary
             </div>
-            <div class="space-y-1 text-xs">
-              <div class="flex justify-between text-slate-600"><span>Total Billed Sales:</span> <span id="pl-sales" class="font-bold text-slate-900">--</span></div>
-              <div class="flex justify-between text-slate-600"><span>Total Expenses:</span> <span id="pl-exp" class="font-bold text-rose-600">--</span></div>
-              <div class="border-t border-slate-200 pt-2 flex justify-between text-sm font-extrabold text-slate-900">
-                <span>Net Profit:</span>
-                <span id="pl-net" class="text-teal-600">--</span>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between text-slate-600"><span>Total Billed Sales:</span> <span id="pl-sales" class="font-bold font-mono text-black">--</span></div>
+              <div class="flex justify-between text-slate-600"><span>Total Expenses:</span> <span id="pl-exp" class="font-bold font-mono text-slate-700">--</span></div>
+              <div class="border-t-2 border-black pt-2 flex justify-between text-sm font-black text-black">
+                <span>Net Operating Profit:</span>
+                <span id="pl-net" class="font-mono text-black">--</span>
               </div>
-              <div class="text-[11px] text-slate-400 text-right pt-1">Margin: <span id="pl-margin">0%</span></div>
+              <div class="text-[11px] font-mono text-slate-500 text-right pt-0.5">Operating Margin: <span id="pl-margin" class="font-bold text-black">0%</span></div>
             </div>
           </div>
 
-          <!-- Sales Report Card -->
-          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3">
-            <div class="flex items-center gap-2 text-emerald-600 font-bold text-sm">
-              <i class="bi bi-receipt text-lg"></i> Sales Summary
+          <!-- Sales Summary Card -->
+          <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-xs space-y-3">
+            <div class="flex items-center gap-2 text-black font-extrabold text-xs uppercase tracking-wider border-b border-slate-200 pb-2">
+              <i class="bi bi-receipt text-sm"></i> Sales & Collections
             </div>
-            <div class="space-y-1 text-xs">
-              <div class="flex justify-between text-slate-600"><span>Total Invoices Issued:</span> <span id="sales-cnt" class="font-bold text-slate-900">--</span></div>
-              <div class="flex justify-between text-slate-600"><span>Total Collected Revenue:</span> <span id="sales-paid" class="font-bold text-emerald-600">--</span></div>
-              <div class="flex justify-between text-slate-600"><span>Outstanding Due:</span> <span id="sales-due" class="font-bold text-rose-600">--</span></div>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between text-slate-600"><span>Total Invoices Issued:</span> <span id="sales-cnt" class="font-bold font-mono text-black">--</span></div>
+              <div class="flex justify-between text-slate-600"><span>Collected Revenue:</span> <span id="sales-paid" class="font-bold font-mono text-black">--</span></div>
+              <div class="flex justify-between text-slate-600"><span>Outstanding Due:</span> <span id="sales-due" class="font-bold font-mono text-slate-800">--</span></div>
+              <div class="text-[11px] font-mono text-slate-500 pt-0.5">Includes settled & outstanding invoices</div>
             </div>
           </div>
 
           <!-- Tax Summary Card -->
-          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-3">
-            <div class="flex items-center gap-2 text-purple-600 font-bold text-sm">
-              <i class="bi bi-percent text-lg"></i> Tax Liability Summary
+          <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-xs space-y-3">
+            <div class="flex items-center gap-2 text-black font-extrabold text-xs uppercase tracking-wider border-b border-slate-200 pb-2">
+              <i class="bi bi-percent text-sm"></i> Tax & GST Liability
             </div>
-            <div class="space-y-1 text-xs">
-              <div class="flex justify-between text-slate-600"><span>Total Taxable Subtotal:</span> <span id="tax-base" class="font-bold text-slate-900">--</span></div>
-              <div class="flex justify-between text-slate-600"><span>Total Tax Collected:</span> <span id="tax-collected" class="font-bold text-purple-700">--</span></div>
-              <div class="text-[11px] text-slate-400 pt-2">Calculated across all customer invoices</div>
+            <div class="space-y-1.5 text-xs">
+              <div class="flex justify-between text-slate-600"><span>Total Taxable Turnover:</span> <span id="tax-base" class="font-bold font-mono text-black">--</span></div>
+              <div class="flex justify-between text-slate-600"><span>Total Tax / GST:</span> <span id="tax-collected" class="font-bold font-mono text-black">--</span></div>
+              <div class="text-[11px] font-mono text-slate-500 pt-2 border-t border-slate-100">Aggregated across customer invoices</div>
             </div>
           </div>
 
         </div>
 
-        <!-- Charts Grid -->
+        <!-- Charts Grid (Monochrome) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-            <h4 class="font-bold text-slate-800 text-xs mb-4">Monthly Revenue vs Expenses</h4>
+          <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-xs">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-4">
+              <h4 class="font-extrabold text-black text-xs uppercase tracking-wider">Monthly Revenue vs Expenses</h4>
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">AUDIT METRIC</span>
+            </div>
             <div class="h-64 relative">
               <canvas id="rev-exp-chart"></canvas>
             </div>
           </div>
 
-          <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200">
-            <h4 class="font-bold text-slate-800 text-xs mb-4">Expense Categories Breakdown</h4>
+          <div class="bg-white p-5 rounded-xl border border-slate-300 shadow-xs">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-4">
+              <h4 class="font-extrabold text-black text-xs uppercase tracking-wider">Expense Categories Breakdown</h4>
+              <span class="text-[10px] font-bold text-slate-500 uppercase tracking-widest font-mono">DISTRIBUTION</span>
+            </div>
             <div class="h-64 relative">
               <canvas id="expense-cat-chart"></canvas>
             </div>
@@ -126,11 +133,13 @@
         </div>
 
         <!-- Footer Authorized Signatory -->
-        <div class="pt-6 border-t-2 border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-end gap-4 text-xs">
-          <div class="text-[10px] text-slate-400 font-medium">Computer generated financial analytics document &bull; Bizsheet Platform</div>
+        <div class="pt-6 border-t-2 border-black flex flex-col md:flex-row justify-between items-start md:items-end gap-4 text-xs">
+          <div class="text-[11px] text-slate-600 font-medium">
+            Standard Executive Financial Analytics Document &bull; Generated by Bizsheet Ledger Core
+          </div>
           <div class="text-right ml-auto">
-            <div class="w-56 border-b-2 border-slate-900 pb-1 text-center font-black text-slate-900 uppercase text-xs">AUTHORIZED SIGNATORY</div>
-            <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider text-center w-56">MANAGEMENT APPROVAL</div>
+            <div class="w-64 border-b-2 border-black pb-1 text-center font-black text-black uppercase text-xs tracking-wider">AUTHORIZED SIGNATORY</div>
+            <div class="text-[10px] text-slate-600 font-bold uppercase tracking-widest text-center w-64 pt-1">EXECUTIVE AUDIT APPROVAL</div>
           </div>
         </div>
 

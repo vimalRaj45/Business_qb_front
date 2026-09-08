@@ -1,13 +1,15 @@
-const CACHE_NAME = 'bizsheet-v2';
+const CACHE_NAME = 'bizsheet-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
+  '/app.html',
   '/login.html',
   '/dashboard.html',
   '/css/app.css',
   '/js/api.js',
   '/js/auth.js',
   '/js/layout.js',
+  '/js/router.js',
   '/js/utils.js',
   '/manifest.json',
   '/favicon.svg'

@@ -86,16 +86,34 @@ function renderRevenueChart(revenue, expenses) {
   chartInstanceRev = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['Overall Total'],
+      labels: ['Fiscal Ledger Total'],
       datasets: [
-        { label: 'Revenue', data: [revenue], backgroundColor: '#0d9488', borderRadius: 8 },
-        { label: 'Expenses', data: [expenses], backgroundColor: '#f43f5e', borderRadius: 8 }
+        { label: 'Revenue', data: [revenue], backgroundColor: '#000000', borderRadius: 4 },
+        { label: 'Expenses', data: [expenses], backgroundColor: '#64748b', borderRadius: 4 }
       ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } }
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            font: { weight: 'bold', size: 11 }
+          }
+        }
+      },
+      scales: {
+        y: {
+          grid: { color: '#f1f5f9' },
+          ticks: { font: { size: 10 } }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: { weight: 'bold', size: 11 } }
+        }
+      }
     }
   });
 }
@@ -115,14 +133,23 @@ function renderExpenseChart(categories) {
       labels: labels.length ? labels : ['Operational'],
       datasets: [{
         data: data.length ? data : [1],
-        backgroundColor: ['#f43f5e', '#fb7185', '#fda4af', '#e11d48', '#be123c', '#9f1239'],
+        backgroundColor: ['#000000', '#1f2937', '#374151', '#4b5563', '#6b7280', '#9ca3af', '#cbd5e1'],
+        borderColor: '#ffffff',
         borderWidth: 2
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } }
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            boxWidth: 12,
+            font: { size: 10 }
+          }
+        }
+      }
     }
   });
 }

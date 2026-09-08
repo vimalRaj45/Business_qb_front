@@ -3,7 +3,41 @@
  * Provides zero-reload client-side routing, template caching, and script execution.
  */
 
-import { updateActiveNav, updateHeaderTitle } from './layout.js';
+// Self-contained navigation highlight and header title updater (zero dependency on layout.js caching)
+export function updateActiveNav(routeName = 'dashboard') {
+  const cleanRoute = (routeName || 'dashboard').replace(/^#\/?/, '').split('?')[0].replace(/\.html$/, '');
+
+  document.querySelectorAll('#sidebar-container .nav-link').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const match = href.includes(cleanRoute) || 
+      (cleanRoute.startsWith('invoice') && href.includes('invoices')) || 
+      (cleanRoute.startsWith('quotation') && href.includes('quotations')) || 
+      (cleanRoute.startsWith('customer') && href.includes('customers'));
+    link.classList.toggle('active', match);
+  });
+
+  document.querySelectorAll('#mobile-sidebar-drawer .nav-link').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const match = href.includes(cleanRoute) || 
+      (cleanRoute.startsWith('invoice') && href.includes('invoices')) || 
+      (cleanRoute.startsWith('quotation') && href.includes('quotations')) || 
+      (cleanRoute.startsWith('customer') && href.includes('customers'));
+    link.classList.toggle('active', match);
+  });
+
+  document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item').forEach(item => {
+    const href = item.getAttribute('href') || '';
+    const match = href.includes(cleanRoute) || 
+      (cleanRoute.startsWith('invoice') && href.includes('invoices')) || 
+      (cleanRoute.startsWith('quotation') && href.includes('quotations'));
+    item.classList.toggle('active', match);
+  });
+}
+
+export function updateHeaderTitle(titleText = 'Dashboard') {
+  const el = document.getElementById('header-title-text');
+  if (el) el.textContent = titleText;
+}
 
 // Polyfill URLSearchParams so existing view scripts using window.location.search automatically read hash params
 const OriginalURLSearchParams = window.URLSearchParams;
