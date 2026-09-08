@@ -22,9 +22,10 @@ export const API = {
       ...options
     };
 
-    if (config.method === 'POST' || config.method === 'PUT') {
-      const payload = options.body !== undefined ? options.body : {};
-      config.body = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    if (config.method === 'POST' || config.method === 'PUT' || config.method === 'DELETE') {
+      if (options.body !== undefined) {
+        config.body = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
+      }
     }
 
     const isMutatingAction = config.method !== 'GET';
@@ -76,8 +77,8 @@ export const API = {
     return this.request(endpoint, { ...options, method: 'PUT', body: body || {} });
   },
 
-  delete(endpoint, options) {
-    return this.request(endpoint, { ...options, method: 'DELETE' });
+  delete(endpoint, body = {}, options = {}) {
+    return this.request(endpoint, { ...options, method: 'DELETE', body });
   }
 };
 

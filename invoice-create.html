@@ -27,6 +27,9 @@
         </button>
       </div>
 
+      <!-- Free Allowance / Pro Upgrade Notice Banner -->
+      <div id="invoice-allowance-banner" class="hidden"></div>
+
       <form id="invoice-form" class="space-y-6">
         
         <!-- Header Info Card -->
@@ -157,6 +160,31 @@
       catalogProducts = prodRes.data || [];
       addItemRow();
 
+      // Check Subscription & Free Allowance
+      try {
+        const { getSubscriptionStatus, openUpgradeModal } = await import('./js/subscription.js');
+        const sub = await getSubscriptionStatus();
+        const banner = document.getElementById('invoice-allowance-banner');
+        if (sub && banner && !sub.isPro) {
+          banner.className = `p-4 rounded-2xl flex items-center justify-between gap-3 text-xs mb-2 ${sub.canCreateInvoice ? 'bg-amber-50 border border-amber-200 text-amber-900' : 'bg-rose-50 border border-rose-200 text-rose-900'}`;
+          banner.innerHTML = `
+            <div class="flex items-center gap-2.5">
+              <i class="bi ${sub.canCreateInvoice ? 'bi-info-circle-fill text-amber-600' : 'bi-exclamation-octagon-fill text-rose-600'} text-base shrink-0"></i>
+              <div>
+                <strong>Free Plan: ${sub.invoiceCount} of ${sub.freeLimit} free invoices used.</strong>
+                <span class="block text-[11px] text-slate-500">${sub.canCreateInvoice ? `${sub.remainingFreeInvoices} free remaining.` : 'Free limit reached! Upgrade for unlimited invoices.'}</span>
+              </div>
+            </div>
+            <button type="button" id="upgrade-pro-banner-btn" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs shrink-0 shadow-xs flex items-center gap-1.5 transition">
+              <i class="bi bi-stars text-amber-400"></i> Upgrade to Pro (₹100/mo)
+            </button>
+          `;
+          document.getElementById('upgrade-pro-banner-btn')?.addEventListener('click', () => openUpgradeModal());
+        }
+      } catch (e) {
+        console.warn('Subscription check notice:', e.message);
+      }
+
       document.getElementById('add-item-btn').addEventListener('click', () => addItemRow());
       document.getElementById('overall-discount').addEventListener('input', calculateTotals);
       document.getElementById('invoice-form').addEventListener('submit', handleSubmit);
@@ -262,7 +290,12 @@
         showToast('Invoice generated successfully!', 'success');
         setTimeout(() => window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`, 500);
       } catch (err) {
-        showToast(err.message, 'error');
+        if (err.message && (err.message.includes('10 free invoices') || err.message.includes('FREE_LIMIT_REACHED'))) {
+          const { openUpgradeModal } = await import('./js/subscription.js');
+          openUpgradeModal('You have reached your 10 free invoices limit. Upgrade to Pro for ₹100/month to continue generating unlimited invoices.');
+        } else {
+          showToast(err.message, 'error');
+        }
       }
     }
   </script>
