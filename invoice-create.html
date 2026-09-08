@@ -288,7 +288,7 @@
       try {
         const res = await API.post('/api/invoices', payload);
         showToast('Invoice generated successfully!', 'success');
-        setTimeout(() => window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`, 500);
+        setTimeout(() => window.location.hash = `#/invoice-view?id=${res.data.invoice_id}`, 500);
       } catch (err) {
         if (err.message && (err.message.includes('10 free invoices') || err.message.includes('FREE_LIMIT_REACHED'))) {
           const { openUpgradeModal } = await import('./js/subscription.js');

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bizsheet — Business Billing Platform</title>
+
+  <!-- CDNs & Global Stylesheets -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <link rel="stylesheet" href="/css/app.css" />
+</head>
+<body class="bg-slate-50 min-h-screen flex text-slate-900 overflow-x-hidden">
+
+  <!-- Desktop Persistent Sidebar -->
+  <aside id="sidebar-container" class="w-64 fixed inset-y-0 z-30 hidden md:block"></aside>
+
+  <!-- Main View Container Area -->
+  <div class="flex-1 md:pl-64 flex flex-col min-h-screen w-full">
+    <!-- Top Persistent Header -->
+    <div id="header-container"></div>
+
+    <!-- Dynamic SPA View Mount Point -->
+    <main id="spa-view-mount" class="w-full flex-1"></main>
+  </div>
+
+  <!-- SPA Core Initialization Module -->
+  <script type="module">
+    import { checkAuth } from '/js/auth.js';
+    import { renderLayout } from '/js/layout.js';
+    import { initRouter } from '/js/router.js';
+
+    // Hook document.addEventListener for 'DOMContentLoaded' so view scripts execute immediately
+    const origAddEventListener = document.addEventListener.bind(document);
+    document.addEventListener = function(type, listener, options) {
+      if (type === 'DOMContentLoaded' && (document.readyState === 'interactive' || document.readyState === 'complete')) {
+        setTimeout(listener, 10);
+        return;
+      }
+      return origAddEventListener(type, listener, options);
+    };
+
+    async function startSpa() {
+      try {
+        const session = await checkAuth();
+        if (!session) return;
+
+        renderLayout(session.business, session.user);
+        initRouter();
+      } catch (err) {
+        console.error('Failed to initialize Bizsheet SPA:', err);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      origAddEventListener('DOMContentLoaded', startSpa);
+    } else {
+      startSpa();
+    }
+  </script>
+
+</body>
+</html>

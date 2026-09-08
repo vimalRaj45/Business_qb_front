@@ -6,16 +6,25 @@ import { formatCurrency, showToast, confirmModal, exportToCSV, exportTableToPDF 
 let currencySymbol = 'USD $';
 let productsList = [];
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function initProducts(session) {
+  currencySymbol = session?.business?.currency || 'USD $';
+  loadProducts();
+  setupEventListeners();
+}
+
+async function handleInit() {
   const auth = await checkAuth();
   if (!auth) return;
 
-  currencySymbol = auth.business.currency || 'USD $';
   renderLayout(auth.business, auth.user);
+  initProducts(auth);
+}
 
-  loadProducts();
-  setupEventListeners();
-});
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 // Bind to window for inline HTML click handlers
 window.openProductModal = function() {

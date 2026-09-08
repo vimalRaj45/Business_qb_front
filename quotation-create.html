@@ -258,7 +258,7 @@
       try {
         const res = await API.post('/api/quotations', payload);
         showToast('Quotation created successfully!', 'success');
-        setTimeout(() => window.location.href = `/quotation-view.html?id=${res.data.quotation_id}`, 500);
+        setTimeout(() => window.location.hash = `#/quotation-view?id=${res.data.quotation_id}`, 500);
       } catch (err) {
         showToast(err.message, 'error');
       }

@@ -6,16 +6,25 @@ import { formatCurrency, showToast, confirmModal, exportToCSV, exportTableToPDF 
 let currencySymbol = 'USD $';
 let customersList = [];
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function initCustomers(session) {
+  currencySymbol = session?.business?.currency || 'USD $';
+  loadCustomers();
+  setupEventListeners();
+}
+
+async function handleInit() {
   const auth = await checkAuth();
   if (!auth) return;
 
-  currencySymbol = auth.business.currency || 'USD $';
   renderLayout(auth.business, auth.user);
+  initCustomers(auth);
+}
 
-  loadCustomers();
-  setupEventListeners();
-});
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 // Bind to window for inline HTML click handlers
 window.openCustomerModal = function() {
@@ -77,7 +86,7 @@ function renderCustomersTable(customers) {
   tbody.innerHTML = customers.map(c => `
     <tr class="border-b border-slate-100 hover:bg-slate-50/60 transition">
       <td class="py-3 px-4 font-bold text-slate-900">
-        <a href="/customer-view.html?id=${c.customer_id}" class="hover:text-teal-600 flex items-center gap-2">
+        <a href="#/customer-view?id=${c.customer_id}" class="hover:text-teal-600 flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg bg-teal-50 text-teal-700 font-bold text-xs flex items-center justify-center border border-teal-100">
             ${(c.customer_name || 'C').charAt(0).toUpperCase()}
           </div>
@@ -89,7 +98,7 @@ function renderCustomersTable(customers) {
       <td class="py-3 px-4 text-slate-600">${c.phone || '-'}</td>
       <td class="py-3 px-4 font-semibold text-slate-800">${formatCurrency(c.opening_balance || 0, currencySymbol)}</td>
       <td class="py-3 px-4 text-right space-x-2 no-print">
-        <a href="/customer-view.html?id=${c.customer_id}" class="text-xs font-semibold text-teal-600 hover:text-teal-800 px-2 py-1 bg-teal-50 rounded-lg">View</a>
+        <a href="#/customer-view?id=${c.customer_id}" class="text-xs font-semibold text-teal-600 hover:text-teal-800 px-2 py-1 bg-teal-50 rounded-lg">View</a>
         <button class="delete-customer-btn text-xs font-semibold text-rose-600 hover:text-rose-800 px-2 py-1 bg-rose-50 rounded-lg" data-id="${c.customer_id}" data-name="${c.customer_name}">Delete</button>
       </td>
     </tr>

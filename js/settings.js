@@ -3,16 +3,26 @@ import { renderLayout } from './layout.js';
 import { API } from './api.js';
 import { showToast, confirmModal, escapeHtml } from './utils.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const auth = await checkAuth();
-  if (!auth) return;
-
-  renderLayout(auth.business, auth.user);
+export async function initSettings(auth) {
   populateSettings(auth.business, auth.user);
   await populateSubscriptionSettings();
   await renderWorkspacesList(auth);
   setupEventListeners();
-});
+}
+
+async function handleInit() {
+  const auth = await checkAuth();
+  if (!auth) return;
+
+  renderLayout(auth.business, auth.user);
+  initSettings(auth);
+}
+
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 async function populateSubscriptionSettings() {
   const badgeEl = document.getElementById('plan-badge-container');

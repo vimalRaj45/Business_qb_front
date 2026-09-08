@@ -27,7 +27,7 @@ export async function checkAuth() {
 
     // Returning users who have already set up their profile skip onboarding
     if (isCompleted && currentPath.endsWith('/onboarding.html')) {
-      window.location.href = '/dashboard.html';
+      window.location.href = '/app.html#/dashboard';
       return null;
     }
 

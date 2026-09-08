@@ -6,23 +6,29 @@ import { showToast, formatDate, escapeHtml, confirmModal } from './utils.js';
 let allLogs = [];
 let isOwner = false;
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const session = await checkAuth();
-  if (!session) return;
-
+export async function initTeam(session) {
   isOwner = session.role === 'owner' || session.business?.owner_google_id === session.user?.googleId;
-  renderLayout(session.business, session.user);
-
-  // Hide owner-only elements for members
   if (!isOwner) {
     document.querySelectorAll('.owner-only').forEach(el => el.classList.add('hidden'));
   }
-
   await loadTeamMembers();
   await loadActivityLogs();
-
   setupEventListeners();
-});
+}
+
+async function handleInit() {
+  const session = await checkAuth();
+  if (!session) return;
+
+  renderLayout(session.business, session.user);
+  initTeam(session);
+}
+
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 async function loadTeamMembers() {
   const container = document.getElementById('team-list-container');

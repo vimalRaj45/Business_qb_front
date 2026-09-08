@@ -6,16 +6,25 @@ import { formatCurrency, formatDate, getStatusBadge, showToast, confirmModal, ex
 let allInvoices = [];
 let currencySymbol = '₹';
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function initInvoices(session) {
+  currencySymbol = session?.business?.currency ? session.business.currency.split(' ')[1] || session.business.currency : '₹';
+  await loadInvoices();
+  setupEventListeners();
+}
+
+async function handleInit() {
   const session = await checkAuth();
   if (!session) return;
 
   renderLayout(session.business, session.user);
-  currencySymbol = session.business.currency ? session.business.currency.split(' ')[1] || session.business.currency : '₹';
+  initInvoices(session);
+}
 
-  await loadInvoices();
-  setupEventListeners();
-});
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 async function loadInvoices() {
   try {
@@ -61,7 +70,7 @@ function renderTable(invoices) {
   tbody.innerHTML = invoices.map(i => `
     <tr class="border-b border-slate-100 hover:bg-slate-50/60">
       <td class="py-3.5 px-4 font-bold">
-        <a href="/invoice-view.html?id=${i.invoice_id}" class="text-teal-600 hover:underline">${i.invoice_number}</a>
+        <a href="#/invoice-view?id=${i.invoice_id}" class="text-teal-600 hover:underline">${i.invoice_number}</a>
       </td>
       <td class="py-3.5 px-4 font-semibold text-slate-800">${i.customer_name || 'N/A'}</td>
       <td class="py-3.5 px-4 text-slate-600">${formatDate(i.invoice_date)}</td>
@@ -71,7 +80,7 @@ function renderTable(invoices) {
       <td class="py-3.5 px-4 text-right text-emerald-600 font-semibold">${formatCurrency(i.paid_amount, currencySymbol)}</td>
       <td class="py-3.5 px-4 text-right text-rose-600 font-extrabold">${formatCurrency(i.balance_due, currencySymbol)}</td>
       <td class="py-3.5 px-4 text-right space-x-1.5 no-print">
-        <a href="/invoice-view.html?id=${i.invoice_id}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-semibold">View / Pay</a>
+        <a href="#/invoice-view?id=${i.invoice_id}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-semibold">View / Pay</a>
         <button onclick="window.deleteInvoice('${i.invoice_id}')" class="owner-only px-2 py-1 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-lg text-[11px] font-semibold" title="Delete Invoice">
           <i class="bi bi-trash-fill"></i>
         </button>

@@ -228,7 +228,7 @@
 
       if (!quotationId) {
         showToast('No quotation ID provided', 'error');
-        setTimeout(() => window.location.href = '/quotations.html', 1200);
+        setTimeout(() => window.location.hash = '#/quotations', 1200);
         return;
       }
 
@@ -347,7 +347,7 @@
               const res = await API.post(`/api/quotations/${q.quotation_id}/convert`, {});
               showToast('Quotation converted to Invoice!', 'success');
               setTimeout(() => {
-                window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`;
+                window.location.hash = `#/invoice-view?id=${res.data.invoice_id}`;
               }, 600);
             } catch (err) {
               showToast(err.message, 'error');

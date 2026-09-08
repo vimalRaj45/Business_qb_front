@@ -7,15 +7,13 @@ let currencySymbol = 'USD $';
 let chartInstanceRev = null;
 let chartInstanceExp = null;
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const auth = await checkAuth();
-  if (!auth) return;
+export async function initReports(auth) {
+  if (chartInstanceRev) { try { chartInstanceRev.destroy(); } catch(e) {} chartInstanceRev = null; }
+  if (chartInstanceExp) { try { chartInstanceExp.destroy(); } catch(e) {} chartInstanceExp = null; }
 
-  currencySymbol = auth.business.currency || 'USD $';
-  renderLayout(auth.business, auth.user);
-  
+  currencySymbol = auth?.business?.currency || 'USD $';
   if (document.getElementById('rep-biz-name')) {
-    document.getElementById('rep-biz-name').textContent = auth.business.business_name || 'My Business';
+    document.getElementById('rep-biz-name').textContent = auth?.business?.business_name || 'My Business';
   }
   if (document.getElementById('rep-date')) {
     document.getElementById('rep-date').textContent = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -26,7 +24,21 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('export-rep-pdf-btn')?.addEventListener('click', () => {
     exportTableToPDF('reports-document-container', 'financial_analytics_report.pdf');
   });
-});
+}
+
+async function handleInit() {
+  const auth = await checkAuth();
+  if (!auth) return;
+
+  renderLayout(auth.business, auth.user);
+  initReports(auth);
+}
+
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 async function loadReports() {
   try {

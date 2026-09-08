@@ -6,13 +6,31 @@ import { formatCurrency, formatDate } from './utils.js';
 let chartInstance1 = null;
 let chartInstance2 = null;
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function initDashboard(currency = 'USD $') {
+  if (chartInstance1) {
+    try { chartInstance1.destroy(); } catch(e) {}
+    chartInstance1 = null;
+  }
+  if (chartInstance2) {
+    try { chartInstance2.destroy(); } catch(e) {}
+    chartInstance2 = null;
+  }
+  await loadDashboardData(currency);
+}
+
+async function handleInit() {
   const auth = await checkAuth();
   if (!auth) return;
 
   renderLayout(auth.business, auth.user);
-  loadDashboardData(auth.business.currency);
-});
+  initDashboard(auth.business?.currency || 'USD $');
+}
+
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 async function loadDashboardData(currency = 'USD $') {
   try {

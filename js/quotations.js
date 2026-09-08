@@ -6,16 +6,25 @@ import { formatCurrency, formatDate, getStatusBadge, showToast, confirmModal, ex
 let allQuotations = [];
 let currencySymbol = '₹';
 
-document.addEventListener('DOMContentLoaded', async () => {
+export async function initQuotations(session) {
+  currencySymbol = session?.business?.currency ? session.business.currency.split(' ')[1] || session.business.currency : '₹';
+  await loadQuotations();
+  setupEventListeners();
+}
+
+async function handleInit() {
   const session = await checkAuth();
   if (!session) return;
 
   renderLayout(session.business, session.user);
-  currencySymbol = session.business.currency ? session.business.currency.split(' ')[1] || session.business.currency : '₹';
+  initQuotations(session);
+}
 
-  await loadQuotations();
-  setupEventListeners();
-});
+if (document.readyState !== 'loading') {
+  handleInit();
+} else {
+  document.addEventListener('DOMContentLoaded', handleInit);
+}
 
 async function loadQuotations() {
   try {
@@ -61,7 +70,7 @@ function renderTable(quotations) {
   tbody.innerHTML = quotations.map(q => `
     <tr class="border-b border-slate-100 hover:bg-slate-50/60">
       <td class="py-3.5 px-4 font-bold">
-        <a href="/quotation-view.html?id=${q.quotation_id}" class="text-teal-600 hover:underline">${q.quotation_number}</a>
+        <a href="#/quotation-view?id=${q.quotation_id}" class="text-teal-600 hover:underline">${q.quotation_number}</a>
       </td>
       <td class="py-3.5 px-4 font-semibold text-slate-800">${q.customer_name || 'N/A'}</td>
       <td class="py-3.5 px-4 text-slate-600">${formatDate(q.quotation_date)}</td>
@@ -69,7 +78,7 @@ function renderTable(quotations) {
       <td class="py-3.5 px-4">${getStatusBadge(q.status)}</td>
       <td class="py-3.5 px-4 text-right font-extrabold text-slate-900">${formatCurrency(q.total, currencySymbol)}</td>
       <td class="py-3.5 px-4 text-right space-x-1.5 no-print">
-        <a href="/quotation-view.html?id=${q.quotation_id}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-semibold">View</a>
+        <a href="#/quotation-view?id=${q.quotation_id}" class="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[11px] font-semibold">View</a>
         ${q.status !== 'Converted' ? `
           <button onclick="window.convertToInvoice('${q.quotation_id}')" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg text-[11px] font-semibold">Convert</button>
         ` : ''}
@@ -96,7 +105,7 @@ window.convertToInvoice = async function(quotationId) {
     const res = await API.post(`/api/quotations/${quotationId}/convert`, {});
     showToast('Quotation converted to Invoice!', 'success');
     setTimeout(() => {
-      window.location.href = `/invoice-view.html?id=${res.data.invoice_id}`;
+      window.location.hash = `#/invoice-view?id=${res.data.invoice_id}`;
     }, 600);
   } catch (err) {
     showToast(err.message, 'error');

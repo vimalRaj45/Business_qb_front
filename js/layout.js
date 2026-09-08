@@ -4,7 +4,52 @@ import { showToast } from './utils.js';
 
 let chatHistory = [];
 
+export function updateActiveNav(routeName = 'dashboard') {
+  const cleanRoute = (routeName || 'dashboard').replace(/^#\/?/, '').split('?')[0].replace(/\.html$/, '');
+
+  // Update sidebar links
+  document.querySelectorAll('#sidebar-container .nav-link').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const match = href.includes(cleanRoute) || 
+      (cleanRoute.startsWith('invoice') && href.includes('invoices')) || 
+      (cleanRoute.startsWith('quotation') && href.includes('quotations')) || 
+      (cleanRoute.startsWith('customer') && href.includes('customers'));
+    link.classList.toggle('active', match);
+  });
+
+  // Update mobile drawer links
+  document.querySelectorAll('#mobile-sidebar-drawer .nav-link').forEach(link => {
+    const href = link.getAttribute('href') || '';
+    const match = href.includes(cleanRoute) || 
+      (cleanRoute.startsWith('invoice') && href.includes('invoices')) || 
+      (cleanRoute.startsWith('quotation') && href.includes('quotations')) || 
+      (cleanRoute.startsWith('customer') && href.includes('customers'));
+    link.classList.toggle('active', match);
+  });
+
+  // Update mobile bottom nav items
+  document.querySelectorAll('.mobile-bottom-nav .mobile-nav-item').forEach(item => {
+    const href = item.getAttribute('href') || '';
+    const match = href.includes(cleanRoute) || 
+      (cleanRoute.startsWith('invoice') && href.includes('invoices')) || 
+      (cleanRoute.startsWith('quotation') && href.includes('quotations'));
+    item.classList.toggle('active', match);
+  });
+}
+
+export function updateHeaderTitle(titleText = 'Dashboard') {
+  const el = document.getElementById('header-title-text');
+  if (el) el.textContent = titleText;
+}
+
 export function renderLayout(business = {}, user = {}) {
+  // If already rendered in SPA shell, simply update active nav and return
+  if (document.querySelector('#sidebar-container .nav-link')) {
+    const hashRoute = (window.location.hash || '#/dashboard').replace(/^#\/?/, '').split('?')[0];
+    updateActiveNav(hashRoute);
+    return;
+  }
+
   // Auto-inject Manifest and Favicon if missing
   if (!document.querySelector('link[rel="manifest"]')) {
     const m = document.createElement('link'); m.rel = 'manifest'; m.href = '/manifest.json';
@@ -18,7 +63,7 @@ export function renderLayout(business = {}, user = {}) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
 
-  // Render & Auto-Dismiss Light Professional Glass Splash Screen
+  // Render & Auto-Dismiss Light Professional Glass Splash Screen (only once per session)
   renderSplashScreen();
 
   // Check PWA install prompt status after login
@@ -30,17 +75,17 @@ export function renderLayout(business = {}, user = {}) {
   const currentPath = window.location.pathname;
 
   const navItems = [
-    { label: 'Dashboard', href: '/dashboard.html', icon: 'bi-grid-1x2-fill' },
-    { label: 'Quotations', href: '/quotations.html', icon: 'bi-file-earmark-text-fill' },
-    { label: 'Invoices', href: '/invoices.html', icon: 'bi-receipt-cutoff' },
-    { label: 'Payments', href: '/payments.html', icon: 'bi-credit-card-fill' },
-    { label: 'Customers', href: '/customers.html', icon: 'bi-people-fill' },
-    { label: 'Products & Services', href: '/products.html', icon: 'bi-box-seam-fill' },
-    { label: 'Expenses', href: '/expenses.html', icon: 'bi-wallet2' },
-    { label: 'Transactions', href: '/transactions.html', icon: 'bi-journal-text' },
-    { label: 'Reports', href: '/reports.html', icon: 'bi-bar-chart-line-fill' },
-    { label: 'Developer API', href: '/developer.html', icon: 'bi-code-slash' },
-    { label: 'Settings', href: '/settings.html', icon: 'bi-gear-fill' },
+    { label: 'Dashboard', route: 'dashboard', href: '#/dashboard', icon: 'bi-grid-1x2-fill' },
+    { label: 'Quotations', route: 'quotations', href: '#/quotations', icon: 'bi-file-earmark-text-fill' },
+    { label: 'Invoices', route: 'invoices', href: '#/invoices', icon: 'bi-receipt-cutoff' },
+    { label: 'Payments', route: 'payments', href: '#/payments', icon: 'bi-credit-card-fill' },
+    { label: 'Customers', route: 'customers', href: '#/customers', icon: 'bi-people-fill' },
+    { label: 'Products & Services', route: 'products', href: '#/products', icon: 'bi-box-seam-fill' },
+    { label: 'Expenses', route: 'expenses', href: '#/expenses', icon: 'bi-wallet2' },
+    { label: 'Transactions', route: 'transactions', href: '#/transactions', icon: 'bi-journal-text' },
+    { label: 'Reports', route: 'reports', href: '#/reports', icon: 'bi-bar-chart-line-fill' },
+    { label: 'Developer API', route: 'developer', href: '#/developer', icon: 'bi-code-slash' },
+    { label: 'Settings', route: 'settings', href: '#/settings', icon: 'bi-gear-fill' },
   ];
 
   const fallbackAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name || 'Business Owner')}&background=0d9488&color=fff&font-size=0.45`;
@@ -64,7 +109,8 @@ export function renderLayout(business = {}, user = {}) {
 
           <nav class="flex-1 overflow-y-auto min-h-0 space-y-1 pr-1">
             ${navItems.map(item => {
-              const isActive = currentPath.endsWith(item.href);
+              const currentHash = (window.location.hash || '#/dashboard').replace(/^#\/?/, '').split('?')[0];
+              const isActive = currentHash === item.route || currentPath.endsWith(item.route + '.html');
               return `
                 <a href="${item.href}" class="nav-link ${isActive ? 'active' : ''}">
                   <i class="bi ${item.icon}"></i>
@@ -79,7 +125,7 @@ export function renderLayout(business = {}, user = {}) {
           <button id="sidebar-pwa-btn" class="w-full flex items-center gap-2 px-3.5 py-2 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 rounded-xl transition border border-teal-200/60 shadow-2xs">
             <i class="bi bi-download text-base"></i> Install App
           </button>
-          <a href="/settings.html" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition overflow-hidden">
+          <a href="#/settings" class="flex items-center gap-3 px-3 py-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-xl transition overflow-hidden">
             <img src="${avatarUrl}" referrerpolicy="no-referrer" onerror="this.onerror=null; this.src='${fallbackAvatar}';" class="w-8 h-8 rounded-full border border-slate-200 shrink-0 object-cover" alt="User Avatar" />
             <div class="overflow-hidden">
               <div class="font-bold text-slate-800 truncate">${user.name || 'Business Owner'}</div>
@@ -112,13 +158,13 @@ export function renderLayout(business = {}, user = {}) {
             <i class="bi bi-list"></i>
           </button>
           
-          <h2 class="text-lg md:text-xl font-bold text-slate-900 capitalize truncate">
-            ${currentPath.split('/').pop().replace('.html', '').replace('-', ' ') || 'Dashboard'}
+          <h2 id="header-title-text" class="text-lg md:text-xl font-bold text-slate-900 capitalize truncate">
+            Dashboard
           </h2>
         </div>
 
         <div class="flex items-center gap-2.5">
-          <a href="${business.spreadsheet_id && business.spreadsheet_id !== 'local_demo_spreadsheet_id' ? `https://docs.google.com/spreadsheets/d/${business.spreadsheet_id}` : '/settings.html'}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-2xs">
+          <a href="${business.spreadsheet_id && business.spreadsheet_id !== 'local_demo_spreadsheet_id' ? `https://docs.google.com/spreadsheets/d/${business.spreadsheet_id}` : '#/settings'}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200 rounded-xl text-xs font-bold transition shadow-2xs">
             <i class="bi bi-file-earmark-spreadsheet-fill text-emerald-600"></i> <span class="hidden sm:inline">Open Sheet</span>
           </a>
 
@@ -270,23 +316,23 @@ function renderMobileBottomNav(currentPath) {
   const nav = document.createElement('div');
   nav.className = 'mobile-bottom-nav md:hidden no-print';
   nav.innerHTML = `
-    <a href="/dashboard.html" class="mobile-nav-item ${currentPath.endsWith('/dashboard.html') ? 'active' : ''}">
+    <a href="#/dashboard" class="mobile-nav-item">
       <i class="bi bi-grid-1x2-fill"></i>
       <span>Home</span>
     </a>
-    <a href="/quotations.html" class="mobile-nav-item ${currentPath.endsWith('/quotations.html') ? 'active' : ''}">
+    <a href="#/quotations" class="mobile-nav-item">
       <i class="bi bi-file-earmark-text-fill"></i>
       <span>Quotes</span>
     </a>
-    <a href="/invoices.html" class="mobile-nav-item ${currentPath.endsWith('/invoices.html') ? 'active' : ''}">
+    <a href="#/invoices" class="mobile-nav-item">
       <i class="bi bi-receipt-cutoff"></i>
       <span>Invoices</span>
     </a>
-    <a href="/payments.html" class="mobile-nav-item ${currentPath.endsWith('/payments.html') ? 'active' : ''}">
+    <a href="#/payments" class="mobile-nav-item">
       <i class="bi bi-credit-card-fill"></i>
       <span>Payments</span>
     </a>
-    <a href="/reports.html" class="mobile-nav-item ${currentPath.endsWith('/reports.html') ? 'active' : ''}">
+    <a href="#/reports" class="mobile-nav-item">
       <i class="bi bi-bar-chart-line-fill"></i>
       <span>Reports</span>
     </a>

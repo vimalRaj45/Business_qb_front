@@ -290,7 +290,7 @@
 
       if (!invId) {
         showToast('No invoice ID specified', 'error');
-        setTimeout(() => window.location.href = '/invoices.html', 1000);
+        setTimeout(() => window.location.hash = '#/invoices', 1000);
         return;
       }
 

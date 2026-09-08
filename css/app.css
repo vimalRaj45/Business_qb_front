@@ -38,6 +38,16 @@ a, button {
   pointer-events: auto !important;
 }
 
+/* SPA View Transition Animation */
+@keyframes spaFadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.spa-fade-in {
+  animation: spaFadeIn 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+
 /* ==========================================================================
    LIGHT PROFESSIONAL GLASSMORPHISM APPLICATION SPLASH SCREEN
    ========================================================================== */
